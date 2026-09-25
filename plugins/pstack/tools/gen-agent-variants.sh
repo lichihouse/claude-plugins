@@ -12,7 +12,7 @@ out="${1:-$plugin/agents}"
 mkdir -p "$out"
 
 # Skipped keys drop their indented continuation lines too (folded or block descriptions).
-keys=$(awk '{ sub(/\r$/, "") } n == 1 && /^---$/ { exit } n == 1 && /^(name|description|effort):/ { skip = 1; next } n == 1 && skip && /^[ \t]/ { next } n == 1 { skip = 0; print } /^---$/ { n++ }' "$base")
+keys=$(awk '{ sub(/\r$/, "") } n == 1 && /^---$/ { exit } n == 1 && /^(name|description|effort):/ { skip = 1; next } n == 1 && skip && (/^[ \t]/ || /^$/) { next } n == 1 { skip = 0; print } /^---$/ { n++ }' "$base")
 body=$(awk '{ sub(/\r$/, "") } n >= 2 { print; next } /^---$/ { n++ }' "$base")
 for effort in low medium high xhigh max; do
 	{
