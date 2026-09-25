@@ -24,7 +24,7 @@ Run:
 
 [`/pstack:setup-pstack`](../../skills/setup-pstack/SKILL.md) detects the models you have access to, asks for a reasoning budget, shows you each role (code delegates, judgment, the review panels), and asks what you want. Answer the questions. It writes the pstack model map, `.claude/pstack-models.md` for the project or `~/.claude/pstack-models.md` for you. The plugin's SessionStart hook injects it into every new session, so every pstack skill reads it.
 
-You only override what you care about. A role with no line in the map keeps the skill's default. To restore a default, delete that role's line. A project line overrides a user line for the same role. A rerun of `/pstack:setup-pstack` keeps any role whose model differs from the default.
+You only override what you care about. A role with no line in the map keeps the skill's default. To restore a default, delete that role's line. A project line overrides a user line for the same role. A rerun of `/pstack:setup-pstack` keeps any role whose model or effort differs from the default. A value can carry an effort word, such as `opus medium`, on the roles that spawn `pstack:poteto-agent` (the code roles, hardest tasks, and judgment and prose).
 
 You might be wondering how to keep every subagent on the model you chose for the chat. Set a role to `inherit-parent` and pstack omits the subagent `model` field, so the subagent inherits your parent chat model. `auto` means the same thing, kept for maps carried over from Cursor. Neither is a model name. For a panel role the value is a list, and one subagent runs per entry, so the list length sets the panel size. Setup also configures `swarm workers`, the default model for every `/pstack:swarm` worker unless a race names a model for each arm.
 

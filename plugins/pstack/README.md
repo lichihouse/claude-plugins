@@ -106,7 +106,7 @@ Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) v
 
 ## Bảng model mặc định
 
-Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
+Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
 
 Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi gọi `Agent`. Vì vậy plugin có sẵn `pstack:poteto-agent-<effort>`. Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent-medium` với model `opus`. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên.
 
@@ -123,6 +123,8 @@ Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi g�
 "Budget" của `/pstack:setup-pstack` là **trần model**, giữ nguyên effort: unlimited → fable, large → opus, medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt.
 
 Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên `interrogate` giao thêm cho mỗi reviewer một góc nhìn riêng: đúng / race / edge case · phân quyền / bảo mật / dữ liệu destructive · nghiệp vụ (tiền, múi giờ, parity giữa các đường đọc).
+
+Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản đó, file bảng model đang ghi `sonnet` cho 4 vai code. Chạy lại `/pstack:setup-pstack` (nó tự chuyển sang `opus medium`) hoặc xoá 4 dòng đó.
 
 Đổi riêng cho một repo: chạy `/pstack:setup-pstack`, chọn ghi vào `.claude/pstack-models.md` của repo đó rồi commit. Đổi cho mọi repo trên máy: chọn `~/.claude/pstack-models.md`.
 
@@ -150,11 +152,11 @@ claude plugin validate --strict .                    # kiểm tra marketplace
 Lint và validate chỉ đọc file. Eval chạy plugin thật trong một phiên Claude Code con, rồi chấm theo những gì phiên đó làm (tool gọi, output hook, file tạo ra, câu trả lời). Chạy sau mỗi lần sync upstream hoặc sửa skill.
 
 ```bash
-claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-tools Write --trust-plugin --no-publish
+claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-tools Write Edit --trust-plugin --no-publish
 ```
 
 - Mỗi case là `evals/<case>/case.yaml`. Case cần repo mẫu có `scaffold.sh` tạo `math.js` (`add()` kẹp tổng qua `clamp()` về [-1000, 1000]), nên phải có `--scaffold`.
-- `--allow-tools Write` dành cho `reader-cannot-edit`. Không cấp Bash, vì eval chỉ cho Bash khi máy có sandbox (bubblewrap + socat).
+- `--allow-tools Write Edit`: `Write` cho `reader-cannot-edit`, `Edit` cho `code-delegate-effort`. Không cấp Bash, vì eval chỉ cho Bash khi máy có sandbox (bubblewrap + socat).
 - Bỏ `--ablation none` thì mỗi case chạy thêm một nhánh không plugin và báo Δ. Nhánh đó phải điểm thấp, nếu không thì grader không đo gì.
 - `--runs 1` tốn khoảng 1 phút và $0.5. Bỏ cờ này thì mỗi case chạy 3 lần. Kết quả ở `evals/results/` (đã gitignore).
 
@@ -165,6 +167,7 @@ claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-to
 | `poteto-bugfix-routing` | `/pstack:poteto-mode` với bug "repro first" đọc `playbooks/bug-fix.md`, không đọc playbook khác, rồi mở todo (`TaskCreate`) có bước repro đứng đầu. |
 | `reader-cannot-edit` | `pstack:reader` từ chối tạo file dù phiên có Write. Không có lệnh Write nào, và file không xuất hiện. |
 | `poteto-off` | `/pstack:poteto-mode off` trả lời một dòng. Không đọc file, không gọi agent, không mở todo. |
+| `code-delegate-effort` | `/pstack:poteto-mode` giao việc sửa code cho `pstack:poteto-agent-medium` với `model: "opus"` (mặc định `opus medium`), không dùng agent thường, và bản sửa có trong file. |
 
 ## License
 

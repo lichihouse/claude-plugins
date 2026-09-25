@@ -62,8 +62,13 @@ awk '
 	function valid(v,   a, k, i) {
 		k = split(v, a, ",")
 		if (k < 1) return 0
-		for (i = 1; i <= k; i++) if (trim(a[i]) !~ /^((fable|opus|sonnet|haiku)([ \t]+(low|medium|high|xhigh|max))?|inherit-parent|auto)$/) return 0
+		for (i = 1; i <= k; i++) if (trim(a[i]) !~ /^(fable|opus|sonnet|haiku|inherit-parent|auto)([ \t]+(low|medium|high|xhigh|max))?$/) return 0
 		return 1
+	}
+	BEGIN {
+		# Roles that spawn pstack:poteto-agent, the only agent with effort variants.
+		split("feature, refactoring|bug-fix|perf-issue|hillclimb|hardest tasks|judgment and prose", er, "|")
+		for (i in er) takes_effort[er[i]] = 1
 	}
 	{ sub(/\r$/, "") }
 	src == "default" {
@@ -84,12 +89,16 @@ awk '
 		if (src == "default") { order[++n] = role; def[role] = norm(val); next }
 		if (!(role in def)) { unknown[src]++; next }
 		if (!valid(val)) { bad = bad "(ignored " src " line with a value that is not a model alias: " role ")\n"; next }
+		if (!(role in takes_effort) && val ~ /[ \t](low|medium|high|xhigh|max)([ \t]*,|[ \t]*$)/) {
+			gsub(/[ \t]+(low|medium|high|xhigh|max)/, "", val)
+			bad = bad "(ignored the effort word on " role ": only roles that spawn pstack:poteto-agent take one)\n"
+		}
 		v[src SUBSEP role] = norm(val)
 	}
 	END {
 		if (n == 0) { print "pstack: default model map not found in skills/setup-pstack/SKILL.md (anchor line \"# pstack model map.\")."; exit }
 		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "unlimited (skill defaults)")
-		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means spawn pstack:poteto-agent-<effort> with that model."
+		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call with BOTH subagent_type pstack:poteto-agent-<effort> AND model set to the model (for example subagent_type \"pstack:poteto-agent-medium\", model \"opus\"). The variant fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means that variant with no model."
 		for (k = 1; k <= n; k++) {
 			r = order[k]
 			if (("project" SUBSEP r) in v) { val = v["project" SUBSEP r]; s = "project" }

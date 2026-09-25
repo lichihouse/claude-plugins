@@ -1,0 +1,43 @@
+schema_version: "1.1"
+name: code-delegate-effort
+description: >-
+  A code change under /pstack:poteto-mode is delegated on the code role's
+  default, "opus medium": an Agent call with subagent_type
+  pstack:poteto-agent-medium and model opus, never the plain poteto-agent or
+  general-purpose. The delegate's edit lands in the file.
+tags: [routing, models]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: "/pstack:poteto-mode rename the private function clamp to clampTotal in math.js. Behavior stays the same."
+  # Keeps the run cheap: the delegation is what this case measures, not the
+  # full Refactoring playbook (pin, commits, PR).
+  append_system_prompt: >-
+    Eval harness note: this run has no shell and no git. Follow the playbook
+    only up to delegating the edit to a code subagent as poteto-mode's
+    Subagents section prescribes, wait for it, check the file, and reply in
+    one line. Do not open a PR or commit.
+  max_turns: 20
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Edit, Agent, TaskCreate, TaskUpdate, TaskList]
+graders:
+  - name: delegates-to-medium-variant
+    type: tool_used
+    tool: Agent
+    input_match: '"subagent_type":\s*"pstack:poteto-agent-medium"'
+    min: 1
+  - name: delegate-on-opus
+    type: tool_used
+    tool: Agent
+    input_match: '"subagent_type":\s*"pstack:poteto-agent-medium"[^}]*"model":\s*"opus"|"model":\s*"opus"[^}]*"subagent_type":\s*"pstack:poteto-agent-medium"'
+    min: 1
+  - name: no-plain-or-general-code-delegate
+    type: tool_used
+    tool: Agent
+    input_match: '"subagent_type":\s*"(pstack:poteto-agent|general-purpose)"'
+    min: 0
+    max: 0
+  - name: rename-landed
+    type: regex
+    target: {source: file, path: math.js}
+    pattern: 'function clampTotal\('
