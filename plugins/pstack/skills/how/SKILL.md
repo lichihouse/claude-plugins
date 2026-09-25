@@ -30,7 +30,7 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 
 ## Step 2b. Direct Explain (simple questions)
 
-Spawn one `Agent` subagent that explores and explains in one pass:
+Spawn one `Agent` subagent that explores and explains in one pass. Spawn it even when the answer looks obvious from a quick look. The explainer runs on the `how explainer` model, and this thread keeps its context for the user's next step, so do not answer from your own reading:
 
 - `subagent_type`: `pstack:reader` (read-only, keeps MCP)
 - `model`: the `how explainer` line, default `opus`
