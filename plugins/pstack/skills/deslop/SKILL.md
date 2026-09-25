@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: Remove AI-generated code slop and clean up code style
+description: "Dọn code \"rác AI\" (AI slop) và làm gọn style code trong diff. Remove AI-generated code slop and clean up code style."
 ---
 
 # Remove AI code slop

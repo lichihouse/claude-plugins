@@ -1,6 +1,6 @@
 ---
 name: teach
-description: "Explain a body of work plainly so a person actually understands it. Runs the `how` and `why` skills and weaves what they find into one clear explanation. Use for 'teach me this', 'help me really understand X', 'explain this change or subsystem to me'."
+description: "Giải thích một khối việc bằng lời dễ hiểu để người đọc hiểu thật. Chạy how và why rồi ghép thành một lời giải thích. Dùng cho 'teach me this', 'dạy tôi', 'giải thích cho tôi hiểu X'."
 disable-model-invocation: true
 ---
 

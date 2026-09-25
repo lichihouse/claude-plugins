@@ -1,6 +1,6 @@
 ---
 name: technical-writing
-description: "Layered technical-writing standard: Diátaxis structure, Google developer style sentences, STE instruction rules, Global English syntax. Use for /pstack:technical-writing or when writing or reviewing docs, RFCs, readmes, PR descriptions, or commit messages."
+description: "Chuẩn viết tài liệu kỹ thuật nhiều lớp (Diátaxis, Google developer style, STE, Global English). Dùng cho /pstack:technical-writing hoặc khi viết/review docs, RFC, README, mô tả PR, commit message."
 disable-model-invocation: true
 ---
 

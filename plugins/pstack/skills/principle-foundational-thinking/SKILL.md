@@ -1,6 +1,6 @@
 ---
 name: principle-foundational-thinking
-description: "Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious."
+description: "Nội quy trước khi viết logic: chọn kiểu và cấu trúc dữ liệu lõi, thứ tự dựng khung trước hay tính năng trước, các actor song song chia sẻ gì. Cấu trúc dữ liệu đúng thì code sau tự rõ."
 disable-model-invocation: true
 ---
 

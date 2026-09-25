@@ -1,6 +1,6 @@
 ---
 name: setup-pstack
-description: Configure which models pstack uses per role, at what reasoning effort, and at what budget. Detects your available Claude models and writes the pstack model map that overrides the skill defaults. Use for /pstack:setup-pstack, "configure pstack models", "pstack budget", or changing pstack's model choices.
+description: "Cấu hình model và mức nỗ lực (effort) pstack dùng cho từng vai, theo ngân sách. Dò model Claude đang có và ghi bảng model map đè lên mặc định. Use for /pstack:setup-pstack, 'configure pstack models', 'pstack budget', đổi model pstack."
 ---
 
 # Setup pstack

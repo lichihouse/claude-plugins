@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
+description: "Giải thích code chạy thế nào: 'how does X work', đọc hiểu trước khi sửa, câu hỏi đặt code ở đâu / package nào sở hữu / đúng layer chưa. Giải thích kiến trúc subsystem, luồng runtime, mô hình để làm quen. Hỏi vì sao thì dùng why."
 disable-model-invocation: true
 ---
 

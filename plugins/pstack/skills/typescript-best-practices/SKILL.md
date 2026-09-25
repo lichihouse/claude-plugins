@@ -1,6 +1,6 @@
 ---
 name: typescript-best-practices
-description: TypeScript best practices. Use when reading or editing any .ts or .tsx file.
+description: "Quy tắc tốt cho TypeScript. Use when reading or editing any .ts or .tsx file (dùng khi đọc hoặc sửa file .ts / .tsx)."
 paths: ["**/*.ts", "**/*.tsx"]
 ---
 

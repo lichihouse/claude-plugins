@@ -1,6 +1,6 @@
 ---
 name: no-comments
-description: "Spawn Comment Sicko, fix accepted findings, and offer encodings for claimed constraints."
+description: "Gọi agent Comment Sicko xoá comment thừa, sửa các điểm được chấp nhận, và đề xuất biến ràng buộc trong comment thành code/test."
 disable-model-invocation: true
 ---
 

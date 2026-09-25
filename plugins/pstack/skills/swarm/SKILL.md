@@ -1,6 +1,6 @@
 ---
 name: swarm
-description: "Fan out N parallel workers, drain them, and return one report. Use for /pstack:swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
+description: "Chia N worker chạy song song, gom lại một báo cáo. Dùng cho /pstack:swarm, 'swarm this', quét rộng, chạy đua, thử nhiều hướng cùng lúc."
 disable-model-invocation: true
 ---
 

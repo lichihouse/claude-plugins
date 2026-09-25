@@ -1,6 +1,6 @@
 ---
 name: blast-radius
-description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
+description: "Tìm xem thay đổi có thể làm vỡ chỗ nào khác ngoài diff trước khi ship, và chứng minh điều kiện an toàn bằng cách chạy code thật chứ không chỉ viết ra. Dùng cho 'blast radius of X', 'sửa cái này vỡ chỗ nào', hoặc diff nhỏ mà chưa tin."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Cut AI tells from any writing. Must always apply.
+description: "Cắt bỏ 'mùi AI' trong mọi văn bản. Luôn áp dụng."
 disable-model-invocation: true
 ---
 

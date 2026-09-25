@@ -1,6 +1,6 @@
 ---
 name: recall
-description: "Reconstruct your recent working context from your own chat history, live state, and the shared record (user reports, prior fixes, incidents), then hand back a tight current-state brief. Use for 'recall my work on X', 'catch me up', 'what have I been working on', 'where did I leave off', before starting or resuming work."
+description: "Dựng lại ngữ cảnh làm việc gần đây từ lịch sử chat, trạng thái hiện tại và ghi chép chung (báo lỗi, lần sửa trước, sự cố), rồi trả một bản tóm tắt ngắn. Dùng cho 'recall my work on X', 'catch me up', 'tôi đang làm dở chỗ nào'."
 disable-model-invocation: true
 ---
 

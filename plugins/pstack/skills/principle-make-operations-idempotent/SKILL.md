@@ -1,6 +1,6 @@
 ---
 name: principle-make-operations-idempotent
-description: "Apply when designing commands, lifecycle steps, or processing loops that run amid crashes, restarts, and retries. Converge to the same end state regardless of partial prior runs."
+description: "Nội quy khi thiết kế lệnh, bước vòng đời, vòng xử lý có thể crash/restart/retry: chạy lại bao nhiêu lần cũng về cùng một trạng thái cuối."
 disable-model-invocation: true
 ---
 

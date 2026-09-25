@@ -1,6 +1,6 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
+description: "Nhiều reviewer LLM soi một thay đổi từ các góc độc lập, chỉ kết luận, không tự sửa. Dùng cho 'interrogate', 'adversarial review', 'multi-model review', 'soi lỗ hổng', 'review gắt'."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: automate-me
-description: "Use for \"automate me\", \"create/update/refresh my -mode skill\", \"turn/capture my preferences or working style into a skill\", or wanting agents to follow how the user works. Drafts or revises a personal -mode skill via skill-creator + unslop, optionally pulling fresh evidence from recent transcripts."
+description: "Tạo hoặc cập nhật skill <tên-bạn>-mode ghi lại thói quen và cách làm việc của người dùng, để agent làm theo. Có thể lấy thêm bằng chứng từ lịch sử chat gần đây. Dùng cho 'automate me', 'tạo/cập nhật -mode skill của tôi'."
 disable-model-invocation: true
 ---
 

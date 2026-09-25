@@ -1,6 +1,6 @@
 ---
 name: principle-guard-the-context-window
-description: "Apply when context is filling up: large outputs, long files, repeated reads, fan-out planning. Route bulk to subagents; keep summaries in the main thread, not raw payloads."
+description: "Nội quy khi context sắp đầy (output lớn, file dài, đọc lặp, lập kế hoạch fan-out): đẩy phần nặng cho subagent, luồng chính chỉ giữ tóm tắt."
 disable-model-invocation: true
 ---
 

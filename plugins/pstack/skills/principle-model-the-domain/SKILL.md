@@ -1,6 +1,6 @@
 ---
 name: principle-model-the-domain
-description: "Apply when writing stateful logic, or when code branches a lot or repeats a shape assumption across files. Encode the domain in a structure instead of scattered conditionals."
+description: "Nội quy khi viết logic có trạng thái, hoặc code rẽ nhánh nhiều / lặp cùng một giả định ở nhiều file: mã hoá nghiệp vụ thành cấu trúc thay vì if rải rác."
 disable-model-invocation: true
 ---
 

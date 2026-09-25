@@ -1,6 +1,6 @@
 ---
 name: poteto-mode
-description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /pstack:poteto-mode, or requests to work in this style.
+description: "Phong cách làm việc của poteto: trả lời gọn mà đủ chi tiết, dùng subagent có chủ đích, văn phong không 'mùi AI', code đơn giản, có kiểm chứng. Điểm vào mặc định cho việc nghiêm túc. Dùng cho /pstack:poteto-mode."
 disable-model-invocation: true
 ---
 

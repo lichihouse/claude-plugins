@@ -1,6 +1,6 @@
 ---
 name: bro
-description: Restate the last message in plain human language, with no jargon.
+description: "Nói lại tin nhắn trước bằng lời dễ hiểu, không dùng thuật ngữ."
 disable-model-invocation: true
 ---
 

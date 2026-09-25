@@ -1,6 +1,6 @@
 ---
 name: principle-type-system-discipline
-description: "Apply when designing types, reviewing a function signature, or writing code in any statically-typed language. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, refuse to lie to the compiler, exhaust variants, derive from authoritative schemas."
+description: "Nội quy khi thiết kế kiểu, review chữ ký hàm, viết code ngôn ngữ có kiểu tĩnh: trạng thái sai không biểu diễn được, brand kiểu nguyên thuỷ có nghĩa, parse dữ liệu ngoài ở biên, không nói dối compiler, xử lý hết các nhánh, suy kiểu từ schema gốc."
 disable-model-invocation: true
 ---
 

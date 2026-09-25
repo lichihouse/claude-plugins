@@ -1,6 +1,6 @@
 ---
 name: show-me-your-work
-description: "Keep a reviewable decision trail for long-running or unattended work: a TSV log with one row per decision (what, why, evidence, result). Local by default; commit it when a reviewer needs the trail to trust the result. Use for /pstack:show-me-your-work, autonomous or multi-phase runs, or work a human reviews after stepping away."
+description: "Ghi nhật ký quyết định để xem lại cho việc dài hoặc chạy không người trông: file TSV, mỗi dòng một quyết định (làm gì, vì sao, bằng chứng, kết quả). Dùng cho /pstack:show-me-your-work hoặc việc tự động nhiều giai đoạn."
 disable-model-invocation: true
 ---
 

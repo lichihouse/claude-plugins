@@ -1,6 +1,6 @@
 ---
 name: arena
-description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /pstack:arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "Cho N bản chạy song song cùng một việc, chọn một bản làm nền, ghép phần hay nhất của các bản thua vào. Dùng cho /pstack:arena, 'arena this', hoặc khi làm một lần dễ chốt sai hình dạng."
 disable-model-invocation: true
 ---
 

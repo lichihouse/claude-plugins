@@ -1,6 +1,6 @@
 ---
 name: principle-fix-root-causes
-description: "Apply when debugging. Trace each symptom to its root cause and fix it there; reproduce first, ask why until you reach it, resist nil-check guards that silence crashes."
+description: "Nội quy khi debug: lần mỗi triệu chứng tới nguyên nhân gốc và sửa ở đó; tái hiện trước, hỏi 'vì sao' tới gốc, không chèn nil-check để dập crash."
 disable-model-invocation: true
 ---
 

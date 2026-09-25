@@ -1,6 +1,6 @@
 ---
 name: why
-description: "Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in parallel, then returns a cited read on decisions and tradeoffs. Use how for runtime behavior."
+description: "Giải thích vì sao: 'why does X work this way', vì sao chọn Y, lý do thiết kế, regression, postmortem, ngưỡng dựa trên dữ liệu. Tra song song các MCP có sẵn (git, issue, docs, chat, monitoring, error tracking, analytics) rồi trả kết luận có trích nguồn. Hỏi code chạy thế nào thì dùng how."
 disable-model-invocation: true
 ---
 

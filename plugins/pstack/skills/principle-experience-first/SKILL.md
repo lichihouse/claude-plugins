@@ -1,6 +1,6 @@
 ---
 name: principle-experience-first
-description: "Apply when product, UX, or feature-scope tradeoffs come up. Choose user delight over implementation convenience; ship fewer polished features over more rough ones."
+description: "Nội quy: khi cân nhắc sản phẩm, UX, phạm vi tính năng, chọn trải nghiệm người dùng hơn sự tiện khi code; ít tính năng mà chỉn chu hơn nhiều mà thô."
 disable-model-invocation: true
 ---
 

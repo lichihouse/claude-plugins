@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: Spawn three parallel review subagents over the active transcript, surface learnings, and route each to a concrete edit on an existing skill. Use when the user says reflect.
+description: "Chạy 3 subagent song song đọc lại phiên vừa xong, rút bài học và đề xuất sửa cụ thể vào skill có sẵn. Dùng khi người dùng nói 'reflect'."
 disable-model-invocation: true
 ---
 

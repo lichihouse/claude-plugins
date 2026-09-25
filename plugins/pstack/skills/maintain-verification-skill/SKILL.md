@@ -1,6 +1,6 @@
 ---
 name: maintain-verification-skill
-description: "Periodic pass that keeps a project's verification skill and feature map honest: parallel source readers per feature, one live session driving every feature, at most one PR of proven corrections. Use for /pstack:maintain-verification-skill or \"audit the verify skill\"."
+description: "Rà định kỳ để skill verify và bản đồ tính năng của repo khớp với app: đọc source song song theo từng tính năng, một phiên live lái mọi tính năng, tối đa một PR sửa đã chứng minh. Dùng cho /pstack:maintain-verification-skill hoặc 'audit the verify skill'."
 disable-model-invocation: true
 ---
 

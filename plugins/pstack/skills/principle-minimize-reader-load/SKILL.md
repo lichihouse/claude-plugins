@@ -1,6 +1,6 @@
 ---
 name: principle-minimize-reader-load
-description: "Apply when reviewing or shaping code that's hard to trace. Count layers between question and answer, and hidden state in the reader's head; collapse one-caller wrappers and shrink mutable scope."
+description: "Nội quy khi review hoặc sửa code khó lần theo: đếm số lớp từ câu hỏi tới câu trả lời và trạng thái người đọc phải nhớ; gộp wrapper chỉ có một nơi gọi, thu hẹp phạm vi biến đổi."
 disable-model-invocation: true
 ---
 

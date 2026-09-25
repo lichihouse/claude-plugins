@@ -1,6 +1,6 @@
 ---
 name: principle-never-block-on-the-human
-description: "Apply when tempted to ask 'should I do X?' on reversible work. Proceed, present the result, let the human course-correct after the fact; reserve confirmation for irreversible actions."
+description: "Nội quy: việc đảo ngược được thì cứ làm, trình kết quả, để người dùng chỉnh sau; chỉ hỏi xác nhận với việc không đảo ngược được."
 disable-model-invocation: true
 ---
 

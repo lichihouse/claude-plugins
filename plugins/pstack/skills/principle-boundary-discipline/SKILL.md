@@ -1,6 +1,6 @@
 ---
 name: principle-boundary-discipline
-description: "Apply when wiring validation, error handling, or framework adapters. Concentrate guards at system boundaries (CLI, config, network, external APIs); trust internal types and keep business logic in pure functions."
+description: "Nội quy: khi nối validation, xử lý lỗi, adapter framework. Dồn kiểm tra ở biên hệ thống (CLI, config, network, API ngoài); tin kiểu dữ liệu nội bộ, giữ logic nghiệp vụ trong hàm thuần."
 disable-model-invocation: true
 ---
 

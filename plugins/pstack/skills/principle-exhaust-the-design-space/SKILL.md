@@ -1,6 +1,6 @@
 ---
 name: principle-exhaust-the-design-space
-description: "Apply when facing a novel UI interaction or architectural decision with no precedent in the codebase. Build 2-3 competing prototypes and compare side by side before committing."
+description: "Nội quy: gặp tương tác UI mới hoặc quyết định kiến trúc chưa có tiền lệ trong code, làm 2-3 prototype cạnh tranh và so sánh trước khi chốt."
 disable-model-invocation: true
 ---
 

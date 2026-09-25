@@ -1,6 +1,6 @@
 ---
 name: create-verification-skill
-description: "Generate a project-local verification skill that drives your app the way a user does — any language, framework, or platform. Use for /pstack:create-verification-skill, \"make a control skill for this repo\", or when a project has no scripted way to prove UI/CLI/service behavior."
+description: "Tạo skill verify-<app> riêng cho repo để agent bấm app như người dùng thật, mọi ngôn ngữ và nền tảng. Dùng cho /pstack:create-verification-skill, hoặc khi repo chưa có cách chạy tự động để chứng minh UI/CLI/service hoạt động đúng."
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: principle-outcome-oriented-execution
-description: "Apply during planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture; don't preserve smooth intermediate states with throwaway compatibility code."
+description: "Nội quy khi rewrite/migration có giai đoạn rõ ràng: tiến thẳng tới kiến trúc đích, không viết code tương thích tạm để giữ trạng thái trung gian êm."
 disable-model-invocation: true
 ---
 

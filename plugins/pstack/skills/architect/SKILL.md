@@ -1,6 +1,6 @@
 ---
 name: architect
-description: "Sketch types, signatures, and module structure before code, then stay in the loop while implementation fills in. Use for /pstack:architect, 'architect this', 'design this', or non-trivial work where jumping to code would lock in the wrong shape."
+description: "Phác trước kiểu dữ liệu, chữ ký hàm, cấu trúc module rồi mới viết code, sau đó theo sát lúc code được lấp vào. Dùng cho /pstack:architect, 'architect this', 'design this', hoặc việc lớn mà lao vào code ngay dễ chốt sai hình dạng."
 disable-model-invocation: true
 ---
 

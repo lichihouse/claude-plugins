@@ -1,6 +1,6 @@
 ---
 name: figure-it-out
-description: "Design an auditable playbook when no narrower one fits: a large migration, an ambitious multi-part change, or work a human reviews after stepping away. Scales rigor to the task, runs a hypothesis loop, and logs decisions via show-me-your-work. Use for /pstack:figure-it-out, 'figure it out', a large migration, or when no narrower playbook applies."
+description: "Soạn playbook có thể kiểm tra lại khi không có playbook hẹp nào khớp: migration lớn, thay đổi nhiều phần, hoặc việc người review sau khi vắng mặt. Độ kỹ theo quy mô việc, chạy vòng giả thuyết, ghi quyết định bằng show-me-your-work. Dùng cho /pstack:figure-it-out, 'figure it out'."
 disable-model-invocation: true
 ---
 

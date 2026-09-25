@@ -1,6 +1,6 @@
 ---
 name: control-cli
-description: Build or adapt a local harness to drive, inspect, and profile an interactive CLI or TUI without external services. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, or terminal demos.
+description: "Dựng hoặc sửa harness local để lái, soi, đo hiệu năng một CLI hoặc TUI tương tác, không cần dịch vụ ngoài. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, terminal demos (kiểm tra UX CLI, khởi động chậm, rò bộ nhớ, treo, luồng prompt, demo terminal)."
 ---
 
 # Control CLI

@@ -1,6 +1,6 @@
 ---
 name: principle-redesign-from-first-principles
-description: "Apply when integrating a new requirement into an existing design. Redesign as if the requirement had been a foundational assumption from day one, instead of bolting it on."
+description: "Nội quy khi thêm yêu cầu mới vào thiết kế có sẵn: thiết kế lại như thể yêu cầu đó có từ đầu, thay vì gắn chắp vá."
 disable-model-invocation: true
 ---
 

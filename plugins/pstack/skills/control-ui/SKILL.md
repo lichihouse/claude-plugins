@@ -1,6 +1,6 @@
 ---
 name: control-ui
-description: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, or reproducing UI bugs.
+description: "Dựng hoặc sửa harness trình duyệt/CDP local để lái và soi giao diện web, IDE hoặc Electron. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs (kiểm tra UI, chụp màn hình, đo hiệu năng, tái hiện bug giao diện)."
 ---
 
 # Control UI
