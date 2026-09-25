@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.5-claude.3`.
+- Phiên bản port: `0.15.5-claude.4`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -108,7 +108,18 @@ Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) v
 
 Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
 
-Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi gọi `Agent`. Vì vậy plugin có sẵn `pstack:poteto-agent-<effort>`. Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent-medium` với model `opus`. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên.
+Tên trong app Claude và giá trị ghi trong bảng model:
+
+| App hiển thị | Ghi trong bảng model | Ghi chú |
+|---|---|---|
+| Low · Medium · High | `low` · `medium` · `high` | `med` cũng được |
+| **Extra** | `xhigh` | `extra` cũng được, hook tự đổi thành `xhigh` |
+| Max | `max` | |
+| **Ultracode** | không phải mức effort | Là chế độ của phiên: `xhigh` + tự điều phối workflow. Ghi `ultracode` trong bảng thì hook đọc thành `xhigh` và báo lại. |
+
+Haiku không hỗ trợ effort, nên `haiku high` được đọc thành `haiku`. Luôn ghi đúng giá trị trong cột giữa khi sửa file agent: Claude Code âm thầm bỏ qua giá trị lạ (chỉ ghi log debug), lint của plugin chặn lỗi này.
+
+Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi gọi `Agent`. Vì vậy plugin có sẵn `pstack:poteto-agent-<effort>`. Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent-medium` với model `opus`. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên nếu phiên có đặt, không thì theo mặc định của model (lúc viết: opus medium, sonnet và fable high; danh mục model của Anthropic có thể đổi). Haiku luôn chạy không có effort. Effort ghi trong dòng thắng effort của phiên, kể cả khi phiên đang ở Extra, Max hay Ultracode. Chỉ biến môi trường `CLAUDE_CODE_EFFORT_LEVEL` và giới hạn effort của tổ chức là thắng được nó.
 
 | Vai | Mặc định |
 |---|---|

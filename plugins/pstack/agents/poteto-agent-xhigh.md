@@ -1,6 +1,6 @@
 ---
 name: poteto-agent-xhigh
-description: pstack:poteto-agent at xhigh reasoning effort. Spawn it, with the role's model, when a pstack model map line names that effort (for example `opus xhigh`). Otherwise use pstack:poteto-agent.
+description: pstack:poteto-agent at xhigh (the Claude apps call it Extra) reasoning effort. Spawn it, with the role's model, when a pstack model map line names that effort (for example `opus xhigh`). Otherwise use pstack:poteto-agent.
 background: true
 effort: xhigh
 ---

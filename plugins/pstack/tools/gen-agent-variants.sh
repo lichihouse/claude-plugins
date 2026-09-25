@@ -15,10 +15,12 @@ mkdir -p "$out"
 keys=$(awk '{ sub(/\r$/, "") } n == 1 && /^---$/ { exit } n == 1 && /^(name|description|effort):/ { skip = 1; next } n == 1 && skip && (/^[ \t]/ || /^$/) { next } n == 1 { skip = 0; print } /^---$/ { n++ }' "$base")
 body=$(awk '{ sub(/\r$/, "") } n >= 2 { print; next } /^---$/ { n++ }' "$base")
 for effort in low medium high xhigh max; do
+	label=$effort
+	[ "$effort" = xhigh ] && label="xhigh (the Claude apps call it Extra)"
 	{
 		echo "---"
 		echo "name: poteto-agent-$effort"
-		echo "description: pstack:poteto-agent at $effort reasoning effort. Spawn it, with the role's model, when a pstack model map line names that effort (for example \`opus $effort\`). Otherwise use pstack:poteto-agent."
+		echo "description: pstack:poteto-agent at $label reasoning effort. Spawn it, with the role's model, when a pstack model map line names that effort (for example \`opus $effort\`). Otherwise use pstack:poteto-agent."
 		[ -n "$keys" ] && printf '%s\n' "$keys"
 		echo "effort: $effort"
 		echo "---"

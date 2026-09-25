@@ -75,6 +75,14 @@ for f in agents/*.md; do
 	fi
 done
 
+# Claude Code silently ignores an effort it does not know (only a debug log line), so a typo or an
+# app label such as `extra` or `ultracode` in frontmatter would quietly run at the default effort.
+for f in agents/*.md skills/*/SKILL.md; do
+	v=$(awk 'n == 1 && /^---$/ { exit } n == 1 && /^effort:/ { sub(/^effort:[ \t]*/, ""); print } /^---$/ { n++ }' "$f")
+	[ -z "$v" ] && continue
+	case "$v" in low | medium | high | xhigh | max) ;; *) echo "$f: effort '$v' must be one of low, medium, high, xhigh, max, written unquoted (Claude Code also takes med and integers, pstack does not)"; status=1 ;; esac
+done
+
 # agents/poteto-agent-<effort>.md are generated from agents/poteto-agent.md.
 variants=$(mktemp -d)
 bash tools/gen-agent-variants.sh "$variants"

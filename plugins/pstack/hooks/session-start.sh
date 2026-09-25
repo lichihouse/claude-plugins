@@ -59,6 +59,23 @@ awk '
 		for (i = 1; i <= k; i++) { x = trim(a[i]); gsub(/[ \t]+/, " ", x); out = out (i > 1 ? ", " : "") x }
 		return out
 	}
+	# App labels and CLI aliases to the effort values Claude Code accepts in agent frontmatter:
+	# Extra is xhigh, med is medium, and Ultracode (xhigh plus workflows, a session mode) reads as xhigh.
+	function canon(v,   a, k, i, w, n, x, out) {
+		k = split(tolower(v), a, ",")
+		out = ""
+		for (i = 1; i <= k; i++) {
+			x = trim(a[i]); n = split(x, w, /[ \t]+/)
+			if (n == 2) {
+				if (w[2] == "extra") w[2] = "xhigh"
+				else if (w[2] == "med") w[2] = "medium"
+				else if (w[2] == "ultracode") { w[2] = "xhigh"; if (w[1] != "haiku") ultra = 1 }
+				x = w[1] " " w[2]
+			}
+			out = out (i > 1 ? ", " : "") x
+		}
+		return out
+	}
 	function valid(v,   a, k, i) {
 		k = split(v, a, ",")
 		if (k < 1) return 0
@@ -88,17 +105,23 @@ awk '
 		if (role !~ /^[a-z][a-z ,-]*[a-z]$/) next
 		if (src == "default") { order[++n] = role; def[role] = norm(val); next }
 		if (!(role in def)) { unknown[src]++; next }
+		ultra = 0; val = canon(val)
 		if (!valid(val)) { bad = bad "(ignored " src " line with a value that is not a model alias: " role ")\n"; next }
+		if (val ~ /(^|, )haiku [a-z]+/) {
+			gsub(/haiku [a-z]+/, "haiku", val)
+			bad = bad "(ignored the effort word on the " src " line for " role ": haiku does not support effort)\n"
+		}
 		if (!(role in takes_effort) && val ~ /[ \t](low|medium|high|xhigh|max)([ \t]*,|[ \t]*$)/) {
 			gsub(/[ \t]+(low|medium|high|xhigh|max)/, "", val)
-			bad = bad "(ignored the effort word on " role ": only roles that spawn pstack:poteto-agent take one)\n"
+			bad = bad "(ignored the effort word on the " src " line for " role ": only roles that spawn pstack:poteto-agent take one)\n"
 		}
+		if (ultra && val ~ / xhigh/) bad = bad "(ultracode on the " src " line for " role " is read as xhigh: its workflow part is a session mode, not an agent setting)\n"
 		v[src SUBSEP role] = norm(val)
 	}
 	END {
 		if (n == 0) { print "pstack: default model map not found in skills/setup-pstack/SKILL.md (anchor line \"# pstack model map.\")."; exit }
 		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "unlimited (skill defaults)")
-		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call with BOTH subagent_type pstack:poteto-agent-<effort> AND model set to the model (for example subagent_type \"pstack:poteto-agent-medium\", model \"opus\"). The variant fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means that variant with no model."
+		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call with BOTH subagent_type pstack:poteto-agent-<effort> AND model set to the model (for example subagent_type \"pstack:poteto-agent-medium\", model \"opus\"). The variant fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means that variant with no model. Effort words are low, medium, high, xhigh (the Claude apps label it Extra), max; a role with no effort word runs at the session effort when one is set, else the model default, and haiku runs without effort. The effort set by a variant overrides the session effort, including Extra, Max and Ultracode, unless CLAUDE_CODE_EFFORT_LEVEL is set; an organization effort cap still applies."
 		for (k = 1; k <= n; k++) {
 			r = order[k]
 			if (("project" SUBSEP r) in v) { val = v["project" SUBSEP r]; s = "project" }

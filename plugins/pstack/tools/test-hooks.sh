@@ -64,8 +64,23 @@ check "unknown effort word rejected" "$out" "(ignored project line with a value 
 check "rejected effort falls back to default" "$out" "perf-issue: opus medium  [default]"
 check "inherit-parent takes an effort word" "$out" "hardest tasks: inherit-parent xhigh  [project]"
 check "effort dropped on a role without variants" "$out" "how explorer: sonnet  [project]"
-check "dropped effort is reported" "$out" "(ignored the effort word on how explorer: only roles that spawn pstack:poteto-agent take one)"
+check "dropped effort is reported" "$out" "(ignored the effort word on the project line for how explorer: only roles that spawn pstack:poteto-agent take one)"
 check "project-skill mode drops the prefix" "$out" "Agents are poteto-agent, reader, comment-sicko"
+
+mkdir -p "$tmp/alias/.claude"
+printf 'bug-fix: Opus Extra\nperf-issue: opus ultracode\nhillclimb: haiku high\nfeature, refactoring: sonnet med\njudgment and prose: opus extra-high\nhow explorer: sonnet ultracode\nhardest tasks: haiku ultracode, opus xhigh\n' > "$tmp/alias/.claude/pstack-models.md"
+out=$(start s4 "$tmp/alias" env -u CLAUDE_PLUGIN_ROOT)
+check "app label Extra reads as xhigh" "$out" "bug-fix: opus xhigh  [project]"
+check "ultracode reads as xhigh" "$out" "perf-issue: opus xhigh  [project]"
+check "ultracode is explained" "$out" "(ultracode on the project line for perf-issue is read as xhigh: its workflow part is a session mode, not an agent setting)"
+check "med reads as medium" "$out" "feature, refactoring: sonnet medium  [project]"
+check "haiku drops the effort word" "$out" "hillclimb: haiku  [project]"
+check "haiku effort drop is explained" "$out" "(ignored the effort word on the project line for hillclimb: haiku does not support effort)"
+check "unknown label rejected" "$out" "(ignored project line with a value that is not a model alias: judgment and prose)"
+check "ultracode dropped on a role without variants" "$out" "how explorer: sonnet  [project]"
+check_not "…without a contradicting ultracode note" "$out" "(ultracode on the project line for how explorer"
+check "haiku ultracode keeps haiku" "$out" "hardest tasks: haiku, opus xhigh  [project]"
+check_not "…and says nothing about xhigh" "$out" "(ultracode on the project line for hardest tasks"
 
 out=$(start_json w1 'C:\\Users\\me\\.claude\\projects\\C--repo\\w1.jsonl' 'C:\\repo' | CLAUDE_CONFIG_DIR="$tmp/config" bash "$plugin/hooks/session-start.sh")
 check "windows transcript unescaped" "$out" 'this session: C:\Users\me\.claude\projects\C--repo\w1.jsonl'

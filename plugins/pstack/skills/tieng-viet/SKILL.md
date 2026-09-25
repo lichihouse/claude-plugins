@@ -48,6 +48,8 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 
 Skill `principle-*`, `typescript-best-practices`: nội quy, không cần gõ. poteto-mode tự đọc khi cần.
 
+Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extra / Max, tương ứng `low` / `medium` / `high` / `xhigh` / `max`. Ultracode không phải mức nỗ lực mà là chế độ của phiên (`xhigh` + tự điều phối workflow). Haiku không có mức nỗ lực.
+
 ## Câu tiếng Việt → lệnh
 
 - chạy thế nào, hiểu code, đặt file ở đâu → `/pstack:how`
