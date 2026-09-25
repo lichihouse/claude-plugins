@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.5-claude.1`.
+- Phiên bản port: `0.15.5-claude.2`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -76,11 +76,12 @@ claude --plugin-dir plugins/pstack
 | `/pstack:typescript-best-practices` | Quy tắc TypeScript. |
 | `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |
 | `/pstack:automate-me` | Tạo `<tên-bạn>-mode` từ thói quen làm việc của bạn. |
-| `/pstack:setup-pstack` | Đổi model cho từng vai. |
+| `/pstack:setup-pstack` | Đổi model và mức nỗ lực (effort) cho từng vai. |
+| `/pstack:tieng-viet` | Bảng tra tiếng Việt: lệnh nào dùng khi nào, câu tiếng Việt → lệnh. |
 
 Ở chế độ skill dự án, bỏ tiền tố: `/how`, `/why`… 23 skill `principle-*` là nội quy, poteto-mode tự đọc khi cần.
 
-Agent: `pstack:poteto-agent` (làm việc theo poteto-mode), `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án: `poteto-agent`, `reader`, `comment-sicko`.
+Agent: `pstack:poteto-agent` (làm việc theo poteto-mode) và các biến thể theo mức nỗ lực `pstack:poteto-agent-low|medium|high|xhigh|max`, `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án thì bỏ tiền tố `pstack:`.
 
 ## Khác gì bản Cursor
 
@@ -92,7 +93,7 @@ Agent: `pstack:poteto-agent` (làm việc theo poteto-mode), `pstack:reader` (ch
 | `environment: "cloud"` | `run_in_background` + `isolation: "worktree"`, hoặc `create_session` khi có công cụ Claude Code Remote |
 | `AskQuestion` | `AskUserQuestion` |
 | `~/.cursor/rules/pstack-models.mdc` (rule luôn áp dụng) | `.claude/pstack-models.md` › `~/.claude/pstack-models.md`, hook SessionStart bơm vào mỗi phiên |
-| Model `grok-4.7-xhigh-fast` / `claude-opus-5-5-max` / `gpt-5.6-sol-max` | `sonnet` / `opus` / `fable` (xem bảng dưới) |
+| Model `grok-4.7-xhigh-fast` / `claude-opus-5-5-max` / `gpt-5.6-sol-max` (slug gộp cả mức effort) | tên model Claude + effort tuỳ chọn, ví dụ `opus medium` cho code (xem bảng dưới) |
 | `~/.cursor/projects/<slug>/agent-transcripts/` | `~/.claude/projects/<slug>/<session>.jsonl`, hook báo đường dẫn phiên hiện tại |
 | `.cursor/skills/verify-<app>/` | `.claude/skills/verify-<app>/` |
 | `create-skill` (built-in Cursor) | skill `skill-creator` nếu có, không thì playbook Authoring a skill |
@@ -105,11 +106,13 @@ Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) v
 
 ## Bảng model mặc định
 
-Claude Code chỉ đặt model theo tên (`fable`, `opus`, `sonnet`, `haiku`) cho mỗi lần gọi `Agent`, không đặt reasoning effort theo lần gọi. Vì vậy "budget" của `/pstack:setup-pstack` là **trần model** (unlimited → fable, large → opus, medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt).
+Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
+
+Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi gọi `Agent`. Vì vậy plugin có sẵn `pstack:poteto-agent-<effort>`. Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent-medium` với model `opus`. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên.
 
 | Vai | Mặc định |
 |---|---|
-| feature, refactoring · bug-fix · perf-issue · hillclimb | `sonnet` |
+| feature, refactoring · bug-fix · perf-issue · hillclimb | `opus medium` |
 | judgment and prose | `opus` |
 | hardest tasks | `fable` |
 | how explorer · why investigators · swarm workers · reflect tooling | `sonnet` |
@@ -117,7 +120,11 @@ Claude Code chỉ đặt model theo tên (`fable`, `opus`, `sonnet`, `haiku`) ch
 | arena runners · architect runners · interrogate reviewers | `fable, opus, sonnet` |
 | arena cross-judge pool | `fable, opus` |
 
+"Budget" của `/pstack:setup-pstack` là **trần model**, giữ nguyên effort: unlimited → fable, large → opus, medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt.
+
 Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên `interrogate` giao thêm cho mỗi reviewer một góc nhìn riêng: đúng / race / edge case · phân quyền / bảo mật / dữ liệu destructive · nghiệp vụ (tiền, múi giờ, parity giữa các đường đọc).
+
+Đổi riêng cho một repo: chạy `/pstack:setup-pstack`, chọn ghi vào `.claude/pstack-models.md` của repo đó rồi commit. Đổi cho mọi repo trên máy: chọn `~/.claude/pstack-models.md`.
 
 ## Hook
 
@@ -131,6 +138,7 @@ bash plugins/pstack/tools/sync-upstream.sh [ref]     # kéo upstream mới, 3-wa
 bash plugins/pstack/tools/lint-port.sh               # chặn từ khoá chỉ Cursor mới hiểu, tên skill sai
 bash plugins/pstack/tools/test-hooks.sh              # test hành vi 2 hook
 bash plugins/pstack/tools/build-zip.sh               # đóng gói zip để upload lên claude.ai
+bash plugins/pstack/tools/gen-agent-variants.sh      # sinh lại poteto-agent-<effort> sau khi sửa poteto-agent.md
 claude plugin validate --strict plugins/pstack       # kiểm tra manifest, hooks
 claude plugin validate --strict .                    # kiểm tra marketplace
 ```

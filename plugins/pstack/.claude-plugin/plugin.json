@@ -1,7 +1,7 @@
 {
   "name": "pstack",
   "displayName": "pstack",
-  "version": "0.15.5-claude.1",
+  "version": "0.15.5-claude.2",
   "description": "pstack của poteto (Lauren Tan), port từ Cursor sang Claude Code. Đi sâu trước để đi nhanh: viết ít code hơn nhưng chất lượng hơn, workflow agent chặt chẽ, song song hoá có kiểm chứng.",
   "author": {
     "name": "Lauren Tan"

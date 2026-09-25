@@ -1,11 +1,11 @@
 ---
 name: setup-pstack
-description: Configure which models pstack uses per role and at what budget. Detects your available Claude models and writes the pstack model map that overrides the skill defaults. Use for /pstack:setup-pstack, "configure pstack models", "pstack budget", or changing pstack's model choices.
+description: Configure which models pstack uses per role, at what reasoning effort, and at what budget. Detects your available Claude models and writes the pstack model map that overrides the skill defaults. Use for /pstack:setup-pstack, "configure pstack models", "pstack budget", or changing pstack's model choices.
 ---
 
 # Setup pstack
 
-Write the pstack model map, a small file that sets pstack's model per role. The pstack plugin's SessionStart hook reads it and injects the effective map into every new session, the way an always-applied rule would.
+Write the pstack model map, a small file that sets pstack's model per role, and optionally its reasoning effort. The pstack plugin's SessionStart hook reads it and injects the effective map into every new session, the way an always-applied rule would.
 
 Two locations, merged per role line. A project line wins over a user line, and a role with no line in either keeps the skill default.
 
@@ -17,6 +17,8 @@ Two locations, merged per role line. A project line wins over a user line, and a
 ### 1. Detect available models
 
 The `model` parameter of the `Agent` tool is the dependable source. Its schema lists the values this session accepts, normally `fable`, `opus`, `sonnet`, and `haiku`. It takes these aliases only. If you cannot read the schema, ask the user to paste the models they have access to. Never write a model you have not confirmed is available. The alias `inherit-parent` is always valid. It means the role runs on the parent chat model (omit the Agent `model` parameter). `auto` is accepted as a synonym of `inherit-parent` for files carried over from Cursor.
+
+A value may add one effort word after the model: `low`, `medium`, `high`, `xhigh`, or `max` (for example `opus medium`). Claude Code sets effort per agent definition, not per `Agent` call, so pstack ships `pstack:poteto-agent-<effort>` variants. The effort word applies to the roles that spawn `pstack:poteto-agent`: `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, `hardest tasks`, and `judgment and prose`. On other roles it has no effect, so do not write one there. A value without an effort word runs at the session's effort.
 
 ### 2. Load current state
 
@@ -31,7 +33,7 @@ The default role-to-model mapping is the shape shown in step 5 below. Read `.cla
 - `medium — sonnet ceiling, opus for judgment`
 - `small — sonnet ceiling, haiku for bulk reads`
 
-**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by model, list, or alias (`inherit-parent`). Claude Code sets reasoning effort per session or per agent definition, not per `Agent` call, so the budget caps the model tier instead of an effort token. The tier ladder is `fable` > `opus` > `sonnet` > `haiku`.
+**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by model, effort, list, or alias (`inherit-parent`). The budget caps the model tier and leaves effort words as they are. The tier ladder is `fable` > `opus` > `sonnet` > `haiku`.
 
 - `unlimited` leaves every value as in the defaults.
 - `large` caps every entry at `opus`, so `fable` becomes `opus`.
@@ -40,13 +42,13 @@ The default role-to-model mapping is the shape shown in step 5 below. Read `.cla
 
 Panel lists keep their length after capping, so an entry can repeat (`fable, opus, sonnet` under `large` is `opus, opus, sonnet`). Say so when it happens. A repeated model is a second run, not a second opinion. `inherit-parent` does not change.
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any value not in the detected set as needing a choice. Also list each line step 2 dropped or remapped. Ask with `AskUserQuestion` whether to accept as-is or change specific roles. Each question takes 2 to 4 options and the tool adds a free-text answer on its own, so offer the four model aliases and let `inherit-parent` come through that free-text answer, or ask in two steps. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it that differs from the parent's model when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+**(c) Show the roles and confirm.** Show every role with its model, marking any value not in the detected set as needing a choice. Also list each line step 2 dropped or remapped. Ask with `AskUserQuestion` whether to accept as-is or change specific roles, and for a changed code role which effort to use (offer `medium`, `high`, `xhigh`, or none). Each question takes 2 to 4 options and the tool adds a free-text answer on its own, so offer the four model aliases and let `inherit-parent` come through that free-text answer, or ask in two steps. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it that differs from the parent's model when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 **(d) Ask where to write it.** Use `AskUserQuestion` with two options. `project — .claude/pstack-models.md (commit to share with the team)` and `user — ~/.claude/pstack-models.md (this machine, every project)`. Default to the location the current values came from.
 
 ### 4. Validate
 
-Every model written must be in the detected set. `inherit-parent` always passes. If a chosen model is not available, stop and ask again.
+Every model written must be in the detected set, and every effort word must be one of `low`, `medium`, `high`, `xhigh`, `max`. `inherit-parent` always passes. If a chosen model is not available, stop and ask again.
 
 ### 5. Write the map
 
@@ -55,12 +57,13 @@ Write the chosen file with a `# budget` line naming the chosen label and one lin
 ```
 # pstack model map. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` as a value: the role runs on the parent chat model (omit the Agent `model`). Alias entries in a panel list still count toward its fan-out.
+# An effort word after the model (`opus medium`) spawns pstack:poteto-agent-<effort>. It applies to the code roles, hardest tasks, and judgment and prose.
 # Project file (.claude/pstack-models.md) overrides the user file (~/.claude/pstack-models.md) line by line.
 # budget: unlimited — fable for the hardest work
-feature, refactoring: sonnet
-bug-fix: sonnet
-perf-issue: sonnet
-hillclimb: sonnet
+feature, refactoring: opus medium
+bug-fix: opus medium
+perf-issue: opus medium
+hillclimb: opus medium
 judgment and prose: opus
 hardest tasks: fable
 how explorer: sonnet

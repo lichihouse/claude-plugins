@@ -75,6 +75,17 @@ for f in agents/*.md; do
 	fi
 done
 
+# agents/poteto-agent-<effort>.md are generated from agents/poteto-agent.md.
+variants=$(mktemp -d)
+bash tools/gen-agent-variants.sh "$variants"
+for f in "$variants"/*.md; do
+	if ! cmp -s "$f" "agents/$(basename "$f")"; then
+		echo "agents/$(basename "$f") is out of date: run tools/gen-agent-variants.sh"
+		status=1
+	fi
+done
+rm -r "$variants"
+
 # The SessionStart hook reads the default model map from this fenced block.
 roles=$(awk '/^# pstack model map\./ { on = 1; next } on && /^```/ { exit } on && /^[a-z][a-z ,-]*:/ { n++ } END { print n + 0 }' skills/setup-pstack/SKILL.md)
 if [ "$roles" != 17 ]; then

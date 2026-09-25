@@ -54,15 +54,15 @@ set -- src=default "$defaults_file"
 # so text from a repository's map file never reaches context verbatim.
 awk '
 	function trim(s) { sub(/^[ \t\r]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
-	function norm(v,   a, k, i, out) {
+	function norm(v,   a, k, i, x, out) {
 		k = split(v, a, ","); out = ""
-		for (i = 1; i <= k; i++) out = out (i > 1 ? ", " : "") trim(a[i])
+		for (i = 1; i <= k; i++) { x = trim(a[i]); gsub(/[ \t]+/, " ", x); out = out (i > 1 ? ", " : "") x }
 		return out
 	}
 	function valid(v,   a, k, i) {
 		k = split(v, a, ",")
 		if (k < 1) return 0
-		for (i = 1; i <= k; i++) if (trim(a[i]) !~ /^(fable|opus|sonnet|haiku|inherit-parent|auto)$/) return 0
+		for (i = 1; i <= k; i++) if (trim(a[i]) !~ /^((fable|opus|sonnet|haiku)([ \t]+(low|medium|high|xhigh|max))?|inherit-parent|auto)$/) return 0
 		return 1
 	}
 	{ sub(/\r$/, "") }
@@ -89,7 +89,7 @@ awk '
 	END {
 		if (n == 0) { print "pstack: default model map not found in skills/setup-pstack/SKILL.md (anchor line \"# pstack model map.\")."; exit }
 		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "unlimited (skill defaults)")
-		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model."
+		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means spawn pstack:poteto-agent-<effort> with that model."
 		for (k = 1; k <= n; k++) {
 			r = order[k]
 			if (("project" SUBSEP r) in v) { val = v["project" SUBSEP r]; s = "project" }
