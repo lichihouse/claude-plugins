@@ -1,0 +1,41 @@
+schema_version: "1.1"
+name: how-spawns-reader
+description: >-
+  /pstack:how on a narrow question takes the simple path. It spawns exactly one
+  Agent, the read-only pstack:reader, on the how explainer model (opus), and the
+  answer explains the clamp.
+tags: [smoke, routing]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: "/pstack:how how does add() in math.js work? two sentences"
+  max_turns: 8
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Agent]
+graders:
+  - name: spawns-reader
+    type: tool_used
+    tool: Agent
+    input_match: '"subagent_type":\s*"pstack:reader"'
+    min: 1
+  - name: reader-started
+    type: regex
+    target: trace
+    pattern: '"subtype":"task_started"[^\n]*"subagent_type":"pstack:reader"'
+  - name: one-agent-only
+    type: tool_used
+    tool: Agent
+    min: 1
+    max: 1
+  - name: explainer-model-from-map
+    type: tool_used
+    tool: Agent
+    input_match: '"model":\s*"opus"'
+    min: 1
+  - name: answer-mentions-clamp
+    type: regex
+    pattern: clamp
+    flags: i
+  - name: answer-names-bound
+    type: regex
+    pattern: "1,?000"

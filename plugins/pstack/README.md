@@ -145,6 +145,27 @@ claude plugin validate --strict .                    # kiểm tra marketplace
 
 `sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
 
+### Eval hành vi
+
+Lint và validate chỉ đọc file. Eval chạy plugin thật trong một phiên Claude Code con, rồi chấm theo những gì phiên đó làm (tool gọi, output hook, file tạo ra, câu trả lời). Chạy sau mỗi lần sync upstream hoặc sửa skill.
+
+```bash
+claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-tools Write --trust-plugin --no-publish
+```
+
+- Mỗi case là `evals/<case>/case.yaml`. Case cần repo mẫu có `scaffold.sh` tạo `math.js` (`add()` kẹp tổng qua `clamp()` về [-1000, 1000]), nên phải có `--scaffold`.
+- `--allow-tools Write` dành cho `reader-cannot-edit`. Không cấp Bash, vì eval chỉ cho Bash khi máy có sandbox (bubblewrap + socat).
+- Bỏ `--ablation none` thì mỗi case chạy thêm một nhánh không plugin và báo Δ. Nhánh đó phải điểm thấp, nếu không thì grader không đo gì.
+- `--runs 1` tốn khoảng 1 phút và $0.5. Bỏ cờ này thì mỗi case chạy 3 lần. Kết quả ở `evals/results/` (đã gitignore).
+
+| Case | Chứng minh |
+|---|---|
+| `how-spawns-reader` | `/pstack:how` với câu hỏi hẹp gọi đúng một `Agent` loại `pstack:reader`, model `opus` lấy từ bảng model, và câu trả lời nêu clamp. |
+| `session-map` | Hook SessionStart chạy và bơm bảng model. Câu trả lời trích `hardest tasks: fable  [default]` và `judgment and prose: opus  [default]` mà không đọc file. |
+| `poteto-bugfix-routing` | `/pstack:poteto-mode` với bug "repro first" đọc `playbooks/bug-fix.md`, không đọc playbook khác, rồi mở todo (`TaskCreate`) có bước repro đứng đầu. |
+| `reader-cannot-edit` | `pstack:reader` từ chối tạo file dù phiên có Write. Không có lệnh Write nào, và file không xuất hiện. |
+| `poteto-off` | `/pstack:poteto-mode off` trả lời một dòng. Không đọc file, không gọi agent, không mở todo. |
+
 ## License
 
 MIT. pstack © 2026 Lauren Tan ([`LICENSE`](LICENSE)). `deslop`, `control-ui`, `control-cli` © 2026 Cursor ([`LICENSE.cursor-team-kit`](LICENSE.cursor-team-kit)).

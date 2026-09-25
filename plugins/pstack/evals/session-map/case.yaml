@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: session-map
+description: >-
+  The SessionStart hook ran and put the pstack model map in context. The trace
+  holds the hook's own output, and the reply quotes the map lines with the
+  [default] source tag, which no skill file carries. The run reads no file
+  (README and tools/test-hooks.sh also hold the tag), so the answer came from
+  the injected context.
+tags: [smoke, hooks]
+execution:
+  prompt: >-
+    Answer from your context only. Do not read files or run tools. Quote,
+    verbatim and each on its own line, the lines for the roles `hardest tasks`
+    and `judgment and prose` from the pstack model map in your context,
+    including any bracketed source tag at the end of the line. If your context
+    has no pstack model map, reply exactly NO MAP.
+  max_turns: 2
+  timeout_seconds: 120
+graders:
+  - name: hook-emitted-map
+    type: regex
+    target: trace
+    pattern: '"subtype":"hook_response"[^\n]*"hook_event":"SessionStart"[^\n]*pstack model map[^\n]*hardest tasks: fable  \[default\]'
+  - name: hardest-tasks-fable
+    type: regex
+    pattern: 'hardest tasks:\s*fable\s*\[default\]'
+  - name: judgment-and-prose-opus
+    type: regex
+    pattern: 'judgment and prose:\s*opus\s*\[default\]'
+  - name: no-file-read
+    type: tool_used
+    tool: Read
+    min: 0
+    max: 0
+    arm: both

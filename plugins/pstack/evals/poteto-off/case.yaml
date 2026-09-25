@@ -1,0 +1,36 @@
+schema_version: "1.1"
+name: poteto-off
+description: >-
+  "/pstack:poteto-mode off" is the off switch. The run answers in one line and
+  does nothing else: no playbook read, no todo list, no subagent.
+tags: [smoke, routing]
+execution:
+  prompt: "/pstack:poteto-mode off"
+  max_turns: 3
+  timeout_seconds: 120
+  allowed_tools: [Read, Glob, Grep, Agent, TaskCreate]
+graders:
+  - name: says-off
+    type: regex
+    pattern: '\boff\b'
+    flags: i
+  - name: one-line-reply
+    type: regex
+    pattern: '^\s*[^\n]+\s*$'
+  - name: no-read
+    type: tool_used
+    tool: Read
+    min: 0
+    max: 0
+    arm: both
+  - name: no-subagent
+    type: tool_used
+    tool: Agent
+    min: 0
+    max: 0
+    arm: both
+  - name: no-todo-list
+    type: regex
+    target: trace
+    pattern: '"name":\s*"(TaskCreate|TodoWrite)"'
+    match: not_contains
