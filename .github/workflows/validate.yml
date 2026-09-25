@@ -1,0 +1,37 @@
+name: Validate plugins
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pstack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Cài Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate marketplace + plugin
+        run: |
+          claude plugin validate --strict .
+          claude plugin validate --strict plugins/pstack
+
+      - name: Lint bản port (chặn cơ chế chỉ Cursor hiểu)
+        run: bash plugins/pstack/tools/lint-port.sh
+
+      - name: Test hook
+        run: bash plugins/pstack/tools/test-hooks.sh
+
+      - name: Test script đi kèm poteto-mode
+        working-directory: plugins/pstack/skills/poteto-mode/scripts
+        run: |
+          bun install --frozen-lockfile
+          bun test orch watch-pr

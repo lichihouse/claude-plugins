@@ -1,0 +1,27 @@
+{
+  "description": "pstack: inject the model map, transcript paths, and plugin root at session start; keep poteto-mode sticky across turns.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\" || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/poteto-mode-sticky.sh\" || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

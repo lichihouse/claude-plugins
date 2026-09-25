@@ -1,0 +1,142 @@
+# pstack cho Claude Code
+
+Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
+
+- Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.5-claude.1`.
+- Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
+
+## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
+
+Làm **một lần trên claude.ai bằng trình duyệt** (không làm trong app Desktop / Cowork, vì ở đó plugin chỉ lưu trên máy):
+
+1. Vào claude.ai → thanh trái **Customize** → tab **Plugins**.
+2. Mục **Personal plugins** → bấm **+** → **Add marketplace** → **Add from a repository** → nhập `lichihouse/claude-plugins`.
+3. Trong marketplace vừa thêm, cài **pstack**.
+
+Cách khác nếu bước 2 không đọc được repo: cũng ở **Personal plugins**, chọn upload file plugin (`pstack-<version>.zip`, tạo bằng `bash plugins/pstack/tools/build-zip.sh`).
+
+Sau đó plugin tự có mặt ở:
+
+| Nơi dùng | Điều kiện | Kiểm tra |
+|---|---|---|
+| Claude Code trên web, tab Code trong app Desktop / mobile (cloud session) | Không cần gì thêm, mỗi phiên tự tải | Gõ `/pstack:` thấy danh sách skill |
+| Claude Code ở terminal | Bản ≥ 2.1.273, đăng nhập bằng tài khoản claude.ai (`/login`) | `claude plugin list` có `pstack@synced` |
+
+Plugin theo tài khoản nạp đủ skill, agent và hook. Có một issue mở (anthropics/claude-code#92031) nói plugin cá nhân cài từ marketplace có lúc không xuất hiện trong phiên web. Nếu gặp: thử cách upload file, hoặc cài vào repo dạng skill dự án (mục dưới).
+
+### Dự phòng: skill dự án trong một repo
+
+```bash
+bash plugins/pstack/tools/install-as-project-skills.sh <thư-mục-repo> [--force]
+```
+
+Tạo symlink `skills/*` vào `.claude/skills/`, `agents/*` vào `.claude/agents/` của repo đó, rồi in khối `hooks` để dán vào `.claude/settings.json`. Lệnh gõ khi đó không có tiền tố (`/how`). Chỉ dùng khi cách theo tài khoản không chạy.
+
+### Thử nhanh không cài
+
+```bash
+claude --plugin-dir plugins/pstack
+```
+
+## Bắt đầu
+
+1. `/pstack:setup-pstack`. Chọn budget và model cho từng vai. Ghi ra `.claude/pstack-models.md` (dự án, commit để cả team dùng chung) hoặc `~/.claude/pstack-models.md` (cá nhân).
+2. `/pstack:poteto-mode <việc cần làm>`. Mode tự chọn playbook, chạy skill khác khi cần. Mode "dính" qua các lượt sau. Tắt bằng `/pstack:poteto-mode off` hoặc gõ "tắt poteto-mode".
+
+```text
+/pstack:poteto-mode trang đơn hàng bị nhân đôi dòng khi retry giữa chừng. repro trước, rồi sửa và chứng minh.
+```
+
+## Skill
+
+| Gõ | Dùng khi |
+|---|---|
+| `/pstack:poteto-mode` | Việc cần làm kỹ, gọn, có kiểm chứng. Điểm vào mặc định. |
+| `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt ở đâu? |
+| `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
+| `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, từng sơ đồ). |
+| `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
+| `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
+| `/pstack:architect` | Phác kiểu, chữ ký hàm, module trước khi viết code. |
+| `/pstack:arena` | Nhiều model làm cùng một việc, chọn bản tốt, ghép điểm hay. |
+| `/pstack:swarm` | Chia nhiều việc nhỏ, chạy song song, gom một báo cáo. |
+| `/pstack:interrogate` | Nhiều model soi lỗ hổng một diff. Chỉ kết luận, không tự sửa. |
+| `/pstack:figure-it-out` | Việc lớn chưa có playbook. Thiết kế quy trình rồi mới làm. |
+| `/pstack:show-me-your-work` | Nhật ký quyết định (TSV) để review sau. |
+| `/pstack:tdd` | Viết test fail trước rồi mới sửa. |
+| `/pstack:deslop` | Dọn code "rác AI" trong diff trước khi commit. |
+| `/pstack:no-comments` | Xoá comment thừa (gọi agent Comment Sicko). |
+| `/pstack:unslop` | Dọn văn phong AI trong chữ viết. |
+| `/pstack:technical-writing` | Viết docs, README, PR, commit message. |
+| `/pstack:bro` | Nói lại tin trước bằng lời dễ hiểu. |
+| `/pstack:create-verification-skill` | Tạo skill `verify-<app>` để agent bấm app như người dùng. |
+| `/pstack:maintain-verification-skill` | Skill verify đã lệch app, sửa lại. |
+| `/pstack:control-ui` / `/pstack:control-cli` | Lái trình duyệt / CLI để lấy bằng chứng (Playwright, CDP). |
+| `/pstack:typescript-best-practices` | Quy tắc TypeScript. |
+| `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |
+| `/pstack:automate-me` | Tạo `<tên-bạn>-mode` từ thói quen làm việc của bạn. |
+| `/pstack:setup-pstack` | Đổi model cho từng vai. |
+
+Ở chế độ skill dự án, bỏ tiền tố: `/how`, `/why`… 23 skill `principle-*` là nội quy, poteto-mode tự đọc khi cần.
+
+Agent: `pstack:poteto-agent` (làm việc theo poteto-mode), `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án: `poteto-agent`, `reader`, `comment-sicko`.
+
+## Khác gì bản Cursor
+
+| Cursor | Claude Code (bản này) |
+|---|---|
+| Tool `Task` | Tool `Agent` |
+| `subagent_type: generalPurpose` | `general-purpose` |
+| `readonly: true` (Ask mode, mất MCP) | agent `pstack:reader` (không sửa file, vẫn giữ MCP) |
+| `environment: "cloud"` | `run_in_background` + `isolation: "worktree"`, hoặc `create_session` khi có công cụ Claude Code Remote |
+| `AskQuestion` | `AskUserQuestion` |
+| `~/.cursor/rules/pstack-models.mdc` (rule luôn áp dụng) | `.claude/pstack-models.md` › `~/.claude/pstack-models.md`, hook SessionStart bơm vào mỗi phiên |
+| Model `grok-4.7-xhigh-fast` / `claude-opus-5-5-max` / `gpt-5.6-sol-max` | `sonnet` / `opus` / `fable` (xem bảng dưới) |
+| `~/.cursor/projects/<slug>/agent-transcripts/` | `~/.claude/projects/<slug>/<session>.jsonl`, hook báo đường dẫn phiên hiện tại |
+| `.cursor/skills/verify-<app>/` | `.claude/skills/verify-<app>/` |
+| `create-skill` (built-in Cursor) | skill `skill-creator` nếu có, không thì playbook Authoring a skill |
+| `deslop`, `control-ui`, `control-cli` (plugin `cursor-team-kit`) | đóng gói sẵn trong bản này (MIT, xem `LICENSE.cursor-team-kit`) |
+| Skill `mode: true` + `reminder:` | hook UserPromptSubmit giữ poteto-mode qua các lượt |
+| `/loop`, `/goal` | `/loop` giữ nguyên (agent tự gọi được). `/goal` chỉ người dùng gõ được, nên playbook in sẵn dòng `/goal …` để bạn dán |
+| Cloud-sleeper wake chain | `/loop 30m …` (local) hoặc `send_later` / Routine (cloud) |
+
+Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) và gói automation `benny` (Cursor Automations).
+
+## Bảng model mặc định
+
+Claude Code chỉ đặt model theo tên (`fable`, `opus`, `sonnet`, `haiku`) cho mỗi lần gọi `Agent`, không đặt reasoning effort theo lần gọi. Vì vậy "budget" của `/pstack:setup-pstack` là **trần model** (unlimited → fable, large → opus, medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt).
+
+| Vai | Mặc định |
+|---|---|
+| feature, refactoring · bug-fix · perf-issue · hillclimb | `sonnet` |
+| judgment and prose | `opus` |
+| hardest tasks | `fable` |
+| how explorer · why investigators · swarm workers · reflect tooling | `sonnet` |
+| how explainer · why synthesizer · reflect judgment | `opus` |
+| arena runners · architect runners · interrogate reviewers | `fable, opus, sonnet` |
+| arena cross-judge pool | `fable, opus` |
+
+Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên `interrogate` giao thêm cho mỗi reviewer một góc nhìn riêng: đúng / race / edge case · phân quyền / bảo mật / dữ liệu destructive · nghiệp vụ (tiền, múi giờ, parity giữa các đường đọc).
+
+## Hook
+
+- `SessionStart` ([`hooks/session-start.sh`](hooks/session-start.sh)): in bảng model đang áp dụng (ghi rõ nguồn project / user / default), đường dẫn transcript, gốc plugin, và chế độ nạp (plugin hay skill dự án).
+- `UserPromptSubmit` ([`hooks/poteto-mode-sticky.sh`](hooks/poteto-mode-sticky.sh)): bật / tắt poteto-mode theo phiên và nhắc ở mỗi lượt sau.
+
+## Bảo trì (cho người nâng cấp plugin)
+
+```bash
+bash plugins/pstack/tools/sync-upstream.sh [ref]     # kéo upstream mới, 3-way merge vào bản port
+bash plugins/pstack/tools/lint-port.sh               # chặn từ khoá chỉ Cursor mới hiểu, tên skill sai
+bash plugins/pstack/tools/test-hooks.sh              # test hành vi 2 hook
+bash plugins/pstack/tools/build-zip.sh               # đóng gói zip để upload lên claude.ai
+claude plugin validate --strict plugins/pstack       # kiểm tra manifest, hooks
+claude plugin validate --strict .                    # kiểm tra marketplace
+```
+
+`sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
+
+## License
+
+MIT. pstack © 2026 Lauren Tan ([`LICENSE`](LICENSE)). `deslop`, `control-ui`, `control-cli` © 2026 Cursor ([`LICENSE.cursor-team-kit`](LICENSE.cursor-team-kit)).

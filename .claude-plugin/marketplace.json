@@ -1,0 +1,17 @@
+{
+  "name": "lichihouse",
+  "owner": {
+    "name": "Lichi House"
+  },
+  "metadata": {
+    "description": "Plugin Claude Code cá nhân của Lichi House, dùng cho mọi repo."
+  },
+  "plugins": [
+    {
+      "name": "pstack",
+      "source": "./plugins/pstack",
+      "description": "pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: poteto-mode, how/why, arena/swarm/interrogate, 23 principle, playbook có kiểm chứng.",
+      "category": "developer-tools"
+    }
+  ]
+}
