@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.5-claude.2`.
+- Phiên bản port: `0.15.5-claude.3`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -124,7 +124,7 @@ Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi g�
 
 Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên `interrogate` giao thêm cho mỗi reviewer một góc nhìn riêng: đúng / race / edge case · phân quyền / bảo mật / dữ liệu destructive · nghiệp vụ (tiền, múi giờ, parity giữa các đường đọc).
 
-Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản đó, file bảng model đang ghi `sonnet` cho 4 vai code. Chạy lại `/pstack:setup-pstack` (nó tự chuyển sang `opus medium`) hoặc xoá 4 dòng đó.
+Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản đó, file bảng model đang ghi `sonnet` cho 4 vai code. Chạy lại `/pstack:setup-pstack` (nó nhận ra file bản cũ và chuyển sang `opus medium`) hoặc xoá 4 dòng đó. File ghi bằng bản mới giữ nguyên `sonnet` nếu bạn chủ động chọn.
 
 Đổi riêng cho một repo: chạy `/pstack:setup-pstack`, chọn ghi vào `.claude/pstack-models.md` của repo đó rồi commit. Đổi cho mọi repo trên máy: chọn `~/.claude/pstack-models.md`.
 

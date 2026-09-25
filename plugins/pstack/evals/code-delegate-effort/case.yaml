@@ -29,7 +29,7 @@ graders:
   - name: delegate-on-opus
     type: tool_used
     tool: Agent
-    input_match: '"subagent_type":\s*"pstack:poteto-agent-medium"[^}]*"model":\s*"opus"|"model":\s*"opus"[^}]*"subagent_type":\s*"pstack:poteto-agent-medium"'
+    input_match: '^(?=.*"subagent_type":\s*"pstack:poteto-agent-medium")(?=.*"model":\s*"opus")'
     min: 1
   - name: no-plain-or-general-code-delegate
     type: tool_used
@@ -41,3 +41,8 @@ graders:
     type: regex
     target: {source: file, path: math.js}
     pattern: 'function clampTotal\('
+  - name: old-name-gone
+    type: regex
+    target: {source: file, path: math.js}
+    pattern: '\bclamp\('
+    match: not_contains
