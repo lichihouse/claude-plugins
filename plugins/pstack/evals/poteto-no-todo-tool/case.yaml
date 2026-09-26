@@ -1,0 +1,66 @@
+schema_version: "1.1"
+name: poteto-no-todo-tool
+description: >-
+  The session has no todo tool, which is how newer models run by default:
+  since a Claude Code release between 2.1.219 and 2.1.275, TaskCreate and
+  TodoWrite exist only for older models (up to Opus 4.7, Sonnet 4.6, Haiku
+  4.5). The run reads playbooks/bug-fix.md and puts the playbook steps in its
+  reply as a markdown checklist, repro first and before binary search, with no
+  file write, no read of math.js, and no Grep or Glob unless it names the
+  playbooks or poteto-mode. Run it on a newer model such as claude-opus-5-5;
+  on an older model TaskCreate exists and no-todo-tool-call fails by design.
+tags: [routing]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: "/pstack:poteto-mode add(900, 200) returns 1000 instead of 1100. repro first, then fix."
+  append_system_prompt: >-
+    Eval harness note: this run has no shell. Stop as soon as your todo list is
+    open and reply with the list. Do not start the fix.
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Write]
+graders:
+  - name: no-todo-tool-call
+    type: regex
+    target: trace
+    pattern: '"name":\s*"(TaskCreate|TodoWrite)"'
+    match: not_contains
+  - name: reads-bug-fix-playbook
+    type: tool_used
+    tool: Read
+    input_match: 'poteto-mode/playbooks/bug-fix\.md'
+    min: 1
+  - name: reply-first-item-is-repro
+    type: regex
+    pattern: '^(?:[^\[]|\[(?! \]))*\[ \][^\n]*([Rr]eproduc|[Rr]epro\b)'
+  - name: reply-repro-before-binary-search
+    type: regex
+    pattern: '\[ \][^\n]*([Rr]eproduc|[Rr]epro\b)[\s\S]*\[ \][^\n]*[Bb]inary.search'
+  - name: no-file-write
+    type: tool_used
+    tool: Write
+    min: 0
+    max: 0
+    arm: both
+  - name: no-source-read
+    type: tool_used
+    tool: Read
+    input_match: 'math\.js'
+    min: 0
+    max: 0
+    arm: both
+  - name: no-grep-outside-playbooks
+    type: tool_used
+    tool: Grep
+    input_match: '^(?![\s\S]*(playbooks|poteto-mode|bug-fix\.md))'
+    min: 0
+    max: 0
+    arm: both
+  - name: no-glob-outside-playbooks
+    type: tool_used
+    tool: Glob
+    input_match: '^(?![\s\S]*(playbooks|poteto-mode|bug-fix\.md))'
+    min: 0
+    max: 0
+    arm: both
