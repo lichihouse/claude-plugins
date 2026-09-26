@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # UserPromptSubmit: keep poteto-mode on across turns, like Cursor's `mode: true` skill.
 # On:  a prompt that starts with /pstack:poteto-mode (plugin) or /poteto-mode (project skills).
-# Off: a whole prompt that is only "/pstack:poteto-mode off|stop|exit", "poteto-mode off",
+# Off: a whole prompt that is only "/pstack:poteto-mode off|stop|exit|tắt|thoát" (up to two polite words), "poteto-mode off",
 #      "exit poteto-mode", "tắt poteto-mode" and similar. Mentions inside a longer prompt never turn it off.
-# While on, each later prompt gets a one-line reminder as context.
+# The entering prompt gets the full setup gate. While on, each later prompt gets a one-line reminder of it.
 set -u
 
 input=$(cat)
@@ -24,6 +24,9 @@ else
 	entry='^/(pstack:)?poteto-mode([^A-Za-z0-9_-]|$)'
 fi
 
+# Short form of the Playbooks paragraph in skills/poteto-mode/SKILL.md, which is canonical.
+gate="Before any other tool call for a new task: match it to a playbook, Read that playbook file, then open the todo list with its steps copied verbatim (TaskCreate, TodoWrite or update_plan; with none of them, a numbered markdown checklist in your reply). Reading code comes after. The default to act as soon as you have enough information does not skip this step."
+
 umask 077
 state_dir="${CLAUDE_PLUGIN_DATA:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/pstack/state}/poteto-mode"
 flag="$state_dir/$session_id"
@@ -32,7 +35,7 @@ mkdir -p "$state_dir" 2>/dev/null || exit 0
 find "$state_dir" -type f -mtime +14 -exec rm -f {} + 2>/dev/null
 
 lower=$(printf '%s' "$prompt" | tr '[:upper:]' '[:lower:]')
-off_slash='^/(pstack:)?poteto-mode[[:space:]]+(off|stop|exit)[.!]*$'
+off_slash='^/(pstack:)?poteto-mode[[:space:]]+(off|stop|exit|tắt|thoát)([[:space:],]+(please|pls|thanks|thank[[:space:]]+you|nhé|nha|đi|thôi|ạ|luôn|giùm|dùm|giúp|cảm[[:space:]]+ơn)){0,2}[[:space:].!?,;]*$'
 off_phrase='^((poteto-mode|poteto mode)[[:space:]]+(off|stop)|(exit|stop|leave|quit|turn off|tắt|thoát)[[:space:]]+(poteto-mode|poteto mode))([[:space:]]+(nhé|nha|đi|please))?[.!]*$'
 if printf '%s' "$lower" | grep -qE "$off_slash|$off_phrase"; then
 	# The slash form also expands the skill, so say it is off even when no flag existed.
@@ -45,11 +48,12 @@ fi
 
 if printf '%s' "$prompt" | grep -qE "$entry"; then
 	touch "$flag"
+	echo "pstack poteto-mode is on. $gate"
 	exit 0
 fi
 
 if [ -f "$flag" ]; then
 	touch "$flag"
-	echo "pstack poteto-mode is on. New task? Playbook match or rigor needed -> apply $command (Read <pstack root>/skills/poteto-mode/SKILL.md if it is no longer in context). Casual turn or user opts out -> don't."
+	echo "pstack poteto-mode is on. New task? Playbook match or rigor needed -> apply $command: playbook file and todo list before any code read (Read <pstack root>/skills/poteto-mode/SKILL.md if it is no longer in context). Casual turn or user opts out -> don't."
 fi
 exit 0

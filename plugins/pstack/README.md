@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.5-claude.4`.
+- Phiên bản port: `0.15.5-claude.6`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -46,6 +46,19 @@ claude --plugin-dir plugins/pstack
 
 ```text
 /pstack:poteto-mode trang đơn hàng bị nhân đôi dòng khi retry giữa chừng. repro trước, rồi sửa và chứng minh.
+```
+
+poteto-mode mở todo list bằng tool todo của phiên (`TaskCreate`, `TodoWrite`, hoặc `update_plan` của app desktop). Từ một bản Claude Code nằm giữa 2.1.219 và 2.1.275, chỉ model cũ (tới Opus 4.7, Sonnet 4.6, Haiku 4.5) mới có tool todo. Model mới hơn (Opus 4.8, Opus 5.x, Sonnet 5, Fable 5) mặc định không có. Khi đó mode ghi checklist ngay trong câu trả lời. Muốn có lại `TaskCreate` cho Claude Code chạy trên máy này (phiên cloud không đọc file này), dán khối lệnh dưới vào Terminal rồi mở phiên mới. Khối lệnh cần `jq` (macOS 15 trở lên có sẵn). Nó sao lưu settings ra `settings.json.bak.<ngày giờ>`, rồi chỉ thêm một key vào `env`, giữ nguyên các key khác, quyền file và symlink. JSON hỏng hoặc thiếu `jq` thì không thêm được key và file cũ giữ nguyên. Dòng cuối in `env` để kiểm tra, phải thấy `"CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"`. Đừng sửa tay nếu không quen JSON: settings lỗi JSON thì Claude Code bỏ qua cả file, kể cả plugin đã bật.
+
+```bash
+f="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
+b="$f.bak.$(date +%Y%m%d%H%M%S)"
+command -v jq >/dev/null || echo "Cần cài jq trước"
+[ -s "$f" ] || echo '{}' > "$f"
+cp -p "$f" "$b"
+jq -e '.env.CLAUDE_CODE_ENABLE_TODO_TOOLS = "1"' "$b" > "$f.new" && cat "$f.new" > "$f"
+rm -f "$f.new"
+jq .env "$f"
 ```
 
 ## Skill
@@ -142,7 +155,7 @@ Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản
 ## Hook
 
 - `SessionStart` ([`hooks/session-start.sh`](hooks/session-start.sh)): in bảng model đang áp dụng (ghi rõ nguồn project / user / default), đường dẫn transcript, gốc plugin, và chế độ nạp (plugin hay skill dự án).
-- `UserPromptSubmit` ([`hooks/poteto-mode-sticky.sh`](hooks/poteto-mode-sticky.sh)): bật / tắt poteto-mode theo phiên và nhắc ở mỗi lượt sau.
+- `UserPromptSubmit` ([`hooks/poteto-mode-sticky.sh`](hooks/poteto-mode-sticky.sh)): bật / tắt poteto-mode theo phiên. Ngay lượt gõ lệnh, hook in cổng thiết lập: chọn playbook, đọc file playbook, mở todo (phiên không có TaskCreate / TodoWrite / update_plan thì ghi checklist trong câu trả lời) rồi mới đọc code. Các lượt sau nhắc lại cổng này bằng một dòng.
 
 ## Bảo trì (cho người nâng cấp plugin)
 
@@ -167,7 +180,7 @@ claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-to
 ```
 
 - Mỗi case là `evals/<case>/case.yaml`. Case cần repo mẫu có `scaffold.sh` tạo `math.js` (`add()` kẹp tổng qua `clamp()` về [-1000, 1000]), nên phải có `--scaffold`.
-- `--allow-tools Write Edit`: `Write` cho `reader-cannot-edit`, `Edit` cho `code-delegate-effort`. Không cấp Bash, vì eval chỉ cho Bash khi máy có sandbox (bubblewrap + socat).
+- `--allow-tools Write Edit`: `Write` cho `reader-cannot-edit` và `poteto-no-todo-tool` (để grader cấm ghi file có nghĩa), `Edit` cho `code-delegate-effort`. Không cấp Bash, vì eval chỉ cho Bash khi máy có sandbox (bubblewrap + socat).
 - Bỏ `--ablation none` thì mỗi case chạy thêm một nhánh không plugin và báo Δ. Nhánh đó phải điểm thấp, nếu không thì grader không đo gì.
 - `--runs 1` tốn khoảng 1 phút và $0.5. Bỏ cờ này thì mỗi case chạy 3 lần. Kết quả ở `evals/results/` (đã gitignore).
 
@@ -177,6 +190,7 @@ claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-to
 | `session-map` | Hook SessionStart chạy và bơm bảng model. Câu trả lời trích `hardest tasks: fable  [default]` và `judgment and prose: opus  [default]` mà không đọc file. |
 | `poteto-bugfix-routing` | `/pstack:poteto-mode` với bug "repro first" đọc `playbooks/bug-fix.md`, không đọc playbook khác, rồi mở todo (`TaskCreate`) có bước repro đứng đầu. |
 | `reader-cannot-edit` | `pstack:reader` từ chối tạo file dù phiên có Write. Không có lệnh Write nào, và file không xuất hiện. |
+| `poteto-no-todo-tool` | Phiên không có tool todo (model mới mặc định như vậy). Run đọc `playbooks/bug-fix.md`, đưa các bước vào câu trả lời thành checklist: mục đầu là repro, repro đứng trước Binary-search. Không ghi file, không đọc `math.js`, không Grep / Glob trừ khi lệnh nhắc tới playbook hay poteto-mode. Chạy trên model mới, vd thêm `--model claude-opus-5-5` vào lệnh eval ở trên; trên model cũ phiên có sẵn `TaskCreate` nên case này fail. Phần hook in cổng thiết lập do `tools/test-hooks.sh` kiểm, vì trace của eval không chứa output UserPromptSubmit. |
 | `poteto-off` | `/pstack:poteto-mode off` trả lời một dòng. Không đọc file, không gọi agent, không mở todo. |
 | `code-delegate-effort` | `/pstack:poteto-mode` giao việc sửa code cho `pstack:poteto-agent-medium` với `model: "opus"` (mặc định `opus medium`), không dùng agent thường, và bản sửa có trong file. |
 

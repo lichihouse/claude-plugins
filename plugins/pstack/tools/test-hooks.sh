@@ -95,14 +95,20 @@ check "missing anchor is reported, not silent" "$out" "default model map not fou
 
 echo "# UserPromptSubmit"
 check_empty "no flag, no reminder" "$(project_prompt a 'hello')"
-check_empty "entering the mode prints nothing" "$(project_prompt a '/pstack:poteto-mode fix the scroll bug')"
-check "later turn gets the reminder" "$(project_prompt a 'next task')" "pstack poteto-mode is on."
+out=$(project_prompt a '/pstack:poteto-mode fix the scroll bug')
+check "entering the mode prints the setup gate" "$out" "Before any other tool call for a new task: match it to a playbook, Read that playbook file"
+check "gate names the fallback when no todo tool exists" "$out" "with none of them, a numbered markdown checklist in your reply"
+check "gate outranks act-now" "$out" "does not skip this step"
+out=$(project_prompt a 'next task')
+check "later turn gets the reminder" "$out" "pstack poteto-mode is on. New task?"
+check "later reminder points at the gate" "$out" "playbook file and todo list before any code read"
+check_not "later reminder stays short" "$out" "Reading code comes after"
 check_empty "other sessions are unaffected" "$(project_prompt b 'hi')"
 check_empty "a longer skill name does not turn it on" "$(project_prompt c '/poteto-mode-x go')"
-check_empty "project-skill form turns it on silently" "$(project_prompt c '/poteto-mode')"
+check "project-skill form turns it on with the gate" "$(project_prompt c '/poteto-mode')" "Read that playbook file"
 check "project-skill form is sticky" "$(project_prompt c 'go on')" "apply /poteto-mode"
 
-check_empty "task text starting with stop does not turn it off" "$(project_prompt a '/pstack:poteto-mode stop the form from double-submitting')"
+check "task text starting with stop does not turn it off" "$(project_prompt a '/pstack:poteto-mode stop the form from double-submitting')" "Read that playbook file"
 check "…so the mode is still on" "$(project_prompt a 'next')" "pstack poteto-mode is on."
 check "exit codes task keeps it on" "$(project_prompt a '/pstack:poteto-mode exit codes are wrong in the CLI, fix them' ; project_prompt a 'next')" "pstack poteto-mode is on."
 check "a question mentioning stop keeps it on" "$(project_prompt a 'why did you stop poteto-mode earlier? keep going')" "pstack poteto-mode is on."
@@ -117,9 +123,23 @@ check_empty "opt-out when already off is silent" "$(project_prompt c 'poteto-mod
 
 check_empty "plugin mode: bare /poteto-mode is some other copy, stays off" "$(plugin_prompt p '/poteto-mode go')"
 check_empty "plugin mode: still off" "$(plugin_prompt p 'next')"
-check_empty "plugin mode: /pstack:poteto-mode turns it on" "$(plugin_prompt p '/pstack:poteto-mode go')"
+check "plugin mode: /pstack:poteto-mode turns it on with the gate" "$(plugin_prompt p '/pstack:poteto-mode go')" "Read that playbook file"
 check "plugin mode reminder names the plugin command" "$(plugin_prompt p 'next')" "apply /pstack:poteto-mode"
 check "escaped trailing newline still opts out" "$(project_prompt e1 '/pstack:poteto-mode go' ; project_prompt e1 'poteto-mode off\n')" "poteto-mode is now off"
+check "Vietnamese slash opt-out" "$(project_prompt n1 '/pstack:poteto-mode go' ; project_prompt n1 '/pstack:poteto-mode tắt')" "poteto-mode is now off"
+check_empty "…and the next turn is silent" "$(project_prompt n1 'next')"
+check "polite slash opt-out" "$(project_prompt n2 '/pstack:poteto-mode go' ; project_prompt n2 '/pstack:poteto-mode off, please')" "poteto-mode is now off"
+check "slash opt-out with a question mark" "$(project_prompt n3 '/pstack:poteto-mode go' ; project_prompt n3 '/pstack:poteto-mode off?')" "poteto-mode is now off"
+check "two polite words still opt out" "$(project_prompt n7 '/pstack:poteto-mode go' ; project_prompt n7 '/pstack:poteto-mode tắt đi nhé')" "poteto-mode is now off"
+check "ạ opts out" "$(project_prompt n8 '/pstack:poteto-mode go' ; project_prompt n8 '/pstack:poteto-mode tắt ạ')" "poteto-mode is now off"
+check "thank you opts out" "$(project_prompt n10 '/pstack:poteto-mode go' ; project_prompt n10 '/pstack:poteto-mode off thank you')" "poteto-mode is now off"
+check "three polite words get the gate" "$(project_prompt n11 '/pstack:poteto-mode off thanks thanks thanks')" "Read that playbook file"
+check "semicolon opt-out" "$(project_prompt n12 '/pstack:poteto-mode go' ; project_prompt n12 '/pstack:poteto-mode off;')" "poteto-mode is now off"
+check "tắt luôn opts out" "$(project_prompt n13 '/pstack:poteto-mode go' ; project_prompt n13 '/pstack:poteto-mode tắt luôn')" "poteto-mode is now off"
+check "polite words then a task still get the gate" "$(project_prompt n9 '/pstack:poteto-mode off please fix bug')" "Read that playbook file"
+check "two-word task after tắt gets the gate" "$(project_prompt n4 '/pstack:poteto-mode tắt cache')" "Read that playbook file"
+check "two-word task after stop gets the gate" "$(project_prompt n5 '/pstack:poteto-mode stop flickering')" "Read that playbook file"
+check "phrase form keeps its old tail: a question stays on" "$(project_prompt n6 '/pstack:poteto-mode go' >/dev/null; project_prompt n6 'poteto-mode off?')" "pstack poteto-mode is on. New task?"
 check "uppercase opt-out" "$(project_prompt e2 '/poteto-mode go' ; project_prompt e2 'Poteto-mode OFF')" "poteto-mode is now off"
 check "slash opt-out without a flag still answers" "$(project_prompt e3 '/pstack:poteto-mode off')" "poteto-mode is now off"
 pretty=$(printf '{\n  "prompt": "/pstack:poteto-mode go",\n  "session_id": "e4",\n  "hook_event_name": "UserPromptSubmit"\n}')
@@ -128,7 +148,7 @@ check "pretty-printed stdin, prompt key first" "$(project_prompt e4 'next')" "ps
 project_prompt '../../escape' '/poteto-mode' >/dev/null
 if [ -e "$tmp/data/poteto-mode/escape" ] && [ ! -e "$tmp/escape" ]; then echo "ok   session id cannot leave the state dir"; else echo "FAIL session id cannot leave the state dir"; fails=$((fails + 1)); fi
 mkdir -p "$tmp/home"
-printf '{"session_id":"h1","prompt":"/poteto-mode"}' | env -u CLAUDE_PLUGIN_DATA -u CLAUDE_PLUGIN_ROOT HOME="$tmp/home" CLAUDE_CONFIG_DIR= bash "$plugin/hooks/poteto-mode-sticky.sh"
+printf '{"session_id":"h1","prompt":"/poteto-mode"}' | env -u CLAUDE_PLUGIN_DATA -u CLAUDE_PLUGIN_ROOT HOME="$tmp/home" CLAUDE_CONFIG_DIR= bash "$plugin/hooks/poteto-mode-sticky.sh" >/dev/null
 if [ -f "$tmp/home/.claude/pstack/state/poteto-mode/h1" ]; then echo "ok   per-user fallback state dir"; else echo "FAIL per-user fallback state dir"; fails=$((fails + 1)); fi
 touch -t 202001010000 "$tmp/data/poteto-mode/a" 2>/dev/null || true
 project_prompt a2 '/poteto-mode' >/dev/null
