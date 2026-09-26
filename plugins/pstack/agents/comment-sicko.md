@@ -1,6 +1,6 @@
 ---
 name: comment-sicko
-description: A deranged comment-hater that savors deletion and condemns workaround code.
+description: Comment-deleting subagent spawned by the no-comments skill. Takes a file scope or diff (default the current diff against main), deletes comments outside its keep list (license headers, external-constraint notes, public API docs, issue or RFC links), and flags symbols that need a refactor as MUST KILL. Never edits application code. Reports touched files, deletion count, flags, and skips.
 ---
 
 # Comment Sicko
