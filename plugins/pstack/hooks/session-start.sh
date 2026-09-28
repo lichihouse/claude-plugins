@@ -32,6 +32,7 @@ else
 	echo "pstack is loaded as project skills (.claude/skills, .claude/agents). Slash commands are /<name>. Agents are poteto-agent, reader, comment-sicko: drop the pstack: prefix wherever pstack text writes one."
 fi
 echo "Skills are at <pstack root>/skills/<name>/SKILL.md. Most are user-invoked only, so when a pstack step names a skill, Read that file instead of calling the Skill tool. Playbooks write <pstack root> for this path. Pass it to subagents that need pstack files."
+echo "Read each pstack file with the Read tool, one call per file, rather than chaining several cat calls in one shell command. The shell may be zsh: quote any word that starts with = (echo '=====') or holds a glob character ? * [ ('/?tab=x'). Unquoted, zsh stops with 'not found', 'no matches found' or 'bad pattern', and the rest of the command may never run."
 echo "pstack store (durable scratch for plans, ledgers, orchestration state; outside the repo): $config_dir/pstack/$slug/"
 echo "pstack source: https://github.com/lichihouse/claude-plugins (plugins/pstack). Fix a pstack skill there as a PR with a version bump, never by editing files under <pstack root>, which the next sync overwrites."
 echo
