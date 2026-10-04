@@ -32,7 +32,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 ### Arm the program
 
 - [ ] State the protocol and this plan to the operator, then stop. Start execution only on the operator's explicit go.
-- [ ] Read these from trunk at program start. Re-read them at every tick.
+- [ ] Read these at program start at program start. Re-read them at every tick.
   - [ ] `<pstack root>/skills/poteto-mode/playbooks/<execution playbook>.md`
   - [ ] `<pstack root>/skills/swarm/SKILL.md`
   - [ ] `git show origin/main:<control skill path>`

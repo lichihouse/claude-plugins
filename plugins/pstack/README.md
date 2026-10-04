@@ -114,8 +114,8 @@ Agent: `pstack:poteto-agent` (làm việc theo poteto-mode) và các biến th�
 | `create-skill` (built-in Cursor) | skill `skill-creator` nếu có, không thì playbook Authoring a skill |
 | `deslop`, `control-ui`, `control-cli` (plugin `cursor-team-kit`) | đóng gói sẵn trong bản này (MIT, xem `LICENSE.cursor-team-kit`) |
 | Skill `mode: true` + `reminder:` | hook UserPromptSubmit giữ poteto-mode qua các lượt |
-| `/loop`, `/goal` | `/loop` giữ nguyên (agent tự gọi được). `/goal` chỉ người dùng gõ được, nên playbook in sẵn dòng `/goal …` để bạn dán |
-| Cloud-sleeper wake chain, `/loop 1h` | `/loop 1h …`, phiên cloud không có `/loop` thì `send_later` / Routine |
+| `/loop`, `/goal` | `/loop` giữ nguyên (agent tự gọi được). `/goal` chỉ người dùng gõ được, nên playbook Autonomous run in sẵn dòng `/goal …` để bạn dán |
+| `/loop 1h` (tick autopilot) | `/loop 1h …`, phiên cloud không có `/loop` thì `send_later` / Routine |
 
 Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) và gói automation `benny` (Cursor Automations).
 
