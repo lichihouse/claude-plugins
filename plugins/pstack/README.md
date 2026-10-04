@@ -2,8 +2,8 @@
 
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
-- Dựa trên upstream **0.15.5**, commit `12d587dfb207` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.5-claude.8`.
+- Dựa trên upstream **0.15.9**, commit `e43c7ee26e00` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.9-claude.1`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -78,6 +78,7 @@ jq .env "$f"
 | `/pstack:figure-it-out` | Việc lớn chưa có playbook. Thiết kế quy trình rồi mới làm. |
 | `/pstack:show-me-your-work` | Nhật ký quyết định (TSV) để review sau. |
 | `/pstack:tdd` | Viết test fail trước rồi mới sửa. |
+| `/pstack:benchmark-checklist` | Soát số đo hiệu năng (nút thắt, tinh chỉnh, lỗi, chạy lặp) trước khi báo hay hành động. |
 | `/pstack:deslop` | Dọn code "rác AI" trong diff trước khi commit. |
 | `/pstack:no-comments` | Xoá comment thừa (gọi agent Comment Sicko). |
 | `/pstack:unslop` | Dọn văn phong AI trong chữ viết. |
@@ -88,11 +89,12 @@ jq .env "$f"
 | `/pstack:control-ui` / `/pstack:control-cli` | Lái trình duyệt / CLI để lấy bằng chứng (Playwright, CDP). |
 | `/pstack:typescript-best-practices` | Quy tắc TypeScript. |
 | `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |
+| `/pstack:correct` | Agent cứ mắc lại cùng một lỗi: tìm các loại lỗi lặp, chặn từng loại bằng kiến trúc / type / lint / test, giữ bảng luật ↔ cái chặn nó. |
 | `/pstack:automate-me` | Tạo `<tên-bạn>-mode` từ thói quen làm việc của bạn. |
 | `/pstack:setup-pstack` | Đổi model và mức nỗ lực (effort) cho từng vai. |
 | `/pstack:tieng-viet` | Bảng tra tiếng Việt: lệnh nào dùng khi nào, câu tiếng Việt → lệnh. |
 
-Ở chế độ skill dự án, bỏ tiền tố: `/how`, `/why`… 23 skill `principle-*` là nội quy, poteto-mode tự đọc khi cần.
+Ở chế độ skill dự án, bỏ tiền tố: `/how`, `/why`… 24 skill `principle-*` là nội quy, poteto-mode tự đọc khi cần.
 
 Agent: `pstack:poteto-agent` (làm việc theo poteto-mode) và các biến thể theo mức nỗ lực `pstack:poteto-agent-low|medium|high|xhigh|max`, `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án thì bỏ tiền tố `pstack:`.
 
@@ -113,7 +115,7 @@ Agent: `pstack:poteto-agent` (làm việc theo poteto-mode) và các biến th�
 | `deslop`, `control-ui`, `control-cli` (plugin `cursor-team-kit`) | đóng gói sẵn trong bản này (MIT, xem `LICENSE.cursor-team-kit`) |
 | Skill `mode: true` + `reminder:` | hook UserPromptSubmit giữ poteto-mode qua các lượt |
 | `/loop`, `/goal` | `/loop` giữ nguyên (agent tự gọi được). `/goal` chỉ người dùng gõ được, nên playbook in sẵn dòng `/goal …` để bạn dán |
-| Cloud-sleeper wake chain | `/loop 30m …` (local) hoặc `send_later` / Routine (cloud) |
+| Cloud-sleeper wake chain, `/loop 1h` | `/loop 1h …`, phiên cloud không có `/loop` thì `send_later` / Routine |
 
 Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) và gói automation `benny` (Cursor Automations).
 

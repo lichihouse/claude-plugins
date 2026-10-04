@@ -4,7 +4,7 @@ Marketplace plugin Claude Code, gắn theo **tài khoản claude.ai** nên dùng
 
 | Plugin | Mô tả |
 |---|---|
-| [`pstack`](plugins/pstack/) | pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: `/pstack:poteto-mode`, how / why, arena / swarm / interrogate, 23 principle, playbook có kiểm chứng. |
+| [`pstack`](plugins/pstack/) | pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: `/pstack:poteto-mode`, how / why, arena / swarm / interrogate, 24 principle, playbook có kiểm chứng. |
 
 ## Gắn vào tài khoản (làm một lần)
 
