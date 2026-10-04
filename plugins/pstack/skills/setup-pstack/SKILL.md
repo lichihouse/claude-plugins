@@ -52,7 +52,7 @@ Every model written must be in the detected set, and every effort word must be o
 
 ### 5. Write the map
 
-Write the chosen file with a `# budget` line naming the chosen label and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent, but carry over an existing `# auto-route: on` or `# auto-route: off` line unchanged. It switches automatic poteto-mode routing, which the SessionStart hook reads from this file. No YAML frontmatter. Shape (these values are the skill defaults):
+Write the chosen file with a `# budget` line naming the chosen label and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent, but carry over any existing `auto-route` line unchanged, whatever its spelling. It switches automatic poteto-mode routing, which the SessionStart hook reads from this file. No YAML frontmatter. Shape (these values are the skill defaults):
 
 ```
 # pstack model map. One line per role. Delete a line to fall back to the skill default.

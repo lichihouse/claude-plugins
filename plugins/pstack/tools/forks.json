@@ -23,10 +23,11 @@
         "skills/how/SKILL.md",
         "skills/why/SKILL.md",
         "skills/interrogate/SKILL.md",
-        "skills/reflect/SKILL.md"
+        "skills/reflect/SKILL.md",
+        "skills/arena/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "Thay Task `readonly: true` của Cursor: agent pstack:reader chỉ đọc nhưng vẫn giữ MCP và web. how, why, interrogate, reflect gọi pstack:reader thay generalPurpose + readonly.",
+      "why": "Thay Task `readonly: true` của Cursor: agent pstack:reader chỉ đọc nhưng vẫn giữ MCP và web. how, why, interrogate, reflect, arena gọi pstack:reader thay generalPurpose + readonly.",
       "since": "0.15.5-claude.1"
     },
     {
