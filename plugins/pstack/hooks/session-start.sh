@@ -159,15 +159,15 @@ fi
 pb_dir="$project_dir/.claude/playbooks"
 if [ -d "$pb_dir" ]; then
 	odd=
-	names=$(for f in "$pb_dir"/*.md; do
+	names=$(LC_ALL=C; export LC_ALL; for f in "$pb_dir"/*.md; do
 		[ -f "$f" ] || continue
 		n=$(basename "$f" .md)
 		case "$n" in (*[!A-Za-z0-9_.-]* | '') echo odd ;; (*) echo "ok:$n" ;; esac
 	done)
-	case "$names" in (*odd*) odd=" (and files with other names: list the folder)" ;; esac
+	printf '%s\n' "$names" | grep -qx odd && odd=" (and files with other names: list the folder)"
 	names=$(printf '%s\n' "$names" | sed -n 's/^ok://p' | paste -sd ',' - | sed 's/,/, /g')
 	if [ -n "$names$odd" ]; then
-		echo "project playbooks (.claude/playbooks/): ${names:-none with plain names}$odd. Before the todo list opens, run node $root/skills/poteto-mode/scripts/check-playbooks.mjs from the repository root, then Read the playbook that fits (poteto-mode, Project playbooks)."
+		echo "project playbooks (.claude/playbooks/): ${names:-none with plain names}$odd. Before the todo list opens, run node '$root/skills/poteto-mode/scripts/check-playbooks.mjs' from the repository root, then Read the playbook that fits (poteto-mode, Project playbooks)."
 	fi
 fi
 echo "</pstack>"
