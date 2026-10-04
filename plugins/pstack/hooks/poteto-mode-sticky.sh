@@ -41,7 +41,7 @@ if printf '%s' "$lower" | grep -qE "$off_slash|$off_phrase"; then
 	# The slash form also expands the skill, so say it is off even when no flag existed.
 	if [ -f "$flag" ] || printf '%s' "$lower" | grep -qE "$off_slash"; then
 		rm -f "$flag"
-		echo "pstack: poteto-mode is now off for this session. Do not apply it unless the user asks again."
+		echo "pstack: poteto-mode is now off for this session, auto-route included. Do not apply it unless the user asks again."
 	fi
 	exit 0
 fi

@@ -1,40 +1,91 @@
 {
-  "about": "Chỗ bản port cố ý khác pstack gốc, ngoài phép đổi tên máy móc mà lint-port.sh canh (Task → Agent, AskQuestion → AskUserQuestion, /cmd → /pstack:cmd, model Cursor → model Claude). kind: port-feature = Claude Code chạy khác nên buộc phải làm; policy = lựa chọn riêng của Lichi House. Khi sync-upstream.sh báo CONFLICT ở một path trong đây, đọc why rồi giữ chỗ khác đó.",
+  "about": "Chỗ bản port cố ý khác pstack gốc, ngoài phép đổi tên máy móc mà lint-port.sh canh (Task → Agent, AskQuestion → AskUserQuestion, /cmd → /pstack:cmd, model Cursor → model Claude). kind: port-feature = Claude Code chạy khác nên buộc phải làm; policy = lựa chọn riêng của Lichi House. Khi sync-upstream.sh báo CONFLICT ở một path trong đây, đọc why rồi giữ chỗ khác đó. sync-upstream.sh chỉ so các path skills/, agents/, docs/ của bản gốc, nên mục chỉ có hooks/, tools/, evals/ hay skill riêng là ghi chép, không bao giờ hiện dòng FORK.",
   "forks": [
     {
-      "paths": ["hooks/session-start.sh"],
+      "paths": [
+        "hooks/session-start.sh"
+      ],
       "kind": "port-feature",
       "why": "Thay rule model luôn áp dụng và đường dẫn transcript mà Cursor ghi trong system prompt: in bảng model map (project > user > mặc định), đường dẫn transcript, gốc plugin, store.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["hooks/poteto-mode-sticky.sh"],
+      "paths": [
+        "hooks/poteto-mode-sticky.sh"
+      ],
       "kind": "port-feature",
       "why": "Claude Code không có skill `mode: true` + `reminder:`. Hook UserPromptSubmit giữ poteto-mode bật qua các lượt và in cổng thiết lập ở lượt bật.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["agents/reader.md"],
+      "paths": [
+        "agents/reader.md",
+        "skills/how/SKILL.md",
+        "skills/why/SKILL.md",
+        "skills/interrogate/SKILL.md",
+        "skills/reflect/SKILL.md"
+      ],
       "kind": "port-feature",
-      "why": "Thay Task `readonly: true` của Cursor: agent chỉ đọc nhưng vẫn giữ MCP và web.",
+      "why": "Thay Task `readonly: true` của Cursor: agent pstack:reader chỉ đọc nhưng vẫn giữ MCP và web. how, why, interrogate, reflect gọi pstack:reader thay generalPurpose + readonly.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["agents/poteto-agent-*.md", "tools/gen-agent-variants.sh"],
+      "paths": [
+        "agents/poteto-agent-*.md",
+        "tools/gen-agent-variants.sh"
+      ],
       "kind": "port-feature",
       "why": "Claude Code đặt effort theo định nghĩa agent, không theo từng lần gọi Agent, nên mỗi mức effort có một biến thể poteto-agent sinh từ poteto-agent.md.",
       "since": "0.15.5-claude.2"
     },
     {
-      "paths": ["skills/setup-pstack/SKILL.md"],
+      "paths": [
+        "skills/setup-pstack/SKILL.md"
+      ],
       "kind": "port-feature",
       "why": "Ghi .claude/pstack-models.md thay cho rule .mdc; dùng alias model Claude (fable/opus/sonnet/haiku), từ effort và nhãn app (Extra, Ultracode).",
       "since": "0.15.5-claude.4"
     },
     {
-      "paths": ["skills/poteto-mode/SKILL.md"],
+      "paths": [
+        "skills/poteto-mode/SKILL.md"
+      ],
       "kind": "port-feature",
       "why": "Mục \"pstack on Claude Code\": bảng model map, mặc định của lệnh Agent, <pstack root> thay đường dẫn trunk.",
+      "since": "0.15.5-claude.1"
+    },
+    {
+      "paths": [
+        "skills/reflect/SKILL.md",
+        "skills/automate-me/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Claude Code không có create-skill: dùng skill-creator nếu có, không thì playbook Authoring a skill; kiểm bằng claude plugin validate. reflect lấy transcript từ khối hook. AskUserQuestion chỉ 2-4 lựa chọn.",
+      "since": "0.15.5-claude.1"
+    },
+    {
+      "paths": [
+        "skills/why/SKILL.md",
+        "skills/interrogate/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "why dò MCP theo tên tool mcp__<server>__ và fallback gh / GitHub MCP. interrogate có chuỗi model dự phòng fable → opus → sonnet → haiku khi model không có.",
+      "since": "0.15.5-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/scripts/worktree-audit.sh"
+      ],
+      "kind": "port-feature",
+      "why": "Đường dẫn transcript Claude Code (slug thư mục, slug riêng của worktree) và stat / date chạy được cả GNU lẫn BSD (Mac).",
+      "since": "0.15.5-claude.1"
+    },
+    {
+      "paths": [
+        "agents/poteto-agent.md"
+      ],
+      "kind": "port-feature",
+      "why": "background: true thay is_background; ghi chú gốc plugin ${CLAUDE_PLUGIN_ROOT} hoặc .claude/skills khi nạp dạng skill dự án.",
       "since": "0.15.5-claude.1"
     },
     {
@@ -42,50 +93,72 @@
         "skills/poteto-mode/playbooks/autopilot-full.md",
         "skills/poteto-mode/playbooks/autopilot-stack.md",
         "skills/poteto-mode/playbooks/multi-phase-plan.md",
-        "skills/poteto-mode/scripts/check-plan.mjs"
+        "skills/poteto-mode/scripts/check-plan.mjs",
+        "skills/poteto-mode/playbooks/orchestrate.md",
+        "skills/swarm/SKILL.md",
+        "skills/poteto-mode/playbooks/opening-a-pr.md"
       ],
       "kind": "port-feature",
-      "why": "Owner là agent chạy nền (Agent + worktree, hoặc create_session) thay Cursor cloud agent; đọc playbook từ <pstack root> thay git show origin/main; phiên cloud không có /loop thì dùng send_later / Routine. check-plan.mjs nhận marker regex cho <pstack root>.",
+      "why": "Owner là agent chạy nền (Agent + worktree, hoặc create_session) thay Cursor cloud agent; đọc playbook từ <pstack root> thay git show origin/main; phiên cloud không có /loop thì dùng send_later / Routine. check-plan.mjs nhận marker regex cho <pstack root>. orchestrate và swarm chạy worker bằng Agent + isolation worktree hoặc create_session / get_session, store là pstack store. opening-a-pr đặt draft: false cho PR tool của phiên remote và GitHub MCP.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["skills/poteto-mode/playbooks/autonomous-run.md"],
+      "paths": [
+        "skills/poteto-mode/playbooks/autonomous-run.md"
+      ],
       "kind": "port-feature",
       "why": "Trên Claude Code chỉ người dùng gõ được /goal, nên playbook in sẵn dòng /goal để người dùng dán.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["skills/deslop/SKILL.md", "skills/control-ui/SKILL.md", "skills/control-cli/SKILL.md"],
+      "paths": [
+        "skills/deslop/SKILL.md",
+        "skills/control-ui/SKILL.md",
+        "skills/control-cli/SKILL.md"
+      ],
       "kind": "port-feature",
       "why": "Gói sẵn 3 skill của plugin cursor-team-kit vì Claude Code không có plugin đó.",
       "since": "0.15.5-claude.1"
     },
     {
-      "paths": ["skills/*/SKILL.md"],
+      "paths": [
+        "skills/*/SKILL.md"
+      ],
       "kind": "policy",
       "why": "Dòng description viết tiếng Việt (giữ từ khoá tiếng Anh) cho người dùng không rành tiếng Anh. Thân skill giữ tiếng Anh như bản gốc.",
       "since": "0.15.5-claude.5"
     },
     {
-      "paths": ["skills/tieng-viet/SKILL.md"],
+      "paths": [
+        "skills/tieng-viet/SKILL.md"
+      ],
       "kind": "policy",
       "why": "Skill riêng: bảng tiếng Việt lệnh nào dùng khi nào. Thêm skill mới thì thêm một dòng vào đây.",
       "since": "0.15.5-claude.2"
     },
     {
-      "paths": ["skills/setup-pstack/SKILL.md", "skills/poteto-mode/playbooks/*.md", "hooks/session-start.sh"],
+      "paths": [
+        "skills/setup-pstack/SKILL.md",
+        "skills/poteto-mode/playbooks/*.md",
+        "hooks/session-start.sh"
+      ],
       "kind": "policy",
       "why": "Vai viết code mặc định opus effort medium (subagent_type pstack:poteto-agent-medium + model opus), không phải sonnet.",
       "since": "0.15.5-claude.2"
     },
     {
-      "paths": ["skills/how/SKILL.md"],
+      "paths": [
+        "skills/how/SKILL.md"
+      ],
       "kind": "policy",
       "why": "/how luôn giao cho subagent explainer, kể cả khi câu trả lời có vẻ rõ, để luồng chính giữ context.",
       "since": "0.15.5-claude.3"
     },
     {
-      "paths": ["skills/poteto-mode/SKILL.md", "hooks/poteto-mode-sticky.sh"],
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "hooks/poteto-mode-sticky.sh"
+      ],
       "kind": "policy",
       "why": "Cổng thiết lập: chọn playbook, đọc file playbook, mở todo trước mọi lệnh đọc code (model mới hay bỏ qua). Nhận cả lệnh tắt tiếng Việt (tắt, thoát).",
       "since": "0.15.5-claude.6"
@@ -102,19 +175,29 @@
       "since": "0.15.5-claude.7"
     },
     {
-      "paths": ["hooks/session-start.sh", "agents/poteto-agent.md", "agents/poteto-agent-*.md", "agents/reader.md"],
+      "paths": [
+        "hooks/session-start.sh",
+        "agents/poteto-agent.md",
+        "agents/poteto-agent-*.md",
+        "agents/reader.md"
+      ],
       "kind": "policy",
       "why": "Nhắc đọc file pstack bằng Read từng file và để trong nháy từ bắt đầu bằng = hoặc chứa ? * [, vì zsh trên Mac làm hỏng lệnh cat gộp.",
       "since": "0.15.5-claude.8"
     },
     {
-      "paths": ["hooks/session-start.sh", "skills/setup-pstack/SKILL.md"],
+      "paths": [
+        "hooks/session-start.sh",
+        "skills/setup-pstack/SKILL.md"
+      ],
       "kind": "policy",
       "why": "Tự bật poteto-mode (auto-route) khi việc chạm nhiều file, có quyết định thiết kế, bug chưa rõ nguyên nhân hoặc vấn đề hiệu năng. Tắt bằng dòng '# auto-route: off' trong pstack-models.md; setup-pstack giữ nguyên dòng đó khi ghi lại file.",
       "since": "0.15.9-claude.2"
     },
     {
-      "paths": ["evals/*/case.yaml"],
+      "paths": [
+        "evals/*/case.yaml"
+      ],
       "kind": "policy",
       "why": "Bộ eval hành vi cho claude plugin eval, bản gốc không có.",
       "since": "0.15.5-claude.2"

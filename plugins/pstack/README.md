@@ -43,7 +43,7 @@ claude --plugin-dir plugins/pstack
 
 1. `/pstack:setup-pstack`. Chọn budget và model cho từng vai. Ghi ra `.claude/pstack-models.md` (dự án, commit để cả team dùng chung) hoặc `~/.claude/pstack-models.md` (cá nhân).
 2. `/pstack:poteto-mode <việc cần làm>`. Mode tự chọn playbook, chạy skill khác khi cần. Mode "dính" qua các lượt sau. Tắt bằng `/pstack:poteto-mode off` hoặc gõ "tắt poteto-mode".
-3. Không gõ cũng được: agent **tự bật poteto-mode** khi việc chạm nhiều file, có quyết định thiết kế, bug chưa rõ nguyên nhân hoặc vấn đề hiệu năng. Việc nhỏ (sửa một file, câu hỏi) làm thẳng. Luật trong `AGENTS.md` / `CLAUDE.md` của repo thắng. Tắt cho một repo: thêm dòng `# auto-route: off` vào `.claude/pstack-models.md` của repo đó. Tắt cho mọi repo: thêm vào `~/.claude/pstack-models.md`. File của repo thắng file của máy.
+3. Không gõ cũng được: agent **tự bật poteto-mode** khi việc trải qua nhiều module hoặc tầng (hơn một file code và test của nó), có quyết định thiết kế, bug chưa rõ nguyên nhân hoặc vấn đề hiệu năng. Việc nhỏ (sửa một file, câu hỏi) làm thẳng. Luật trong `AGENTS.md` / `CLAUDE.md` của repo thắng. Tắt cho một repo: thêm dòng `# auto-route: off` vào `.claude/pstack-models.md` của repo đó. Tắt cho mọi repo: thêm vào `~/.claude/pstack-models.md`. File của repo thắng file của máy.
 
 ```text
 /pstack:poteto-mode trang đơn hàng bị nhân đôi dòng khi retry giữa chừng. repro trước, rồi sửa và chứng minh.

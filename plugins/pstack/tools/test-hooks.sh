@@ -81,6 +81,14 @@ out=$(start_json r2 /x.jsonl "$tmp/routeon" | CLAUDE_PROJECT_DIR="$tmp/routeon" 
 check "project on beats user off" "$out" "pstack auto-route: on."
 out=$(start_json r3 /x.jsonl "$tmp/bare" | CLAUDE_PROJECT_DIR="$tmp/bare" CLAUDE_CONFIG_DIR="$tmp/config-off" CLAUDE_PLUGIN_ROOT="$plugin" bash "$plugin/hooks/session-start.sh")
 check "user off applies to every repo" "$out" "pstack auto-route: off."
+mkdir -p "$tmp/routecase/.claude" "$tmp/routebad/.claude"
+printf '  # Auto-Route: OFF   # tạm tắt\n' > "$tmp/routecase/.claude/pstack-models.md"
+out=$(start r4 "$tmp/routecase" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "auto-route line: case, indent and trailing comment" "$out" "pstack auto-route: off."
+printf '# auto-route: no\n' > "$tmp/routebad/.claude/pstack-models.md"
+out=$(start r5 "$tmp/routebad" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "unparsed auto-route line keeps it on" "$out" "pstack auto-route: on."
+check "unparsed auto-route line is reported" "$out" "(ignored an auto-route line in"
 
 mkdir -p "$tmp/alias/.claude"
 printf 'bug-fix: Opus Extra\nperf-issue: opus ultracode\nhillclimb: haiku high\nfeature, refactoring: sonnet med\njudgment and prose: opus extra-high\nhow explorer: sonnet ultracode\nhardest tasks: haiku ultracode, opus xhigh\n' > "$tmp/alias/.claude/pstack-models.md"

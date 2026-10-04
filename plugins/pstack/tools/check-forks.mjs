@@ -10,7 +10,7 @@ const plugin = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { forks } = JSON.parse(readFileSync(join(plugin, "tools/forks.json"), "utf8"));
 
 const toRegex = (glob) =>
-	new RegExp(`^${glob.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")}$`);
+	new RegExp(`^${glob.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")}$`);
 
 function walk(dir) {
 	return readdirSync(dir).flatMap((name) => {
