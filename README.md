@@ -1,4 +1,4 @@
-# Plugin Claude Code của Lichi House
+# Plugin Claude Code 
 
 Marketplace plugin Claude Code, gắn theo **tài khoản claude.ai** nên dùng được ở mọi repo: Claude Code trên web, tab Code trong app Desktop / mobile, và terminal.
 
