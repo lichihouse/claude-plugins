@@ -154,4 +154,20 @@ else
 	echo "pstack auto-route: off. Enter poteto-mode only when the user types it."
 fi
 [ -n "$route_note" ] && echo "$route_note"
+
+# Project playbooks: names only, so a repository's text never reaches context verbatim.
+pb_dir="$project_dir/.claude/playbooks"
+if [ -d "$pb_dir" ]; then
+	odd=
+	names=$(LC_ALL=C; export LC_ALL; for f in "$pb_dir"/*.md; do
+		[ -f "$f" ] || continue
+		n=$(basename "$f" .md)
+		case "$n" in (*[!A-Za-z0-9_.-]* | '') echo odd ;; (*) echo "ok:$n" ;; esac
+	done)
+	printf '%s\n' "$names" | grep -qx odd && odd=" (and files with other names: list the folder)"
+	names=$(printf '%s\n' "$names" | sed -n 's/^ok://p' | paste -sd ',' - | sed 's/,/, /g')
+	if [ -n "$names$odd" ]; then
+		echo "project playbooks (.claude/playbooks/): ${names:-none with plain names}$odd. Before the todo list opens, run node '$root/skills/poteto-mode/scripts/check-playbooks.mjs' from the repository root, then Read the playbook that fits (poteto-mode, Project playbooks)."
+	fi
+fi
 echo "</pstack>"

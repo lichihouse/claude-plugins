@@ -202,6 +202,17 @@
       "kind": "policy",
       "why": "Bộ eval hành vi cho claude plugin eval, bản gốc không có.",
       "since": "0.15.5-claude.2"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "skills/poteto-mode/scripts/check-playbooks.mjs",
+        "skills/poteto-mode/scripts/check-playbooks.test.mjs",
+        "hooks/session-start.sh"
+      ],
+      "kind": "policy",
+      "why": "Project playbooks (học từ michael-denyer/pstack-claude 0.9.57): repo thêm playbook ở .claude/playbooks/ mở rộng playbook gốc, mỗi thay đổi bám một đoạn nguyên văn của bước gốc; check-playbooks.mjs báo khi bản mới đổi câu đó. Hook đầu phiên chỉ in tên file, không in nội dung repo.",
+      "since": "0.15.9-claude.3"
     }
   ]
 }

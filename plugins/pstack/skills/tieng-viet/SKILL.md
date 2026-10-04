@@ -48,6 +48,8 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:setup-pstack` | Đổi model và mức nỗ lực cho từng vai. |
 | `/pstack:tieng-viet` | Bảng này. |
 
+Repo có quy trình riêng (vd cách merge khác): viết `.claude/playbooks/<tên>.md` mở rộng playbook gốc, xem mục "Playbook riêng của repo" trong README plugin.
+
 Skill `principle-*`, `typescript-best-practices`: nội quy, không cần gõ. poteto-mode tự đọc khi cần.
 
 Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extra / Max, tương ứng `low` / `medium` / `high` / `xhigh` / `max`. Ultracode không phải mức nỗ lực mà là chế độ của phiên (`xhigh` + tự điều phối workflow). Haiku không có mức nỗ lực.

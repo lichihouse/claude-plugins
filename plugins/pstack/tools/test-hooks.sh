@@ -81,6 +81,28 @@ out=$(start_json r2 /x.jsonl "$tmp/routeon" | CLAUDE_PROJECT_DIR="$tmp/routeon" 
 check "project on beats user off" "$out" "pstack auto-route: on."
 out=$(start_json r3 /x.jsonl "$tmp/bare" | CLAUDE_PROJECT_DIR="$tmp/bare" CLAUDE_CONFIG_DIR="$tmp/config-off" CLAUDE_PLUGIN_ROOT="$plugin" bash "$plugin/hooks/session-start.sh")
 check "user off applies to every repo" "$out" "pstack auto-route: off."
+mkdir -p "$tmp/pb/.claude/playbooks"
+printf -- '---\nextends: shipping\nwhen: x\n---\n' > "$tmp/pb/.claude/playbooks/shipping.md"
+printf -- '---\nextends:\nwhen: y\n---\n' > "$tmp/pb/.claude/playbooks/hotfix\$(id).md"
+out=$(start p1 "$tmp/pb" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "project playbooks listed by name" "$out" "project playbooks (.claude/playbooks/): shipping (and files with other names: list the folder)."
+check_not "repo text never echoed" "$out" "when: x"
+check "the checker path is printed" "$out" "node '$plugin/skills/poteto-mode/scripts/check-playbooks.mjs'"
+check "odd file names are flagged, not mangled" "$out" "(and files with other names: list the folder)"
+mkdir -p "$tmp/pbodd/.claude/playbooks" "$tmp/pbempty/.claude/playbooks"
+printf 'x' > "$tmp/pbodd/.claude/playbooks/giao-hàng.md"
+out=$(start p3 "$tmp/pbodd" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "only odd names: say so" "$out" "project playbooks (.claude/playbooks/): none with plain names (and files with other names: list the folder)."
+check_not "non-ASCII name not mangled" "$out" "giao-hng"
+out=$(start p5 "$tmp/pbodd" env LC_ALL=en_US.UTF-8 CLAUDE_PLUGIN_ROOT="$plugin")
+check "non-ASCII name flagged under a UTF-8 locale" "$out" "none with plain names (and files with other names"
+mkdir -p "$tmp/pbgood/.claude/playbooks"; printf 'x' > "$tmp/pbgood/.claude/playbooks/goodday.md"
+out=$(start p6 "$tmp/pbgood" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "a name containing odd is not flagged" "$out" "project playbooks (.claude/playbooks/): goodday. Before"
+out=$(start p4 "$tmp/pbempty" env CLAUDE_PLUGIN_ROOT="$plugin")
+check_not "empty folder prints no line" "$out" "project playbooks"
+out=$(start p2 "$tmp/bare" env CLAUDE_PLUGIN_ROOT="$plugin")
+check_not "no playbook line without the folder" "$out" "project playbooks"
 mkdir -p "$tmp/routecase/.claude" "$tmp/routebad/.claude"
 printf '  # Auto-Route: OFF   # tạm tắt\n' > "$tmp/routecase/.claude/pstack-models.md"
 out=$(start r4 "$tmp/routecase" env CLAUDE_PLUGIN_ROOT="$plugin")
