@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.9**, commit `e43c7ee26e00` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.9-claude.2`.
+- Phiên bản port: `0.15.9-claude.3`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -61,6 +61,24 @@ jq -e '.env.CLAUDE_CODE_ENABLE_TODO_TOOLS = "1"' "$b" > "$f.new" && cat "$f.new"
 rm -f "$f.new"
 jq .env "$f"
 ```
+
+## Playbook riêng của repo (project playbooks)
+
+Repo có quy trình khác playbook gốc (vd merge commit thay squash, qua staging trước) thì viết file `.claude/playbooks/<tên>.md`, không phải fork plugin. Học từ bản cộng đồng [pstack-claude](https://github.com/michael-denyer/pstack-claude).
+
+```markdown
+---
+extends: shipping
+when: Đưa PR lên main của repo này.
+---
+- **Replace** "<một đoạn nguyên văn trong bước gốc>": <cách repo này làm>.
+- **After** "<một đoạn nguyên văn trong bước gốc>": <bước thêm>.
+```
+
+- `extends`: tên playbook gốc (`bug-fix`, `feature`, `shipping`…), cách nhau dấu phẩy, để trống nếu là playbook riêng hoàn toàn. `when`: một câu nói playbook dùng cho việc gì.
+- Mỗi thay đổi là một dòng bắt đầu bằng `**After**`, `**Before**`, `**Replace**` hoặc `**In**`, rồi một đoạn **nguyên văn** của bước gốc trong ngoặc kép thẳng `"…"`.
+- poteto-mode chép bước gốc vào todo rồi áp thay đổi đúng chỗ. Hook đầu phiên báo tên các playbook của repo.
+- Máy kiểm: `node <pstack root>/skills/poteto-mode/scripts/check-playbooks.mjs` (chạy ở gốc repo). Báo lỗi khi bản pstack mới sửa câu gốc mà playbook của repo đang bám, để không lệch âm thầm.
 
 ## Skill
 

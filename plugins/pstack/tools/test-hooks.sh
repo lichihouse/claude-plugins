@@ -81,6 +81,14 @@ out=$(start_json r2 /x.jsonl "$tmp/routeon" | CLAUDE_PROJECT_DIR="$tmp/routeon" 
 check "project on beats user off" "$out" "pstack auto-route: on."
 out=$(start_json r3 /x.jsonl "$tmp/bare" | CLAUDE_PROJECT_DIR="$tmp/bare" CLAUDE_CONFIG_DIR="$tmp/config-off" CLAUDE_PLUGIN_ROOT="$plugin" bash "$plugin/hooks/session-start.sh")
 check "user off applies to every repo" "$out" "pstack auto-route: off."
+mkdir -p "$tmp/pb/.claude/playbooks"
+printf -- '---\nextends: shipping\nwhen: x\n---\n' > "$tmp/pb/.claude/playbooks/shipping.md"
+printf -- '---\nextends:\nwhen: y\n---\n' > "$tmp/pb/.claude/playbooks/hotfix\$(id).md"
+out=$(start p1 "$tmp/pb" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "project playbooks listed by name" "$out" "project playbooks (.claude/playbooks/): hotfixid, shipping."
+check_not "repo text never echoed" "$out" "when: x"
+out=$(start p2 "$tmp/bare" env CLAUDE_PLUGIN_ROOT="$plugin")
+check_not "no playbook line without the folder" "$out" "project playbooks"
 mkdir -p "$tmp/routecase/.claude" "$tmp/routebad/.claude"
 printf '  # Auto-Route: OFF   # tạm tắt\n' > "$tmp/routecase/.claude/pstack-models.md"
 out=$(start r4 "$tmp/routecase" env CLAUDE_PLUGIN_ROOT="$plugin")

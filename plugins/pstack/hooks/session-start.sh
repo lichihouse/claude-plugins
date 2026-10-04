@@ -154,4 +154,11 @@ else
 	echo "pstack auto-route: off. Enter poteto-mode only when the user types it."
 fi
 [ -n "$route_note" ] && echo "$route_note"
+
+# Project playbooks: names only, so a repository's text never reaches context verbatim.
+pb_dir="$project_dir/.claude/playbooks"
+if [ -d "$pb_dir" ]; then
+	names=$(for f in "$pb_dir"/*.md; do [ -f "$f" ] && basename "$f" .md; done | tr -cd 'A-Za-z0-9_.\n-' | paste -sd ',' - | sed 's/,/, /g')
+	[ -n "$names" ] && echo "project playbooks (.claude/playbooks/): $names. Read the one that fits before you open the todo list, and run check-playbooks.mjs first (poteto-mode, Project playbooks)."
+fi
 echo "</pstack>"

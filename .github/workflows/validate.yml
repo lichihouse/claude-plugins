@@ -34,4 +34,4 @@ jobs:
         working-directory: plugins/pstack/skills/poteto-mode/scripts
         run: |
           bun install --frozen-lockfile
-          bun test orch watch-pr
+          bun test orch watch-pr check-playbooks
