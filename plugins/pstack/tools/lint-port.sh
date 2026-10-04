@@ -42,6 +42,9 @@ for i in "${!patterns[@]}"; do
 	[ "$i" -lt "$last" ] && scan "${patterns[$i]}" docs
 done
 
+# Every entry in the fork registry names real files and says why.
+node tools/check-forks.mjs || status=1
+
 # Conflict markers from sync-upstream.sh, in any text file (scripts included).
 hits=$(grep -rnIE --exclude-dir=node_modules '^(<<<<<<<|>>>>>>>) (port|upstream@)' . 2>/dev/null)
 [ -n "$hits" ] && { printf 'Unresolved sync conflict markers:\n%s\n\n' "$hits"; status=1; }
