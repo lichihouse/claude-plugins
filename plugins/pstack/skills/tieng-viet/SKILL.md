@@ -32,6 +32,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:figure-it-out` | Việc lớn chưa có cách làm sẵn. Viết quy trình rồi mới làm. |
 | `/pstack:show-me-your-work` | Nhật ký quyết định (làm gì, vì sao, bằng chứng) để xem lại sau. |
 | `/pstack:tdd` | Viết test fail trước rồi mới sửa. Chỉ khi người dùng xin. |
+| `/pstack:benchmark-checklist` | Soát số đo hiệu năng trước khi báo "nhanh hơn / chậm đi". |
 | `/pstack:deslop` | Dọn code "rác AI" trong diff trước khi commit. |
 | `/pstack:no-comments` | Xoá comment thừa (gọi agent Comment Sicko). |
 | `/pstack:unslop` | Dọn văn phong AI trong chữ viết. |
@@ -43,6 +44,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:control-cli` | Lái CLI / TUI để lấy bằng chứng. |
 | `/pstack:automate-me` | Học thói quen làm việc của bạn, tạo `<tên-bạn>-mode`. |
 | `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |
+| `/pstack:correct` | Agent cứ mắc lại một lỗi: sửa repo để lỗi đó không xảy ra được nữa. |
 | `/pstack:setup-pstack` | Đổi model và mức nỗ lực cho từng vai. |
 | `/pstack:tieng-viet` | Bảng này. |
 
@@ -65,4 +67,6 @@ Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extr
 - sửa bug, làm tính năng, làm cho kỹ → `/pstack:poteto-mode <mô tả việc>`
 - dọn code trước khi commit → `/pstack:deslop`
 - nói lại cho dễ hiểu → `/pstack:bro`
+- agent cứ sai mãi một kiểu, chặn hẳn lỗi lặp → `/pstack:correct`
+- đo tốc độ, số này có tin được không → `/pstack:benchmark-checklist`
 - đổi model pstack → `/pstack:setup-pstack`

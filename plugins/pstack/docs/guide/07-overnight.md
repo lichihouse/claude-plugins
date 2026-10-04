@@ -21,7 +21,7 @@ Walk through what each line buys you:
 - "done means..." turns the goal into checks every iteration can run.
 - "fresh worktree off `<base>`" keeps the run from colliding with anything else you have open.
 - "don't ask me before committing" pre-answers the permission the agent would otherwise block on.
-- `/loop` is Claude Code's built-in wake mechanism, not a pstack skill. `/goal` keeps the session working across turns until a condition holds. Only you can type it, so the playbooks print the exact `/goal` line for you to paste. The [Autonomous run playbook](../../skills/poteto-mode/playbooks/autonomous-run.md) uses it to re-check the finish condition on events or a heartbeat.
+- `/loop` is Claude Code's built-in wake mechanism, not a pstack skill. `/goal` keeps the session working across turns until a condition holds. Only you can type it, so the Autonomous run playbook prints the exact `/goal` line for you to paste. The [Autonomous run playbook](../../skills/poteto-mode/playbooks/autonomous-run.md) uses it to re-check the finish condition on events or a heartbeat.
 - The escape hatch lets it stop at a genuine dead end and write up why, which beats eight hours of creative goal reinterpretation.
 
 Because you'll review this work after stepping away, `/pstack:poteto-mode` routes it through [`/pstack:figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs the run's phases before any code and wires in the decision log.
