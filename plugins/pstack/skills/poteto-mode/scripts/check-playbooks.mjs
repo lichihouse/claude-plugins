@@ -13,7 +13,7 @@ export function checkPlaybooks(root, bundled = BUNDLED) {
   const dir = join(root, ".claude/playbooks");
   if (!existsSync(dir)) return [];
   const problems = [];
-  for (const name of readdirSync(dir).filter((file) => file.endsWith(".md")).sort()) {
+  for (const name of readdirSync(dir).filter((file) => file.endsWith(".md") && !file.startsWith(".")).sort()) {
     const path = `.claude/playbooks/${name}`;
     const text = readFileSync(join(dir, name), "utf8").replaceAll("\r\n", "\n");
     const front = text.match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? "";

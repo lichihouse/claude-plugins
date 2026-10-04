@@ -85,8 +85,17 @@ mkdir -p "$tmp/pb/.claude/playbooks"
 printf -- '---\nextends: shipping\nwhen: x\n---\n' > "$tmp/pb/.claude/playbooks/shipping.md"
 printf -- '---\nextends:\nwhen: y\n---\n' > "$tmp/pb/.claude/playbooks/hotfix\$(id).md"
 out=$(start p1 "$tmp/pb" env CLAUDE_PLUGIN_ROOT="$plugin")
-check "project playbooks listed by name" "$out" "project playbooks (.claude/playbooks/): hotfixid, shipping."
+check "project playbooks listed by name" "$out" "project playbooks (.claude/playbooks/): shipping (and files with other names: list the folder)."
 check_not "repo text never echoed" "$out" "when: x"
+check "the checker path is printed" "$out" "node $plugin/skills/poteto-mode/scripts/check-playbooks.mjs"
+check "odd file names are flagged, not mangled" "$out" "(and files with other names: list the folder)"
+mkdir -p "$tmp/pbodd/.claude/playbooks" "$tmp/pbempty/.claude/playbooks"
+printf 'x' > "$tmp/pbodd/.claude/playbooks/giao-hàng.md"
+out=$(start p3 "$tmp/pbodd" env CLAUDE_PLUGIN_ROOT="$plugin")
+check "only odd names: say so" "$out" "project playbooks (.claude/playbooks/): none with plain names (and files with other names: list the folder)."
+check_not "non-ASCII name not mangled" "$out" "giao-hng"
+out=$(start p4 "$tmp/pbempty" env CLAUDE_PLUGIN_ROOT="$plugin")
+check_not "empty folder prints no line" "$out" "project playbooks"
 out=$(start p2 "$tmp/bare" env CLAUDE_PLUGIN_ROOT="$plugin")
 check_not "no playbook line without the folder" "$out" "project playbooks"
 mkdir -p "$tmp/routecase/.claude" "$tmp/routebad/.claude"

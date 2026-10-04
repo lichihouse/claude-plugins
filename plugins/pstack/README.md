@@ -68,15 +68,16 @@ Repo có quy trình khác playbook gốc (vd merge commit thay squash, qua stagi
 
 ```markdown
 ---
-extends: shipping
-when: Đưa PR lên main của repo này.
+extends: bug-fix
+when: Sửa bug ở repo này.
 ---
 - **Replace** "<một đoạn nguyên văn trong bước gốc>": <cách repo này làm>.
 - **After** "<một đoạn nguyên văn trong bước gốc>": <bước thêm>.
 ```
 
 - `extends`: tên playbook gốc (`bug-fix`, `feature`, `shipping`…), cách nhau dấu phẩy, để trống nếu là playbook riêng hoàn toàn. `when`: một câu nói playbook dùng cho việc gì.
-- Mỗi thay đổi là một dòng bắt đầu bằng `**After**`, `**Before**`, `**Replace**` hoặc `**In**`, rồi một đoạn **nguyên văn** của bước gốc trong ngoặc kép thẳng `"…"`.
+- Mỗi thay đổi là một dòng bắt đầu bằng `**After**`, `**Before**`, `**Replace**` hoặc `**In**`, rồi một đoạn **nguyên văn** của bước gốc trong ngoặc kép thẳng `"…"`. Nguyên văn theo file Markdown gốc (giữ cả dấu `` ` `` và `**`), nằm trên một dòng, không chứa dấu `"`.
+- Playbook của repo không mở lại playbook mà luật repo cấm (vd repo cấm Shipping thì đừng viết `extends: shipping`). Luật `AGENTS.md` / `CLAUDE.md` của repo vẫn thắng.
 - poteto-mode chép bước gốc vào todo rồi áp thay đổi đúng chỗ. Hook đầu phiên báo tên các playbook của repo.
 - Máy kiểm: `node <pstack root>/skills/poteto-mode/scripts/check-playbooks.mjs` (chạy ở gốc repo). Báo lỗi khi bản pstack mới sửa câu gốc mà playbook của repo đang bám, để không lệch âm thầm.
 

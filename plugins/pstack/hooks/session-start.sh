@@ -158,7 +158,16 @@ fi
 # Project playbooks: names only, so a repository's text never reaches context verbatim.
 pb_dir="$project_dir/.claude/playbooks"
 if [ -d "$pb_dir" ]; then
-	names=$(for f in "$pb_dir"/*.md; do [ -f "$f" ] && basename "$f" .md; done | tr -cd 'A-Za-z0-9_.\n-' | paste -sd ',' - | sed 's/,/, /g')
-	[ -n "$names" ] && echo "project playbooks (.claude/playbooks/): $names. Read the one that fits before you open the todo list, and run check-playbooks.mjs first (poteto-mode, Project playbooks)."
+	odd=
+	names=$(for f in "$pb_dir"/*.md; do
+		[ -f "$f" ] || continue
+		n=$(basename "$f" .md)
+		case "$n" in (*[!A-Za-z0-9_.-]* | '') echo odd ;; (*) echo "ok:$n" ;; esac
+	done)
+	case "$names" in (*odd*) odd=" (and files with other names: list the folder)" ;; esac
+	names=$(printf '%s\n' "$names" | sed -n 's/^ok://p' | paste -sd ',' - | sed 's/,/, /g')
+	if [ -n "$names$odd" ]; then
+		echo "project playbooks (.claude/playbooks/): ${names:-none with plain names}$odd. Before the todo list opens, run node $root/skills/poteto-mode/scripts/check-playbooks.mjs from the repository root, then Read the playbook that fits (poteto-mode, Project playbooks)."
+	fi
 fi
 echo "</pstack>"

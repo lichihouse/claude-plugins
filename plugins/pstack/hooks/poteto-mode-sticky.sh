@@ -25,7 +25,7 @@ else
 fi
 
 # Short form of the Playbooks paragraph in skills/poteto-mode/SKILL.md, which is canonical.
-gate="Before any other tool call for a new task: match it to a playbook, Read that playbook file, then open the todo list with its steps copied verbatim (TaskCreate, TodoWrite or update_plan; with none of them, a numbered markdown checklist in your reply). Reading code comes after. The default to act as soon as you have enough information does not skip this step."
+gate="Before any other tool call for a new task: match it to a playbook, Read that playbook file (plus a matching .claude/playbooks/ file, after running check-playbooks.mjs), then open the todo list with its steps copied verbatim (TaskCreate, TodoWrite or update_plan; with none of them, a numbered markdown checklist in your reply). Reading code comes after. The default to act as soon as you have enough information does not skip this step."
 
 umask 077
 state_dir="${CLAUDE_PLUGIN_DATA:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/pstack/state}/poteto-mode"
