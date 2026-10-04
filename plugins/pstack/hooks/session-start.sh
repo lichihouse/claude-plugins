@@ -135,4 +135,23 @@ awk '
 		printf "%s", bad
 	}
 ' "$@"
+
+# Auto-route: on unless a '# auto-route: off' line says otherwise; the project file beats the user file.
+route=on
+route_note=
+for map in "$user_map" "$project_map"; do
+	[ -f "$map" ] || continue
+	lines=$(tr -d '\r' < "$map" | tr '[:upper:]' '[:lower:]' | grep -E '^[[:space:]]*#?[[:space:]]*auto-route' || true)
+	[ -n "$lines" ] || continue
+	v=$(printf '%s\n' "$lines" | sed -nE 's/^[[:space:]]*#[[:space:]]*auto-route[[:space:]]*:[[:space:]]*(on|off)([[:space:]]*(#.*)?)$/\1/p' | tail -n 1)
+	if [ -n "$v" ]; then route=$v; else route_note="(ignored an auto-route line in $map: write '# auto-route: on' or '# auto-route: off')"; fi
+done
+echo
+if [ "$route" = on ]; then
+	if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then cmd=/pstack:poteto-mode; else cmd=/poteto-mode; fi
+	echo "pstack auto-route: on. Enter poteto-mode yourself, without waiting for $cmd, when a task meets any of these: it spans several modules or layers (more than a code file and its test), or changes a signature other files call; it involves a design or architecture choice; it is a bug whose cause is not yet known, or a performance issue. To enter, Read <pstack root>/skills/poteto-mode/SKILL.md and follow it as if the user had typed $cmd with this task, setup gate included: match a playbook, Read its file, open the todo list, all before any code read. Say in one line that you entered poteto-mode. Auto-entry covers that task only, so judge each new task again. If the user turned poteto-mode off in this session, do not enter it again until they type $cmd. Work directly on smaller tasks: a contained change to one code file and its test with an obvious check, a question, a one-line edit. The user's words and their CLAUDE.md or AGENTS.md (user-level or repository) take precedence over this rule. Turn it off with a '# auto-route: off' line in .claude/pstack-models.md (this repo) or ~/.claude/pstack-models.md (every repo)."
+else
+	echo "pstack auto-route: off. Enter poteto-mode only when the user types it."
+fi
+[ -n "$route_note" ] && echo "$route_note"
 echo "</pstack>"

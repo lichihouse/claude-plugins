@@ -118,6 +118,9 @@ done
 upstream_version=$(git -C "$work/up" show "$theirs:pstack/.cursor-plugin/plugin.json" 2>/dev/null | sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
 
 sort "$report"
+# Name the deliberate deviations behind every path that needs a hand decision (tools/forks.json).
+flagged=$(sed -nE 's/^(CONFLICT|KEPT|PORT-DELETED)[[:space:]]+([^ ]+).*/\2/p' "$report")
+if [ -n "$flagged" ] && command -v node >/dev/null; then node "$plugin/tools/check-forks.mjs" $flagged || true; fi
 echo
 echo "upstream: ${base:0:12} -> ${theirs:0:12} (pstack ${upstream_version:-?})"
 if grep -q '^CONFLICT\|^PORT-DELETED\|^KEPT' "$report"; then

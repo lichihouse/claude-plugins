@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.9**, commit `e43c7ee26e00` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.9-claude.1`.
+- Phiên bản port: `0.15.9-claude.2`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -43,6 +43,7 @@ claude --plugin-dir plugins/pstack
 
 1. `/pstack:setup-pstack`. Chọn budget và model cho từng vai. Ghi ra `.claude/pstack-models.md` (dự án, commit để cả team dùng chung) hoặc `~/.claude/pstack-models.md` (cá nhân).
 2. `/pstack:poteto-mode <việc cần làm>`. Mode tự chọn playbook, chạy skill khác khi cần. Mode "dính" qua các lượt sau. Tắt bằng `/pstack:poteto-mode off` hoặc gõ "tắt poteto-mode".
+3. Không gõ cũng được: agent **tự bật poteto-mode** khi việc trải qua nhiều module hoặc tầng (hơn một file code và test của nó), có quyết định thiết kế, bug chưa rõ nguyên nhân hoặc vấn đề hiệu năng. Việc nhỏ (sửa một file, câu hỏi) làm thẳng. Luật trong `AGENTS.md` / `CLAUDE.md` của repo thắng. Tắt cho một repo: thêm dòng `# auto-route: off` vào `.claude/pstack-models.md` của repo đó. Tắt cho mọi repo: thêm vào `~/.claude/pstack-models.md`. File của repo thắng file của máy.
 
 ```text
 /pstack:poteto-mode trang đơn hàng bị nhân đôi dòng khi retry giữa chừng. repro trước, rồi sửa và chứng minh.
@@ -156,7 +157,7 @@ Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản
 
 ## Hook
 
-- `SessionStart` ([`hooks/session-start.sh`](hooks/session-start.sh)): in bảng model đang áp dụng (ghi rõ nguồn project / user / default), đường dẫn transcript, gốc plugin, và chế độ nạp (plugin hay skill dự án).
+- `SessionStart` ([`hooks/session-start.sh`](hooks/session-start.sh)): in bảng model đang áp dụng (ghi rõ nguồn project / user / default), đường dẫn transcript, gốc plugin, chế độ nạp (plugin hay skill dự án), và luật tự bật poteto-mode (auto-route, tắt bằng `# auto-route: off`).
 - `UserPromptSubmit` ([`hooks/poteto-mode-sticky.sh`](hooks/poteto-mode-sticky.sh)): bật / tắt poteto-mode theo phiên. Ngay lượt gõ lệnh, hook in cổng thiết lập: chọn playbook, đọc file playbook, mở todo (phiên không có TaskCreate / TodoWrite / update_plan thì ghi checklist trong câu trả lời) rồi mới đọc code. Các lượt sau nhắc lại cổng này bằng một dòng.
 
 ## Bảo trì (cho người nâng cấp plugin)
@@ -165,13 +166,14 @@ Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản
 bash plugins/pstack/tools/sync-upstream.sh [ref]     # kéo upstream mới, 3-way merge vào bản port
 bash plugins/pstack/tools/lint-port.sh               # chặn từ khoá chỉ Cursor mới hiểu, tên skill sai
 bash plugins/pstack/tools/test-hooks.sh              # test hành vi 2 hook
+node plugins/pstack/tools/check-forks.mjs [path...]  # kiểm sổ chỗ khác bản gốc, hoặc in lý do của từng path
 bash plugins/pstack/tools/build-zip.sh               # đóng gói zip để upload lên claude.ai
 bash plugins/pstack/tools/gen-agent-variants.sh      # sinh lại poteto-agent-<effort> sau khi sửa poteto-agent.md
 claude plugin validate --strict plugins/pstack       # kiểm tra manifest, hooks
 claude plugin validate --strict .                    # kiểm tra marketplace
 ```
 
-`sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
+`sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Với path nằm trong sổ [`tools/forks.json`](tools/forks.json) (chỗ bản port cố ý khác bản gốc), script in thêm dòng `FORK` kèm lý do: gỡ conflict thì giữ chỗ khác đó. Thêm chỗ khác bản gốc mới thì ghi một mục vào sổ (`paths`, `kind` = `port-feature` hoặc `policy`, `why`, `since`); `lint-port.sh` báo lỗi nếu path không khớp file nào. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
 
 ### Eval hành vi
 

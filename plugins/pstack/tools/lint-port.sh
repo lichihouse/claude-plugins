@@ -42,6 +42,9 @@ for i in "${!patterns[@]}"; do
 	[ "$i" -lt "$last" ] && scan "${patterns[$i]}" docs
 done
 
+# Every entry in the fork registry names real files and says why.
+if command -v node >/dev/null; then node tools/check-forks.mjs || status=1; else echo 'lint-port: node not found, skipped tools/forks.json check'; fi
+
 # Conflict markers from sync-upstream.sh, in any text file (scripts included).
 hits=$(grep -rnIE --exclude-dir=node_modules '^(<<<<<<<|>>>>>>>) (port|upstream@)' . 2>/dev/null)
 [ -n "$hits" ] && { printf 'Unresolved sync conflict markers:\n%s\n\n' "$hits"; status=1; }

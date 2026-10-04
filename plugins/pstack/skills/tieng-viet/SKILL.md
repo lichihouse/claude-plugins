@@ -19,7 +19,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 
 | Gõ | Dùng khi |
 |---|---|
-| `/pstack:poteto-mode` | Làm việc kỹ, gọn, có kiểm chứng. Điểm vào mặc định cho việc nghiêm túc. Tắt: `/pstack:poteto-mode off` hoặc "tắt poteto-mode". |
+| `/pstack:poteto-mode` | Làm việc kỹ, gọn, có kiểm chứng. Điểm vào mặc định cho việc nghiêm túc. Agent tự bật khi việc lớn (nhiều module, thiết kế, bug chưa rõ, hiệu năng). Tắt: `/pstack:poteto-mode off` hoặc "tắt poteto-mode". Không cho tự bật: dòng `# auto-route: off` trong `pstack-models.md`. |
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt code ở đâu? |
 | `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
