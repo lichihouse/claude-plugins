@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.9**, commit `e43c7ee26e00` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.9-claude.3`.
+- Phiên bản port: `0.15.9-claude.4`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -89,6 +89,7 @@ when: Sửa bug ở repo này.
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt ở đâu? |
 | `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, từng sơ đồ). |
+| `/pstack:ambition` | Viết lại prompt giao việc cho AI tham vọng hơn (Tốc độ, Độ cao, Độ sâu, Độ rộng). |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Phác kiểu, chữ ký hàm, module trước khi viết code. |

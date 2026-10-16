@@ -23,6 +23,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt code ở đâu? |
 | `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
+| `/pstack:ambition` | Viết lại prompt giao việc cho AI: nhắm kết quả thật, dùng dữ liệu thô, mời nhiều ngành, có người chấm bên ngoài. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Việc lớn: phác kiểu, hàm, file rồi mới viết code. |
@@ -58,6 +59,7 @@ Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extr
 
 - chạy thế nào, hiểu code, đặt file ở đâu → `/pstack:how`
 - vì sao, sao làm vậy, lịch sử quyết định → `/pstack:why`
+- viết prompt, giao việc cho AI, tham vọng hơn → `/pstack:ambition`
 - dạy tôi, giải thích cho tôi hiểu → `/pstack:teach`
 - thiết kế trước, đừng viết code vội → `/pstack:architect`
 - làm nhiều bản rồi chọn bản đẹp → `/pstack:arena`
