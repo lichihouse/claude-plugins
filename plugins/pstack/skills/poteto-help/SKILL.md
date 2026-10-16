@@ -14,7 +14,7 @@ This file maps questions to the skills and guide pages that hold the answers. Th
 
 ## Find out what they need
 
-Infer the need from the message and the conversation. A named situation, such as "which skill reviews a PR?", goes straight to its section. If the need is still unclear, ask one `AskUserQuestion` with these options, then answer only the section they pick. The tool takes at most four options and adds a free-text answer on its own, so offer the first four and let the last come through that answer:
+Infer the need from the message and the conversation. A named situation, such as "which skill reviews a PR?", goes straight to its section. If the need is still unclear, ask one `AskUserQuestion` with these options, then answer only the section they pick. The tool takes at most four options and adds a free-text answer on its own, so offer the first four as options and let "Make pstack my own" come through that free-text answer:
 
 - Get set up
 - Start a task with `/pstack:poteto-mode`
@@ -132,7 +132,7 @@ Principles are one-rule skills that `/pstack:poteto-mode` reads and cites in its
 |---|---|
 | The mode stopped applying | Check that the plugin's hooks loaded (the SessionStart `pstack` block is in context) and that nobody turned the mode off. Otherwise start the task again with `/pstack:poteto-mode`. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. |
-| A new model choice had no effect | The map from `/pstack:setup-pstack` applies to new sessions. Start one. A line in the project file also wins over the same role in the user file. |
+| A new model choice had no effect | The session that ran `/pstack:setup-pstack` uses the new values at once. Other sessions read the map at start, so open a new one. A line in the project file also wins over the same role in the user file. |
 | Runs cost more than expected | See the cost paragraph under Get set up. |
 | A skill didn't load on its own | Only the skills named under Get set up load from the user's words. The others load when the user types them or when `/pstack:poteto-mode` runs them, and it doesn't run every skill. |
 | Parallel agents overwrote each other | Give each agent its own worktree (`Agent` with `isolation: "worktree"`), or run each in its own session. |

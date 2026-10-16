@@ -25,7 +25,7 @@ That covers a session (`<slug>/<session-id>.jsonl`) and its subagents (`<slug>/<
 
 One message, three `Agent` calls, `subagent_type: "pstack:reader"`. Reviewers need MCP access to look up the tickets, chat threads, and observability traces the transcript references. `pstack:reader` keeps MCP and cannot edit files.
 
-Each reviewer and the synthesizer name a role line in the pstack model map and a default. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so. Pick each subagent's effort for the job, per the Subagents section of the **poteto-mode** skill.
+Each reviewer and the synthesizer name a role line in the pstack model map and a default. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so.
 
 | Lens | Role line | Default `model` | Prompt template |
 |---|---|---|---|

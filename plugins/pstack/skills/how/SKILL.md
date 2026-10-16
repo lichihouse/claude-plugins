@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Every spawn is an `Agent` subagent with `subagent_type: "pstack:reader"` (read-only, keeps MCP). Explorers use the `how explorer` line in the pstack model map (injected at session start; see the **setup-pstack** skill), default `sonnet`, and every explainer uses the `how explainer` line, default `opus`. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so. Pick each subagent's effort for the job, per the Subagents section of the **poteto-mode** skill.
+Every spawn is an `Agent` subagent with `subagent_type: "pstack:reader"` (read-only, keeps MCP). Explorers use the `how explorer` line in the pstack model map (injected at session start; see the **setup-pstack** skill), default `sonnet`, and every explainer uses the `how explainer` line, default `opus`. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so.
 
 ## 1. Assess complexity
 

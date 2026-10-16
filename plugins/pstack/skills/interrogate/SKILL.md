@@ -36,7 +36,7 @@ Each reviewer gets `subagent_type: "pstack:reader"` (read-only, keeps MCP) and `
 
 If the Agent tool rejects a configured entry, run that reviewer on the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so. If it rejects a table default, spawn with the closest equivalent from the valid values in its error message (prefer the strongest tier available), and open a separate PR to update the default table. Do not block the review on the model issue. Never treat an alias entry as a rejected model or apply either fallback to it. All reviewers are Claude models, so diversity comes from tier and from a per-reviewer lens, not from vendor. Append one lens line to each reviewer's prompt, in panel order: correctness, races, and edge cases; then authorization, security, and destructive data paths; then domain invariants (money, time zones, data parity across read paths). A longer panel cycles through the three.
 
-Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`, then append that reviewer's lens line. Pick each subagent's effort for the job, per the Subagents section of the **poteto-mode** skill.
+Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`, then append that reviewer's lens line.
 
 ## Step 4, Synthesize
 

@@ -45,6 +45,12 @@ done
 # Every entry in the fork registry names real files and says why.
 if command -v node >/dev/null; then node tools/check-forks.mjs || status=1; else echo 'lint-port: node not found, skipped tools/forks.json check'; fi
 
+# Effort variants exist only for pstack:poteto-agent. A skill that spawns pstack:reader or
+# comment-sicko must not tell the model to pick an effort, or it swaps the subagent type.
+for f in $(grep -rlE 'subagent_type: "pstack:(reader|comment-sicko)"' skills --include='*.md'); do
+	grep -q "Pick each subagent's effort" "$f" && { echo "$f: effort rule in a skill whose subagents have no effort variant"; status=1; }
+done
+
 # Conflict markers from sync-upstream.sh, in any text file (scripts included).
 hits=$(grep -rnIE --exclude-dir=node_modules '^(<<<<<<<|>>>>>>>) (port|upstream@)' . 2>/dev/null)
 [ -n "$hits" ] && { printf 'Unresolved sync conflict markers:\n%s\n\n' "$hits"; status=1; }
