@@ -213,6 +213,14 @@
       "kind": "policy",
       "why": "Project playbooks (học từ michael-denyer/pstack-claude 0.9.57): repo thêm playbook ở .claude/playbooks/ mở rộng playbook gốc, mỗi thay đổi bám một đoạn nguyên văn của bước gốc; check-playbooks.mjs báo khi bản mới đổi câu đó. Hook đầu phiên chỉ in tên file, không in nội dung repo.",
       "since": "0.15.9-claude.3"
+    },
+    {
+      "paths": [
+        "skills/ambition/SKILL.md"
+      ],
+      "kind": "policy",
+      "why": "Skill riêng: viết lại prompt giao việc theo 4 trục tham vọng (Tốc độ, Độ cao, Độ sâu, Độ rộng) từ bài 'How to be more ambitious' của Felix Rieseberg (13/10/2026). Bản gốc không có.",
+      "since": "0.15.9-claude.4"
     }
   ]
 }
