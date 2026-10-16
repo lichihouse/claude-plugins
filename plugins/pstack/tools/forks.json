@@ -226,10 +226,21 @@
       "paths": [
         "skills/poteto-mode/SKILL.md",
         "agents/poteto-agent.md",
-        "skills/poteto-mode/playbooks/*.md"
+        "skills/poteto-mode/playbooks/*.md",
+        "skills/how/SKILL.md",
+        "skills/why/SKILL.md",
+        "skills/interrogate/SKILL.md",
+        "skills/reflect/SKILL.md",
+        "skills/arena/SKILL.md",
+        "skills/no-comments/SKILL.md",
+        "skills/swarm/SKILL.md",
+        "skills/recall/SKILL.md",
+        "skills/show-me-your-work/SKILL.md",
+        "skills/automate-me/SKILL.md",
+        "skills/figure-it-out/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "\"Match the effort to the job\" thay luật chọn reasoning level và fast mode của upstream (#613): chỉ áp cho spawn pstack:poteto-agent; dòng vai có từ effort thì dùng biến thể pstack:poteto-agent-<effort> và nâng / hạ một bậc trong cùng vai, không có thì dùng pstack:poteto-agent thường. Skill dùng pstack:reader / comment-sicko bỏ câu này. Claude Code không có fast mode.",
+      "why": "\"Match the effort to the job\" thay luật chọn reasoning level và fast mode của upstream (#613): chỉ áp cho spawn pstack:poteto-agent; dòng vai có từ effort thì dùng biến thể pstack:poteto-agent-<effort> và nâng / hạ một bậc trong cùng vai, không có thì dùng pstack:poteto-agent thường. Skill không gọi thẳng pstack:poteto-agent (reader, comment-sicko, general-purpose, verification) bỏ câu \"Pick each subagent's effort\" của upstream. Claude Code không có fast mode.",
       "since": "0.15.25-claude.1"
     },
     {
