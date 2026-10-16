@@ -221,6 +221,37 @@
       "kind": "policy",
       "why": "Skill riêng: viết lại prompt giao việc theo 4 trục tham vọng (Tốc độ, Độ cao, Độ sâu, Độ rộng) từ bài 'How to be more ambitious' của Felix Rieseberg (13/10/2026). Bản gốc không có.",
       "since": "0.15.9-claude.4"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "agents/poteto-agent.md",
+        "skills/poteto-mode/playbooks/*.md",
+        "skills/how/SKILL.md",
+        "skills/why/SKILL.md",
+        "skills/reflect/SKILL.md",
+        "skills/arena/SKILL.md",
+        "skills/interrogate/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "\"Match the effort to the job\" thay luật chọn reasoning level và fast mode của upstream (#613): chỉnh effort bằng biến thể pstack:poteto-agent-<effort>, giữ model của vai. Claude Code không có fast mode nên bỏ.",
+      "since": "0.15.25-claude.1"
+    },
+    {
+      "paths": [
+        "skills/ketchup/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Claude Code không có /visualize và không sinh ảnh: hình gom vào một trang Artifact riêng tư (nếu phiên có tool Artifact), không thì khối Mermaid và đường dẫn ảnh / video.",
+      "since": "0.15.25-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-help/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Custom Mode của Cursor thay bằng hook sticky + auto-route; rule .mdc thay bằng .claude/pstack-models.md; link công khai trỏ lichihouse/claude-plugins; make-bot-ui không port nên bỏ khỏi bảng.",
+      "since": "0.15.25-claude.1"
     }
   ]
 }

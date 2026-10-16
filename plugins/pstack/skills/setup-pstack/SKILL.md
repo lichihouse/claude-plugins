@@ -26,7 +26,7 @@ The default role-to-model mapping is the shape shown in step 5 below. Read `.cla
 
 ### 3. Budget, map, and confirm
 
-**(a) Ask for a budget.** Use `AskUserQuestion`, not free text. Offer these four options with these exact labels, and name the current budget when a file records one.
+**(a) Ask for a budget.** Use `AskUserQuestion`, not free text. Offer these four options with these exact labels, and name the current budget when a file records one. With no file, say that `unlimited` matches the skill defaults.
 
 - `unlimited — fable for the hardest work`
 - `large — opus ceiling`

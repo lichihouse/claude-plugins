@@ -20,10 +20,14 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | Gõ | Dùng khi |
 |---|---|
 | `/pstack:poteto-mode` | Làm việc kỹ, gọn, có kiểm chứng. Điểm vào mặc định cho việc nghiêm túc. Agent tự bật khi việc lớn (nhiều module, thiết kế, bug chưa rõ, hiệu năng). Tắt: `/pstack:poteto-mode off` hoặc "tắt poteto-mode". Không cho tự bật: dòng `# auto-route: off` trong `pstack-models.md`. |
+| `/pstack:poteto-help` | Hỏi cách dùng pstack: cài đặt, poteto-mode, nên chọn skill / playbook nào, sửa lượt chạy hỏng. |
+| `/pstack:in-your-own-words` | Agent nói lại mục tiêu và vấn đề của bạn bằng lời của nó, để thấy nó hiểu sai trước khi làm. |
+| `/pstack:sharpen` | Trước khi làm: chuyên gia sẽ làm sao, bạn thật sự cần gì. Có một bước kiểm bên ngoài, rồi làm luôn. |
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt code ở đâu? |
 | `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI: nhắm kết quả thật, dùng dữ liệu thô, mời nhiều ngành, có người chấm bên ngoài. |
+| `/pstack:ketchup` | Nãy giờ trong chat này có gì mới: vài câu dễ hiểu, hình nhỏ, việc nào đang chờ bạn quyết. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Việc lớn: phác kiểu, hàm, file rồi mới viết code. |
@@ -68,6 +72,10 @@ Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extr
 - vỡ chỗ nào, ảnh hưởng tới đâu → `/pstack:blast-radius`
 - việc to, chưa biết chia bước → `/pstack:figure-it-out`
 - đang làm dở, bắt kịp lại → `/pstack:recall`
+- nãy giờ làm được gì, tóm tắt cho tôi → `/pstack:ketchup`
+- bạn hiểu tôi cần gì chưa → `/pstack:in-your-own-words`
+- làm như chuyên gia, nhắm đúng cái tôi cần → `/pstack:sharpen`
+- dùng pstack thế nào, nên gõ lệnh nào → `/pstack:poteto-help`
 - sửa bug, làm tính năng, làm cho kỹ → `/pstack:poteto-mode <mô tả việc>`
 - dọn code trước khi commit → `/pstack:deslop`
 - nói lại cho dễ hiểu → `/pstack:bro`
