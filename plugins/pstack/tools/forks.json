@@ -258,6 +258,23 @@
       "kind": "port-feature",
       "why": "Custom Mode của Cursor thay bằng hook sticky + auto-route; rule .mdc thay bằng .claude/pstack-models.md; link công khai trỏ lichihouse/claude-plugins; make-bot-ui không port nên bỏ khỏi bảng.",
       "since": "0.15.25-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "skills/setup-pstack/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Thread Claude Projects, Remote Control và chạy -p không có AskUserQuestion: dùng thẻ lựa chọn của phiên (vd ask_decision) hoặc hỏi bằng chữ, mỗi lựa chọn một dòng. Thêm luật của adapter gốc docs/harness/claude-code.md: field Cursor không có tương ứng thì bỏ và nói, không truyền field schema từ chối, không có Grep/Glob thì rg qua Bash.",
+      "since": "0.15.25-claude.2"
+    },
+    {
+      "paths": [
+        "tools/sync-upstream.sh"
+      ],
+      "kind": "port-feature",
+      "why": "Dòng `watch` trong tools/UPSTREAM: file upstream bản port đọc nhưng không chép (adapter Claude Code của gốc, docs/harness/). Đổi thì sync in WATCH và diff để người sync chép luật còn thiếu, không chặn pin.",
+      "since": "0.15.25-claude.2"
     }
   ]
 }

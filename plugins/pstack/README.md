@@ -2,8 +2,8 @@
 
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
-- Dựa trên upstream **0.15.25**, commit `f713f14203cd` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.25-claude.1`.
+- Dựa trên upstream **0.15.25**, commit `101b274dd991` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.25-claude.2`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -15,6 +15,8 @@ Làm **một lần trên claude.ai bằng trình duyệt** (không làm trong ap
 3. Trong marketplace vừa thêm, cài **pstack**.
 
 Cách khác nếu bước 2 không đọc được repo: cũng ở **Personal plugins**, chọn upload file plugin (`pstack-<version>.zip`, tạo bằng `bash plugins/pstack/tools/build-zip.sh`).
+
+**Không cài thêm bản gốc.** Từ 16/10/2026 bản gốc có cách cài riêng cho Claude Code (`/plugin marketplace add cursor/plugins`, `/plugin install pstack@cursor-plugins`). Bản đó cũng tên `pstack`, nên cài cùng bản này thì trùng lệnh `/pstack:` và tên agent `pstack:poteto-agent`, không biết bản nào chạy. Bản gốc cũng không có model map, hook, auto-route, project playbook. Lỡ cài thì gỡ: `/plugin uninstall pstack@cursor-plugins`.
 
 Sau đó plugin tự có mặt ở:
 
@@ -197,7 +199,7 @@ claude plugin validate --strict plugins/pstack       # kiểm tra manifest, hook
 claude plugin validate --strict .                    # kiểm tra marketplace
 ```
 
-`sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Với path nằm trong sổ [`tools/forks.json`](tools/forks.json) (chỗ bản port cố ý khác bản gốc), script in thêm dòng `FORK` kèm lý do: gỡ conflict thì giữ chỗ khác đó. Thêm chỗ khác bản gốc mới thì ghi một mục vào sổ (`paths`, `kind` = `port-feature` hoặc `policy`, `why`, `since`); `lint-port.sh` báo lỗi nếu path không khớp file nào. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
+`sync-upstream.sh` lấy base là commit trong `tools/UPSTREAM`, merge thay đổi upstream lên bản port. Dòng nào cả hai phía cùng sửa thì để marker conflict (`<<<<<<< port`). Còn conflict thì mốc chưa dời: sửa xong chạy `sync-upstream.sh --pin <sha>`. Với path nằm trong sổ [`tools/forks.json`](tools/forks.json) (chỗ bản port cố ý khác bản gốc), script in thêm dòng `FORK` kèm lý do: gỡ conflict thì giữ chỗ khác đó. Thêm chỗ khác bản gốc mới thì ghi một mục vào sổ (`paths`, `kind` = `port-feature` hoặc `policy`, `why`, `since`); `lint-port.sh` báo lỗi nếu path không khớp file nào. Dòng `watch` trong `tools/UPSTREAM` là file upstream không chép nhưng cần đọc (adapter Claude Code của bản gốc, `docs/harness/`): đổi thì script in dòng `WATCH` và diff, chép luật còn thiếu vào bản port bằng tay. Port file mới, xem các dòng `UNMAPPED`, chạy lint + test + validate, rồi tăng `version` trong `.claude-plugin/plugin.json` (claude.ai chỉ cập nhật plugin khi version đổi).
 
 ### Eval hành vi
 

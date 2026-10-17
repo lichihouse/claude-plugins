@@ -29,6 +29,8 @@ ref="${1:-main}"
 repo_url=$(sed -n 's/^repo[[:space:]]*//p' "$pin")
 base=$(sed -n 's/^commit[[:space:]]*//p' "$pin")
 not_ported=$(sed -n 's/^not-ported[[:space:]]*//p' "$pin")
+# Upstream files the port reads but never copies, such as upstream's own Claude Code adapter.
+watch=$(sed -n 's/^watch[[:space:]]*//p' "$pin")
 [ -n "$base" ] && [ -n "$repo_url" ] || { echo "tools/UPSTREAM needs 'repo <url>' and 'commit <sha>' lines" >&2; exit 2; }
 
 work=$(mktemp -d)
@@ -41,13 +43,16 @@ if [ "$theirs" = "$base" ]; then
 	exit 0
 fi
 
-excluded() {
-	local p
-	for p in $not_ported; do
-		case "$1" in "$p" | "$p"/*) return 0 ;; esac
+under() {
+	local path="$1" p
+	shift
+	for p in "$@"; do
+		case "$path" in "$p" | "$p"/*) return 0 ;; esac
 	done
 	return 1
 }
+excluded() { under "$1" $not_ported; }
+watched() { under "$1" $watch; }
 
 # upstream path -> path inside this plugin. Anything not mapped is not ported.
 map_path() {
@@ -70,6 +75,11 @@ report="$work/report"
 
 # --no-renames: a rename is a delete plus an add, so the old ported path still gets REMOVED or KEPT.
 git -C "$work/up" diff --no-renames --name-only "$base" "$theirs" -- "${scope[@]}" | while IFS= read -r up; do
+	if watched "$up"; then
+		echo "WATCH     $up (not ported: read the diff below and carry over any rule the port lacks)" >> "$report"
+		git -C "$work/up" diff "$base" "$theirs" -- "$up" >> "$work/watch.diff"
+		continue
+	fi
 	if ! ours_rel=$(map_path "$up"); then
 		excluded "$up" || echo "UNMAPPED  $up (changed upstream, outside the ported paths: check whether the port needs it)" >> "$report"
 		continue
@@ -118,6 +128,11 @@ done
 upstream_version=$(git -C "$work/up" show "$theirs:pstack/.cursor-plugin/plugin.json" 2>/dev/null | sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
 
 sort "$report"
+if [ -s "$work/watch.diff" ]; then
+	echo
+	echo "--- WATCH diff ---"
+	cat "$work/watch.diff"
+fi
 # Name the deliberate deviations behind every path that needs a hand decision (tools/forks.json).
 flagged=$(sed -nE 's/^(CONFLICT|KEPT|PORT-DELETED)[[:space:]]+([^ ]+).*/\2/p' "$report")
 if [ -n "$flagged" ] && command -v node >/dev/null; then node "$plugin/tools/check-forks.mjs" $flagged || true; fi
