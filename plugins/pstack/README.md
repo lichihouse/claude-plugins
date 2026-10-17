@@ -33,7 +33,7 @@ Plugin theo tài khoản nạp đủ skill, agent và hook. Có một issue mở
 bash plugins/pstack/tools/install-as-project-skills.sh <thư-mục-repo> [--force]
 ```
 
-Tạo symlink `skills/*` vào `.claude/skills/`, `agents/*` vào `.claude/agents/` của repo đó, rồi in khối `hooks` để dán vào `.claude/settings.json`. Lệnh gõ khi đó không có tiền tố (`/how`). Chỉ dùng khi cách theo tài khoản không chạy.
+Tạo symlink `skills/*` vào `.claude/skills/`, `agents/*` vào `.claude/agents/` của repo đó (đã cài trước bản 0.15.25-claude.3 thì xoá tay các link hỏng `.claude/agents/poteto-agent-{low,medium,high,xhigh,max}.md`), rồi in khối `hooks` để dán vào `.claude/settings.json`. Lệnh gõ khi đó không có tiền tố (`/how`). Chỉ dùng khi cách theo tài khoản không chạy.
 
 ### Thử nhanh không cài
 
