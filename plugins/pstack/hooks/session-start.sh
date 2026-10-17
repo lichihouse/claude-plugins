@@ -60,7 +60,7 @@ awk '
 		for (i = 1; i <= k; i++) { x = trim(a[i]); gsub(/[ \t]+/, " ", x); out = out (i > 1 ? ", " : "") x }
 		return out
 	}
-	# App labels and CLI aliases to the effort values Claude Code accepts in agent frontmatter:
+	# App labels and CLI aliases to the effort values the Agent tool accepts:
 	# Extra is xhigh, med is medium, and Ultracode (xhigh plus workflows, a session mode) reads as xhigh.
 	function canon(v,   a, k, i, w, n, x, out) {
 		k = split(tolower(v), a, ",")
@@ -84,7 +84,7 @@ awk '
 		return 1
 	}
 	BEGIN {
-		# Roles that spawn pstack:poteto-agent, the only agent with effort variants.
+		# Roles that spawn pstack:poteto-agent, the only agent pstack passes an effort to.
 		split("feature, refactoring|bug-fix|perf-issue|hillclimb|hardest tasks|judgment and prose", er, "|")
 		for (i in er) takes_effort[er[i]] = 1
 	}
@@ -122,7 +122,7 @@ awk '
 	END {
 		if (n == 0) { print "pstack: default model map not found in skills/setup-pstack/SKILL.md (anchor line \"# pstack model map.\")."; exit }
 		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "unlimited (skill defaults)")
-		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call with BOTH subagent_type pstack:poteto-agent-<effort> AND model set to the model (for example subagent_type \"pstack:poteto-agent-medium\", model \"opus\"). The variant fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means that variant with no model. Effort words are low, medium, high, xhigh (the Claude apps label it Extra), max; a role with no effort word runs at the session effort when one is set, else the model default, and haiku runs without effort. The effort set by a variant overrides the session effort, including Extra, Max and Ultracode, unless CLAUDE_CODE_EFFORT_LEVEL is set; an organization effort cap still applies."
+		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call on subagent_type pstack:poteto-agent with BOTH model and effort set (for example model \"opus\", effort \"medium\"). The effort parameter fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means effort \"medium\" with no model. Effort words are low, medium, high, xhigh (the Claude apps label it Extra), max; a role with no effort word runs at the session effort when one is set, else the model default, and haiku runs without effort. The Agent effort overrides the session effort, including Extra, Max and Ultracode, unless CLAUDE_CODE_EFFORT_LEVEL is set; an organization effort cap still applies."
 		for (k = 1; k <= n; k++) {
 			r = order[k]
 			if (("project" SUBSEP r) in v) { val = v["project" SUBSEP r]; s = "project" }
