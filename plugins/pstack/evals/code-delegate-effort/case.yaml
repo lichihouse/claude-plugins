@@ -3,8 +3,8 @@ name: code-delegate-effort
 description: >-
   A code change under /pstack:poteto-mode is delegated on the code role's
   default, "opus medium": an Agent call with subagent_type
-  pstack:poteto-agent-medium and model opus, never the plain poteto-agent or
-  general-purpose. The delegate's edit lands in the file.
+  pstack:poteto-agent, model opus and an effort within one step of medium
+  (poteto-mode lets a routine rename step down to low), never general-purpose. The delegate's edit lands in the file.
 tags: [routing, models]
 context:
   scaffold_script: scaffold.sh
@@ -21,20 +21,20 @@ execution:
   timeout_seconds: 600
   allowed_tools: [Read, Glob, Grep, Edit, Agent, TaskCreate, TaskUpdate, TaskList]
 graders:
-  - name: delegates-to-medium-variant
+  - name: delegates-with-role-effort
     type: tool_used
     tool: Agent
-    input_match: '"subagent_type":\s*"pstack:poteto-agent-medium"'
+    input_match: '^(?=.*"subagent_type":\s*"pstack:poteto-agent")(?=.*"effort":\s*"(low|medium|high)")'
     min: 1
   - name: delegate-on-opus
     type: tool_used
     tool: Agent
-    input_match: '^(?=.*"subagent_type":\s*"pstack:poteto-agent-medium")(?=.*"model":\s*"opus")'
+    input_match: '^(?=.*"subagent_type":\s*"pstack:poteto-agent")(?=.*"model":\s*"opus")(?=.*"effort":\s*"(low|medium|high)")'
     min: 1
-  - name: no-plain-or-general-code-delegate
+  - name: no-general-code-delegate
     type: tool_used
     tool: Agent
-    input_match: '"subagent_type":\s*"(pstack:poteto-agent|general-purpose)"'
+    input_match: '"subagent_type":\s*"general-purpose"'
     min: 0
     max: 0
   - name: rename-landed

@@ -45,10 +45,10 @@ done
 # Every entry in the fork registry names real files and says why.
 if command -v node >/dev/null; then node tools/check-forks.mjs || status=1; else echo 'lint-port: node not found, skipped tools/forks.json check'; fi
 
-# Effort variants exist only for pstack:poteto-agent. A skill that spawns pstack:reader,
+# pstack passes an Agent effort only to pstack:poteto-agent. A skill that spawns pstack:reader,
 # comment-sicko or general-purpose must not tell the model to pick an effort, or it swaps the type.
 for f in $(grep -rlE '"(pstack:reader|pstack:comment-sicko|general-purpose)"' skills --include='*.md'); do
-	grep -q "Pick each subagent's effort" "$f" && { echo "$f: effort rule in a skill whose subagents have no effort variant"; status=1; }
+	grep -q "Pick each subagent's effort" "$f" && { echo "$f: effort rule in a skill whose subagents take no effort"; status=1; }
 done
 
 # Conflict markers from sync-upstream.sh, in any text file (scripts included).
@@ -91,17 +91,6 @@ for f in agents/*.md skills/*/SKILL.md; do
 	[ -z "$v" ] && continue
 	case "$v" in low | medium | high | xhigh | max) ;; *) echo "$f: effort '$v' must be one of low, medium, high, xhigh, max, written unquoted (Claude Code also takes med and integers, pstack does not)"; status=1 ;; esac
 done
-
-# agents/poteto-agent-<effort>.md are generated from agents/poteto-agent.md.
-variants=$(mktemp -d)
-bash tools/gen-agent-variants.sh "$variants"
-for f in "$variants"/*.md; do
-	if ! cmp -s "$f" "agents/$(basename "$f")"; then
-		echo "agents/$(basename "$f") is out of date: run tools/gen-agent-variants.sh"
-		status=1
-	fi
-done
-rm -r "$variants"
 
 # The SessionStart hook reads the default model map from this fenced block.
 roles=$(awk '/^# pstack model map\./ { on = 1; next } on && /^```/ { exit } on && /^[a-z][a-z ,-]*:/ { n++ } END { print n + 0 }' skills/setup-pstack/SKILL.md)

@@ -3,7 +3,7 @@
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
 - Dựa trên upstream **0.15.25**, commit `101b274dd991` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.25-claude.2`.
+- Phiên bản port: `0.15.25-claude.3`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -123,7 +123,7 @@ when: Sửa bug ở repo này.
 
 Ở chế độ skill dự án, bỏ tiền tố: `/how`, `/why`… 24 skill `principle-*` là nội quy, poteto-mode tự đọc khi cần.
 
-Agent: `pstack:poteto-agent` (làm việc theo poteto-mode) và các biến thể theo mức nỗ lực `pstack:poteto-agent-low|medium|high|xhigh|max`, `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án thì bỏ tiền tố `pstack:`.
+Agent: `pstack:poteto-agent` (làm việc theo poteto-mode, mức nỗ lực đặt bằng tham số `effort` khi gọi), `pstack:reader` (chỉ đọc, vẫn dùng được MCP), `pstack:comment-sicko`. Ở chế độ skill dự án thì bỏ tiền tố `pstack:`.
 
 ## Khác gì bản Cursor
 
@@ -161,7 +161,7 @@ Tên trong app Claude và giá trị ghi trong bảng model:
 
 Haiku không hỗ trợ effort, nên `haiku high` được đọc thành `haiku`. Luôn ghi đúng giá trị trong cột giữa khi sửa file agent: Claude Code âm thầm bỏ qua giá trị lạ (chỉ ghi log debug), lint của plugin chặn lỗi này.
 
-Claude Code chỉ đặt effort trong định nghĩa agent, không đặt khi gọi `Agent`. Vì vậy plugin có sẵn `pstack:poteto-agent-<effort>`. Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent-medium` với model `opus`. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên nếu phiên có đặt, không thì theo mặc định của model (lúc viết: opus medium, sonnet và fable high; danh mục model của Anthropic có thể đổi). Haiku luôn chạy không có effort. Effort ghi trong dòng thắng effort của phiên, kể cả khi phiên đang ở Extra, Max hay Ultracode. Chỉ biến môi trường `CLAUDE_CODE_EFFORT_LEVEL` và giới hạn effort của tổ chức là thắng được nó.
+Tool `Agent` của Claude Code nhận tham số `effort` khi gọi (đã thử 17/10/2026 trên bản 2.1.287 và 2.1.302). Dòng `opus medium` nghĩa là gọi `pstack:poteto-agent` với `model: "opus"` và `effort: "medium"`. Claude Code bản cũ hơn không nhận `effort` thì agent chạy theo effort mặc định và báo lại. Effort chỉ áp dụng cho các vai gọi `pstack:poteto-agent`: 4 vai code, `hardest tasks`, `judgment and prose`. Dòng không ghi effort thì chạy theo effort của phiên nếu phiên có đặt, không thì theo mặc định của model (lúc viết: opus medium, sonnet và fable high; danh mục model của Anthropic có thể đổi). Haiku luôn chạy không có effort. Effort ghi trong dòng thắng effort của phiên, kể cả khi phiên đang ở Extra, Max hay Ultracode. Chỉ biến môi trường `CLAUDE_CODE_EFFORT_LEVEL` và giới hạn effort của tổ chức là thắng được nó.
 
 | Vai | Mặc định |
 |---|---|
@@ -194,7 +194,6 @@ bash plugins/pstack/tools/lint-port.sh               # chặn từ khoá chỉ C
 bash plugins/pstack/tools/test-hooks.sh              # test hành vi 2 hook
 node plugins/pstack/tools/check-forks.mjs [path...]  # kiểm sổ chỗ khác bản gốc, hoặc in lý do của từng path
 bash plugins/pstack/tools/build-zip.sh               # đóng gói zip để upload lên claude.ai
-bash plugins/pstack/tools/gen-agent-variants.sh      # sinh lại poteto-agent-<effort> sau khi sửa poteto-agent.md
 claude plugin validate --strict plugins/pstack       # kiểm tra manifest, hooks
 claude plugin validate --strict .                    # kiểm tra marketplace
 ```
@@ -222,7 +221,7 @@ claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-to
 | `reader-cannot-edit` | `pstack:reader` từ chối tạo file dù phiên có Write. Không có lệnh Write nào, và file không xuất hiện. |
 | `poteto-no-todo-tool` | Phiên không có tool todo (model mới mặc định như vậy). Run đọc `playbooks/bug-fix.md`, đưa các bước vào câu trả lời thành checklist: mục đầu là repro, repro đứng trước Binary-search. Không ghi file, không đọc `math.js`, không Grep / Glob trừ khi lệnh nhắc tới playbook hay poteto-mode. Chạy trên model mới, vd thêm `--model claude-opus-5-5` vào lệnh eval ở trên; trên model cũ phiên có sẵn `TaskCreate` nên case này fail. Phần hook in cổng thiết lập do `tools/test-hooks.sh` kiểm, vì trace của eval không chứa output UserPromptSubmit. |
 | `poteto-off` | `/pstack:poteto-mode off` trả lời một dòng. Không đọc file, không gọi agent, không mở todo. |
-| `code-delegate-effort` | `/pstack:poteto-mode` giao việc sửa code cho `pstack:poteto-agent-medium` với `model: "opus"` (mặc định `opus medium`), không dùng agent thường, và bản sửa có trong file. |
+| `code-delegate-effort` | `/pstack:poteto-mode` giao việc sửa code cho `pstack:poteto-agent` với `model: "opus"` và `effort: "medium"` (mặc định `opus medium`), không dùng agent thường, và bản sửa có trong file. |
 
 ## License
 
