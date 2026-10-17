@@ -23,6 +23,7 @@ patterns=(
 	'model famil|cloud (worker|spawn|default|agent)|Cursor dashboard|Cursor cloud agent|cloud-sleeper'
 	'a full model ID'
 	'^is_background:|^mode: true|^reminder:'
+	'poteto-agent-(low|medium|high|xhigh|max|<effort>)'
 	"Cursor's built-in|cursor-team-kit"
 )
 last=$((${#patterns[@]} - 1))
