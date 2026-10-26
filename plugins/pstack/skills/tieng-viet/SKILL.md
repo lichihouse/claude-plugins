@@ -22,12 +22,13 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:poteto-mode` | Làm việc kỹ, gọn, có kiểm chứng. Điểm vào mặc định cho việc nghiêm túc. Agent tự bật khi việc lớn (nhiều module, thiết kế, bug chưa rõ, hiệu năng). Tắt: `/pstack:poteto-mode off` hoặc "tắt poteto-mode". Không cho tự bật: dòng `# auto-route: off` trong `pstack-models.md`. |
 | `/pstack:poteto-help` | Hỏi cách dùng pstack: cài đặt, poteto-mode, nên chọn skill / playbook nào, sửa lượt chạy hỏng. |
 | `/pstack:in-your-own-words` | Agent nói lại mục tiêu và vấn đề của bạn bằng lời của nó, để thấy nó hiểu sai trước khi làm. |
-| `/pstack:sharpen` | Trước khi làm: chuyên gia sẽ làm sao, bạn thật sự cần gì. Có một bước kiểm bên ngoài, rồi làm luôn. |
+| `/pstack:sharpen` | Viết lại prompt sâu hơn (không to hơn) trước khi gửi: chuyên gia sẽ làm gì thêm, dùng dữ liệu thô và cách nào, cái gì ngoài bạn và AI chứng minh kết quả đúng. Chỉ trả prompt, không làm việc. |
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt code ở đâu? |
 | `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI: nhắm kết quả thật, dùng dữ liệu thô, mời nhiều ngành, có người chấm bên ngoài. |
-| `/pstack:ketchup` | Nãy giờ trong chat này có gì mới: vài câu dễ hiểu, hình nhỏ, việc nào đang chờ bạn quyết. |
+| `/pstack:ketchup` | Nãy giờ trong chat có gì mới: lời dễ hiểu, hình nhỏ, liệt kê đủ mọi việc chờ bạn quyết, mỗi việc đủ bối cảnh để quyết ngay. |
+| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide, việc chờ bạn quyết viết bên dưới. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Việc lớn: phác kiểu, hàm, file rồi mới viết code. |
@@ -45,6 +46,9 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:bro` | Nói lại tin trước cho dễ hiểu. |
 | `/pstack:create-verification-skill` | Tạo skill `verify-<app>` để agent bấm app như người dùng. |
 | `/pstack:maintain-verification-skill` | Skill verify đã lệch so với app, sửa lại. |
+| `/pstack:create-formal-verification-skill` | Chứng minh một tính chất của code đúng trong mọi trường hợp (race, retry, state machine) mà test khó chạm. Tạo skill để kiểm lại mỗi lần sửa. |
+| `/pstack:maintain-formal-verification-skill` | Code đã đổi sau lần kiểm chứng hình thức trước: sửa mô hình cho khớp, chạy lại, nói lỗi là lệch mô hình hay bug thật. |
+| `/pstack:statechart` | Vẽ sơ đồ trạng thái người dùng thấy (sinh từ mô hình TLA+), mỗi bug là một đường đánh số, cho PM / designer xem. |
 | `/pstack:control-ui` | Lái trình duyệt (Playwright, CDP) để lấy ảnh, log, bằng chứng. |
 | `/pstack:control-cli` | Lái CLI / TUI để lấy bằng chứng. |
 | `/pstack:automate-me` | Học thói quen làm việc của bạn, tạo `<tên-bạn>-mode`. |
@@ -74,7 +78,9 @@ Mức nỗ lực (effort) trong bảng model: app ghi Low / Medium / High / Extr
 - đang làm dở, bắt kịp lại → `/pstack:recall`
 - nãy giờ làm được gì, tóm tắt cho tôi → `/pstack:ketchup`
 - bạn hiểu tôi cần gì chưa → `/pstack:in-your-own-words`
-- làm như chuyên gia, nhắm đúng cái tôi cần → `/pstack:sharpen`
+- viết lại prompt cho sâu hơn trước khi gửi → `/pstack:sharpen`
+- chứng minh không bao giờ chạy trùng, race, bất biến → `/pstack:create-formal-verification-skill`
+- vẽ sơ đồ trạng thái cho PM xem bug → `/pstack:statechart`
 - dùng pstack thế nào, nên gõ lệnh nào → `/pstack:poteto-help`
 - sửa bug, làm tính năng, làm cho kỹ → `/pstack:poteto-mode <mô tả việc>`
 - dọn code trước khi commit → `/pstack:deslop`

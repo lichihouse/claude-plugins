@@ -26,6 +26,7 @@ Check the state that changes the answer, and mention it only when it does:
 
 - No `.claude/pstack-models.md` in the project and no `~/.claude/pstack-models.md` means `/pstack:setup-pstack` hasn't run for this user, so every role uses its default model. The `pstack model map` block that the SessionStart hook injects says which files it read.
 - No `verify-*` skill under `.claude/skills/` or other app harness in the project means agents have no scripted way to drive the app. Mention `/pstack:create-verification-skill` when the question is about proving a change works.
+- No formal verification skill in the project means no property is checked past what tests reach. Mention `/pstack:create-formal-verification-skill` when the question is about a race, an invariant, or another case tests rarely hit. When one exists and the code it covers changed after the commit it records as last in sync, mention `/pstack:maintain-formal-verification-skill` if the question touches that code.
 
 When the model map file is missing and it matters, ask whether the user wants to pick a model for each role and a reasoning budget now. It matters when the user is new, the question is about setup or cost, or the answer depends on which models run. Ask at most once per chat. If the need is also unclear, ask both questions together. Offer two choices:
 
@@ -35,7 +36,7 @@ When the model map file is missing and it matters, ask whether the user wants to
 ## Get set up
 
 1. Install the `pstack` plugin from its marketplace, as the [README](../../README.md) describes: once on claude.ai for every session of the account, or with `claude plugin install` in a terminal. A fallback installs it as project skills under `.claude/skills/`, and then commands drop the `pstack:` prefix.
-2. Run [`/pstack:setup-pstack`](../setup-pstack/SKILL.md). It asks for a reasoning budget, maps a Claude model alias (`fable`, `opus`, `sonnet`, `haiku`, or `inherit-parent`) and an optional effort word to each role, and writes `.claude/pstack-models.md` for the project or `~/.claude/pstack-models.md` for the user. The SessionStart hook applies it to new sessions.
+2. Run [`/pstack:setup-pstack`](../setup-pstack/SKILL.md). It asks for a reasoning budget, maps a Claude model alias (`fable`, `opus`, `sonnet`, `haiku`, or `inherit-parent`) and an optional effort word to each role, and writes `.claude/pstack-models.md` for the project or `~/.claude/pstack-models.md` for the user. The SessionStart hook applies it to new sessions. Then it offers once each to generate a verification skill and a formal verification skill for the project, unless the project already has one.
 3. Start a real task with `/pstack:poteto-mode`, a goal, and a check that can pass or fail.
 
 Installing changes little until the user invokes a skill. Only `/pstack:setup-pstack`, `/pstack:deslop`, `control-ui`, `control-cli`, and `typescript-best-practices` load from the user's words. Separately, the hooks turn `/pstack:poteto-mode` on by themselves for large work, unless a `# auto-route: off` line in `pstack-models.md` stops that. The [README](../../README.md) and [guide page 1](../../docs/guide/01-setup.md) have the details. Offer to word their first prompt with them, per [`references/prompting.md`](references/prompting.md).
@@ -60,13 +61,14 @@ The default answer is `/pstack:poteto-mode`, which runs most of the others when 
 |---|---|
 | Do any non-trivial task with rigor | [`/pstack:poteto-mode`](../poteto-mode/SKILL.md) |
 | Check that the agent understood their goal and the problem before it starts | [`/pstack:in-your-own-words`](../in-your-own-words/SKILL.md) |
-| Aim a task higher before starting: more expert, more outcome-focused, not overspecified | [`/pstack:sharpen`](../sharpen/SKILL.md) |
+| Get a prompt rewritten deeper, not bigger, before sending it: what a top professional would add, their raw material and methods, and an outside check. It returns the prompt and doesn't do the task | [`/pstack:sharpen`](../sharpen/SKILL.md) |
 | Rewrite a prompt they give an AI so it aims at the real outcome, with raw data and an outside judge | [`/pstack:ambition`](../ambition/SKILL.md) |
 | Know how code works now, or where new code should live | [`/pstack:how`](../how/SKILL.md) |
 | Know why code is shaped this way, or where a number came from | [`/pstack:why`](../why/SKILL.md) |
 | Understand a change or subsystem, explained plainly | [`/pstack:teach`](../teach/SKILL.md) |
 | Catch up on their own recent work on a topic | [`/pstack:recall`](../recall/SKILL.md) |
-| Catch up on what changed in this chat since their last message, in a few plain sentences and small visuals, with enough context to decide each action item | [`/pstack:ketchup`](../ketchup/SKILL.md) |
+| Catch up on what changed in this chat since their last message, in plain words and small visuals, with every item waiting on them listed and decidable from the reply alone | [`/pstack:ketchup`](../ketchup/SKILL.md) |
+| Catch up like `/pstack:ketchup`, in a short silent video of slides, with the waiting calls as text under it | [`/pstack:ketchup-video`](../ketchup-video/SKILL.md) |
 | Know what a small diff could break outside itself | [`/pstack:blast-radius`](../blast-radius/SKILL.md) |
 | Settle types and module shape before code that crosses a function boundary | [`/pstack:architect`](../architect/SKILL.md) |
 | Get several attempts at one brief, merged into the best one | [`/pstack:arena`](../arena/SKILL.md) |
@@ -81,6 +83,9 @@ The default answer is `/pstack:poteto-mode`, which runs most of the others when 
 | Hear the last reply again in plain words | [`/pstack:bro`](../bro/SKILL.md) |
 | Give agents a scripted way to drive the app and prove behavior | [`/pstack:create-verification-skill`](../create-verification-skill/SKILL.md) |
 | Bring a verification skill and its feature map back in line with the app | [`/pstack:maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
+| Formally verify a race, invariant, or other property that tests rarely reach | [`/pstack:create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
+| Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | [`/pstack:maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md) |
+| Show a PM or designer what the user sees as a chart checked by a model, with each bug drawn as a numbered path, turn an agreed chart into a TLA+ skeleton, or audit the code against its TLA+ spec | [`/pstack:statechart`](../statechart/SKILL.md) |
 | Drive a web, IDE, or Electron UI, or a CLI or TUI, for screenshots and other evidence | [`/pstack:control-ui`](../control-ui/SKILL.md), [`/pstack:control-cli`](../control-cli/SKILL.md) |
 | Vet a performance number before reporting or acting on it | [`/pstack:benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/pstack:figure-it-out`](../figure-it-out/SKILL.md) |
