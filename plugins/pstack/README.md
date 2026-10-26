@@ -2,8 +2,8 @@
 
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ y như bản gốc. Chỉ đổi những chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud).
 
-- Dựa trên upstream **0.15.25**, commit `101b274dd991` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.25-claude.3`.
+- Dựa trên upstream **0.15.32**, commit `99b609a72323` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.32-claude.1`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -24,6 +24,8 @@ Sau đó plugin tự có mặt ở:
 |---|---|---|
 | Claude Code trên web, tab Code trong app Desktop / mobile (cloud session) | Không cần gì thêm, mỗi phiên tự tải | Gõ `/pstack:` thấy danh sách skill |
 | Claude Code ở terminal | Bản ≥ 2.1.273, đăng nhập bằng tài khoản claude.ai (`/login`) | `claude plugin list` có `pstack@synced` |
+
+**Cập nhật bản mới.** Bản gắn tài khoản (`pstack@synced`) tự lên bản mới khi `version` đổi. Bản cài trên máy bằng `/plugin install pstack@lichihouse` thì khác: Claude Code để auto-update tắt với marketplace bên thứ ba, nên bản đó đứng yên ở bản đã cài. Bật: gõ `/plugin`, tab **Marketplaces**, chọn `lichihouse`, chọn **Enable auto-update**. Cập nhật tay một lần: `claude plugin marketplace update lichihouse` rồi `claude plugin update pstack@lichihouse`, mở phiên mới. Chưa cài trên máy thì đừng cài chỉ để cập nhật: bản trên máy che bản theo tài khoản.
 
 Plugin theo tài khoản nạp đủ skill, agent và hook. Có một issue mở (anthropics/claude-code#92031) nói plugin cá nhân cài từ marketplace có lúc không xuất hiện trong phiên web. Nếu gặp: thử cách upload file, hoặc cài vào repo dạng skill dự án (mục dưới).
 
@@ -94,8 +96,9 @@ when: Sửa bug ở repo này.
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI tham vọng hơn (Tốc độ, Độ cao, Độ sâu, Độ rộng). |
 | `/pstack:poteto-help` | Hỏi cách dùng pstack: cài đặt, nên chọn skill / playbook nào, sửa lượt chạy hỏng. |
 | `/pstack:in-your-own-words` | Agent nói lại mục tiêu và vấn đề bằng lời của nó trước khi làm. |
-| `/pstack:sharpen` | Làm việc theo cách chuyên gia giỏi nhất sẽ làm, nhắm đúng cái bạn thật sự cần. |
-| `/pstack:ketchup` | Nãy giờ trong chat có gì mới: vài câu dễ hiểu, hình nhỏ, việc chờ bạn quyết. |
+| `/pstack:sharpen` | Viết lại prompt sâu hơn (không to hơn) trước khi gửi: chuyên gia sẽ làm gì thêm, dùng dữ liệu thô và cách nào, cái gì ngoài bạn và AI chứng minh kết quả đúng. Chỉ trả prompt, không làm việc. |
+| `/pstack:ketchup` | Nãy giờ trong chat có gì mới: lời dễ hiểu, hình nhỏ, liệt kê đủ mọi việc chờ bạn quyết, mỗi việc đủ bối cảnh để quyết ngay. |
+| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide, việc chờ bạn quyết viết bên dưới. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Phác kiểu, chữ ký hàm, module trước khi viết code. |
@@ -113,6 +116,9 @@ when: Sửa bug ở repo này.
 | `/pstack:bro` | Nói lại tin trước bằng lời dễ hiểu. |
 | `/pstack:create-verification-skill` | Tạo skill `verify-<app>` để agent bấm app như người dùng. |
 | `/pstack:maintain-verification-skill` | Skill verify đã lệch app, sửa lại. |
+| `/pstack:create-formal-verification-skill` | Chứng minh một tính chất của code đúng trong mọi trường hợp (race, retry, state machine) mà test khó chạm. Tạo skill để kiểm lại mỗi lần sửa. |
+| `/pstack:maintain-formal-verification-skill` | Code đã đổi sau lần kiểm chứng hình thức trước: sửa mô hình cho khớp, chạy lại, nói lỗi là lệch mô hình hay bug thật. |
+| `/pstack:statechart` | Vẽ sơ đồ trạng thái người dùng thấy (sinh từ mô hình TLA+), mỗi bug là một đường đánh số, cho PM / designer xem. |
 | `/pstack:control-ui` / `/pstack:control-cli` | Lái trình duyệt / CLI để lấy bằng chứng (Playwright, CDP). |
 | `/pstack:typescript-best-practices` | Quy tắc TypeScript. |
 | `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |

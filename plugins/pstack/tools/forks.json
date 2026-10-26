@@ -277,6 +277,59 @@
       "kind": "port-feature",
       "why": "Effort của subagent đặt bằng tham số effort của tool Agent (đã thử trên Claude Code 2.1.287 và 2.1.302, giống adapter gốc docs/harness/claude-code.md), thay 5 agent biến thể poteto-agent-<effort> và gen-agent-variants.sh đã bỏ.",
       "since": "0.15.25-claude.3"
+    },
+    {
+      "paths": [
+        "skills/ketchup-video/SKILL.md",
+        "skills/statechart/SKILL.md",
+        "skills/create-formal-verification-skill/SKILL.md",
+        "skills/maintain-formal-verification-skill/SKILL.md"
+      ],
+      "kind": "policy",
+      "why": "Dòng description viết tiếng Việt (giữ từ khoá tiếng Anh) cho người dùng không rành tiếng Anh. Thân skill giữ tiếng Anh như bản gốc.",
+      "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/ketchup-video/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Claude Code không phát video trong câu trả lời: video đặt trên trang Artifact riêng tư (nếu phiên có tool Artifact), không thì đưa đường dẫn. Máy không render được video thì nói một dòng và chỉ đưa các việc chờ quyết.",
+      "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/statechart/SKILL.md",
+        "skills/create-formal-verification-skill/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Skill đọc theo đường dẫn (disable-model-invocation) nên script gọi bằng <pstack root>/skills/statechart/scripts thay <skill dir>; skill dự án sinh ra nằm ở .claude/skills/.",
+      "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/reflect/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Bản gốc #800 cấm sửa skill trong plugin cache, chép ra .cursor/skills. Bản port: cấm sửa dưới ~/.claude/plugins/ (gồm <pstack root>), chép ra .claude/skills/ hoặc ~/.claude/skills/, và nói rằng sửa pstack thật thì cần PR vào repo plugin kèm tăng version.",
+      "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/scripts/worktree-audit.sh"
+      ],
+      "kind": "port-feature",
+      "why": "Bản gốc #805 thêm stat_fmt / fmt_day cho GNU stat / date. Bản port đã có mtime / day chạy cả GNU lẫn BSD từ 0.15.5-claude.1 nên giữ bản port, không thêm khối của gốc.",
+      "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "skills/setup-pstack/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Adapter gốc (#705) cho setup-pstack ghi ~/.claude/rules/pstack-models.md. Bản port giữ .claude/pstack-models.md + hook SessionStart (có model map theo dự án và dòng auto-route). Chỉ lấy luật dòng 'Skipped in Claude Code', Bugbot là review thread thường, link github.com/cursor/plugins/blob/main/pstack đọc bản trong <pstack root>.",
+      "since": "0.15.32-claude.1"
     }
   ]
 }
