@@ -8,6 +8,7 @@ import {
   mkdtempSync,
   readdirSync,
   readFileSync,
+  realpathSync,
   renameSync,
   rmSync,
   statSync,
@@ -15,7 +16,7 @@ import {
   utimesSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
+import { tmpdir as systemTmpdir } from "node:os";
 import { basename, delimiter, dirname, join, posix, win32 } from "node:path";
 import { test } from "node:test";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -47,6 +48,9 @@ import { ruleBook } from "../rule-book.mjs";
 import { copyPath } from "../snapshot.mjs";
 import { findTlc, JAVA_TOOL, TLC_TOOL } from "../tlc-tools.mjs";
 
+// macOS TMPDIR is under /var, a symlink to /private/var. A child run in such a folder sees
+// process.cwd() under /private/var, so tests that compare paths need the real one.
+const tmpdir = () => realpathSync(systemTmpdir());
 const here = dirname(fileURLToPath(import.meta.url));
 const scripts = dirname(here);
 const fixture = (name) => readFileSync(join(here, name), "utf8");
@@ -2010,7 +2014,7 @@ test(
           : false,
   },
   () => {
-    const root = mkdtempSync(join(tmpdir(), "statechart-outside-"));
+    const root = mkdtempSync(join(systemTmpdir(), "statechart-outside-"));
     const at = join(root, "scripts");
     cpSync(scripts, at, { recursive: true, filter: (f) => !f.startsWith(here) });
     const dir = join(root, "work");
@@ -6160,6 +6164,7 @@ int rename(const char *from, const char *to) {
 }
 `;
 const failingRenames = (() => {
+  if (process.platform !== "linux") return null;
   const dir = mkdtempSync(join(tmpdir(), "statechart-preload-"));
   writeFileSync(join(dir, "rename.c"), failRenames);
   const so = join(dir, "rename.so");
@@ -6168,7 +6173,7 @@ const failingRenames = (() => {
 })();
 test(
   "a run whose rename fails after it moves the output folder aside puts the folder back, or says where it is",
-  { skip: needsTlc.skip || (!failingRenames && "cannot compile a rename preload") },
+  { skip: needsTlc.skip || (!failingRenames && "needs a rename preload, which only LD_PRELOAD on Linux loads") },
   () => {
     const dir = mkdtempSync(join(tmpdir(), "statechart-"));
     writeLamp(dir);
@@ -6204,7 +6209,7 @@ test(
 
 test(
   "a run on a filesystem that cannot rename copies its files into place",
-  { skip: needsTlc.skip || (!failingRenames && "cannot compile a rename preload") },
+  { skip: needsTlc.skip || (!failingRenames && "needs a rename preload, which only LD_PRELOAD on Linux loads") },
   () => {
     const dir = mkdtempSync(join(tmpdir(), "statechart-"));
     writeLamp(dir);
@@ -6231,7 +6236,7 @@ test(
 
 test(
   "a run that cannot rename replaces a folder that another run makes before its copy, and keeps one that another run makes during its copy",
-  { skip: needsTlc.skip || (!failingRenames && "cannot compile a rename preload") },
+  { skip: needsTlc.skip || (!failingRenames && "needs a rename preload, which only LD_PRELOAD on Linux loads") },
   () => {
     const dir = mkdtempSync(join(tmpdir(), "statechart-"));
     writeLamp(dir);
@@ -6263,7 +6268,7 @@ test(
 
 test(
   "a run that cannot rename stops when another run removes its folder during its copy and makes an empty one in its place, and keeps that folder",
-  { skip: needsTlc.skip || (!failingRenames && "cannot compile a rename preload") },
+  { skip: needsTlc.skip || (!failingRenames && "needs a rename preload, which only LD_PRELOAD on Linux loads") },
   () => {
     const dir = mkdtempSync(join(tmpdir(), "statechart-"));
     writeLamp(dir);
@@ -6284,7 +6289,7 @@ test(
 
 test(
   "a run that cannot rename keeps the folder that another run puts in place of its folder as soon as the run makes it",
-  { skip: needsTlc.skip || (!failingRenames && "cannot compile a rename preload") },
+  { skip: needsTlc.skip || (!failingRenames && "needs a rename preload, which only LD_PRELOAD on Linux loads") },
   () => {
     const dir = mkdtempSync(join(tmpdir(), "statechart-"));
     writeLamp(dir);
