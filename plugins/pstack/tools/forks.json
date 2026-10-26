@@ -330,6 +330,15 @@
       "kind": "port-feature",
       "why": "Adapter gốc (#705) cho setup-pstack ghi ~/.claude/rules/pstack-models.md. Bản port giữ .claude/pstack-models.md + hook SessionStart (có model map theo dự án và dòng auto-route). Chỉ lấy luật dòng 'Skipped in Claude Code', Bugbot là review thread thường, link github.com/cursor/plugins/blob/main/pstack đọc bản trong <pstack root>.",
       "since": "0.15.32-claude.1"
+    },
+    {
+      "paths": [
+        "skills/statechart/scripts/tlc-tools.mjs",
+        "skills/statechart/scripts/test/statechart.test.mjs"
+      ],
+      "kind": "policy",
+      "why": "Sửa trước bản gốc lỗi trên macOS (TMPDIR /var là symlink tới /private/var): ceiling của mise và lệnh cài dùng đường dẫn thật (realpathSync, pwd -P); test lấy đường dẫn thật của thư mục tạm, test rename bằng LD_PRELOAD chỉ chạy trên Linux. Bản gốc sửa rồi thì bỏ mục này.",
+      "since": "0.15.32-claude.2"
     }
   ]
 }
