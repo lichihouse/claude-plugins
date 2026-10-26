@@ -25,7 +25,7 @@ Sau đó plugin tự có mặt ở:
 | Claude Code trên web, tab Code trong app Desktop / mobile (cloud session) | Không cần gì thêm, mỗi phiên tự tải | Gõ `/pstack:` thấy danh sách skill |
 | Claude Code ở terminal | Bản ≥ 2.1.273, đăng nhập bằng tài khoản claude.ai (`/login`) | `claude plugin list` có `pstack@synced` |
 
-**Cập nhật bản mới.** Claude Code để auto-update tắt với marketplace bên thứ ba, nên bản cài trên máy (terminal) đứng yên ở bản đã cài. Bật: gõ `/plugin`, tab **Marketplaces**, chọn `lichihouse`, chọn **Enable auto-update**. Cập nhật tay một lần: `claude plugin marketplace update lichihouse` rồi `claude plugin update pstack@lichihouse`, mở phiên mới.
+**Cập nhật bản mới.** Bản gắn tài khoản (`pstack@synced`) tự lên bản mới khi `version` đổi. Bản cài trên máy bằng `/plugin install pstack@lichihouse` thì khác: Claude Code để auto-update tắt với marketplace bên thứ ba, nên bản đó đứng yên ở bản đã cài. Bật: gõ `/plugin`, tab **Marketplaces**, chọn `lichihouse`, chọn **Enable auto-update**. Cập nhật tay một lần: `claude plugin marketplace update lichihouse` rồi `claude plugin update pstack@lichihouse`, mở phiên mới. Chưa cài trên máy thì đừng cài chỉ để cập nhật: bản trên máy che bản theo tài khoản.
 
 Plugin theo tài khoản nạp đủ skill, agent và hook. Có một issue mở (anthropics/claude-code#92031) nói plugin cá nhân cài từ marketplace có lúc không xuất hiện trong phiên web. Nếu gặp: thử cách upload file, hoặc cài vào repo dạng skill dự án (mục dưới).
 

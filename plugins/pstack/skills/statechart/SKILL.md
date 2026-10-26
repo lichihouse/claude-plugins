@@ -1,6 +1,6 @@
 ---
 name: statechart
-description: "Vẽ cách một hệ thống đi qua các trạng thái (luồng sản phẩm, giao thức, service) thành statechart Mermaid sinh từ mô hình TLA+. Mỗi bug là một đường đánh số tới trạng thái phạm luật. Dùng cho /pstack:statechart, cho PM / designer xem bug dưới dạng đường đi, hoặc biến sơ đồ đã thống nhất thành khung TLA+."
+description: "Vẽ cách một hệ thống đi qua các trạng thái (luồng sản phẩm, giao thức, service) thành statechart Mermaid sinh từ mô hình TLA+. Mỗi bug là một đường đánh số tới trạng thái phạm luật. Dùng cho /pstack:statechart, cho PM / designer xem bug dưới dạng đường đi, biến sơ đồ đã thống nhất thành khung TLA+, hoặc soi code với spec TLA+ có sẵn."
 disable-model-invocation: true
 ---
 
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 The chart shows how a system moves between states, in the words of the person who reads it. The scripts call that person the reader, as in `readerActions` and reader steps. The reader decides whether the behavior is right. The reader can be a PM who reads a product flow, an engineer who reads a protocol or a service, or a reviewer who reads a design. Label each state with what the reader can observe or cares about, such as "Paying" in an app or "Lease held, write pending" in a lock service. Label each step with the event that moves the system, such as "tap Pay" in an app, "the request reads the count" in a service, or "the lease expires" in a lock service. Keep variable and action names out of labels.
 
-Run `node "<pstack root>/skills/statechart/scripts/statechart.mjs" --help` for the commands and for how to read a chart. Work in a scratch folder outside the repo. The command writes its files next to its input. The first run installs TLC and Java with mise, which downloads about 305 MB and needs the network. The help's TLC section tells how to use a TLC and Java that you have.
+Run `node "<pstack root>/skills/statechart/scripts/statechart.mjs" --help` for the commands and for how to read a chart. Work in a scratch folder outside the repo. The command writes its files next to its input. The first run installs TLC and Java with mise, which downloads about 305 MB and needs the network. The help's TLC section tells how to use a TLC and Java that you have. The first `--png` also runs `npm install` for the renderer into a cache folder; in a sandboxed session that blocks the network or that folder, the help says how to point it elsewhere.
 
 ## Pick the direction
 

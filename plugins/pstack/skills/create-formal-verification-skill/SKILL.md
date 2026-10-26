@@ -1,6 +1,6 @@
 ---
 name: create-formal-verification-skill
-description: "Tạo skill dự án kiểm chứng hình thức (formal verification) cho chỗ code mà bug đắt nhất và test khó chạm nhất, ngôn ngữ nào cũng được, dùng công cụ hợp nhất (mặc định TLA+). Dùng cho /pstack:create-formal-verification-skill, \"model-check this race\", \"prove this invariant\", hoặc khi race, retry, state machine, parser cần hơn test."
+description: "Tạo skill dự án kiểm chứng hình thức (formal verification) cho chỗ code mà bug đắt nhất và test khó chạm nhất, ngôn ngữ nào cũng được, dùng công cụ hợp nhất (câu hỏi về thứ tự sự kiện thì mặc định TLA+). Dùng cho /pstack:create-formal-verification-skill, \"model-check this race\", \"prove this invariant\", hoặc khi race, retry, state machine, parser cần hơn test."
 disable-model-invocation: true
 ---
 

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Ketchup video
 
-Follow [`/pstack:ketchup`](../ketchup/SKILL.md), but show what happened in a short silent video instead of its summary and visuals. Its window starts at the last message the user wrote before `/pstack:ketchup-video`, not before any earlier `/pstack:ketchup`. Writing and rendering the video, outside the repo, is the one exception to its read-only rule. The reply is ketchup's opening sentence, the video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
+Follow [`/pstack:ketchup`](../ketchup/SKILL.md), but show what happened in a short silent video instead of its summary and visuals. Its window starts at the last message the user wrote before `/pstack:ketchup-video`, not before any earlier `/pstack:ketchup`. Writing and rendering the video, outside the repo, is the other exception to its read-only rule, next to its Artifact page. The reply is ketchup's opening sentence, the video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
 
 ## Slides
 
@@ -20,6 +20,6 @@ Show what came of each thing the user asked for, and whether it is done, still r
 
 ## Render
 
-Render one silent landscape video, such as an mp4, with motion between slides. Every frame is the slide itself, edge to edge. Make the frames from the slides, never by recording a screen. Hold each slide long enough to read its words, at least one second for each three words it adds. Words inside a screenshot do not count. Before you embed the video, look at one frame from each slide in the rendered file, and count the words it adds against its hold in that file. Fix any slide you cannot read in that time, render again, and check again.
+Render one silent landscape video, such as an mp4, with motion between slides. Every frame is the slide itself, edge to edge. Make the frames from the slides, never by recording a screen. Hold each slide long enough to read its words, at least one second for each three words it adds. Words inside a screenshot do not count. Before you share the video, look at one frame from each slide in the rendered file, and count the words it adds against its hold in that file. Fix any slide you cannot read in that time, render again, and check again.
 
 Claude Code cannot play a video inside a reply. When the `Artifact` tool is available, put the video on one private Artifact page (follow the `artifact-design` skill if the session lists it) and link it. Otherwise give the video's path or link so the user can open it. Use `ffmpeg` for the render when it is installed. If no tool on this machine can render a video, say so in one line and give only the calls.
