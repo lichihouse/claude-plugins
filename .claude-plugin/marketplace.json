@@ -16,7 +16,7 @@
     {
       "name": "lichi",
       "source": "./plugins/lichi",
-      "description": "Kiến thức riêng của LICHI dùng cho mọi repo: skill shopee-open-api (toàn bộ tài liệu Shopee Open Platform API v2, bài học từ Booking, thiết kế nạp BigQuery).",
+      "description": "Kiến thức riêng của LICHI dùng cho mọi repo: skill shopee-open-api và tiktok-shop-api (toàn bộ tài liệu API Shopee v2 và TikTok Shop, bài học từ Booking, thiết kế nạp BigQuery, script tải lại).",
       "category": "productivity"
     }
   ]
