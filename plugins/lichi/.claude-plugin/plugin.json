@@ -1,7 +1,7 @@
 {
   "name": "lichi",
   "displayName": "LICHI",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Kiến thức nghiệp vụ và tích hợp riêng của LICHI, dùng cho mọi repo (Booking, Quan-ly-Kho, BigQuery). Skill: shopee-open-api, tiktok-shop-api.",
   "author": {
     "name": "Lichi House"
