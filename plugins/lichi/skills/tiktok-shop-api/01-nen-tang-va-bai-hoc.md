@@ -43,7 +43,7 @@ Hàm gọi chung: `artifacts/api-server/src/lib/tiktok-shop/client.ts` → `call
 | `POST /return_refund/202602/returns/search` | returns-sync.ts | 202602 | ổn; có trường mới `is_quick_refund`, `return_sub_line_items` |
 | `POST /return_refund/202602/cancellations/search` | cancellations-sync.ts | 202602 | ổn |
 | `POST /return_refund/202309/returns/{id}/approve` | returns-decide.ts | 202309 | ổn |
-| `POST /return_refund/202309/returns/{id}/reject` | returns-decide.ts | **202606** | xem doc 202606 trước khi nâng (bản 202309 vẫn chạy, chưa có thông báo khai tử) |
+| `POST /return_refund/202309/returns/{id}/reject` | returns-decide.ts | **202606** | cố ý giữ 202309 (2026-10-31): API ghi, không thử an toàn được; 202606 thêm hoàn một phần sau nhận hàng + `idempotency_key`, app chưa cần. Nâng khi có lịch khai tử |
 | `GET /return_refund/202309/returns/{id}/records` | return-parcels-detail.ts, parcel-tracking.ts | 202309 | ổn |
 | `GET /return_refund/202309/reject_reasons` | tiktok-shop.ts | 202309 | ổn |
 | `GET /return_refund/202601/decision_eligibility` | tiktok-shop.ts | 202601 | ổn; có API mới Get Available Review Decisions 202606 (gom theo RMA, chủ yếu US/EMEA) |
@@ -54,12 +54,12 @@ Hàm gọi chung: `artifacts/api-server/src/lib/tiktok-shop/client.ts` → `call
 | `GET /product/202309/categories`, `/product/202309/brands`, `GET /product/202309/products/{id}` | category-names.ts, brands-sync.ts, product-listing-enrich.ts | 202309 | ổn |
 | `POST /product/202502/products/search` | product-catalog-sync.ts | 202502 | ổn |
 | `GET /analytics/202605/shop_videos/performance` | gmv-sync.ts | 202605 | ổn. Từ **2026-11-06** mỗi request tối đa 30 ngày (Booking gọi 1 ngày/lần nên không ảnh hưởng). Bản 202409/202509 khai tử 2026-12-28 |
-| `GET /analytics/202509/shop_lives/performance` | live-gmv-sync.ts | **202609** | nâng lên 202609 (thêm chỉ số GMV, traffic, đấu giá) |
+| `GET /analytics/202609/shop_lives/performance` | live-gmv-sync.ts | 202609 | đã nâng (Booking PR #689). Response là `data.live_stream_sessions[]`, host `creator.user_name`, GMV trực tiếp `sales_performance.live_gmv` |
 | `GET /analytics/202510/shop_lives/{id}/performance_per_minutes` | live-gmv-sync.ts | 202510 | ổn |
 | `GET /analytics/202511/creators/bestselling` | kocs.ts | 202511 | ổn |
-| `POST /affiliate_seller/202508/marketplace_creators/search` | creator-sync.ts | **202608** | nâng lên 202608 (thêm `creator_level`, `is_rising_star`, `pps_score`...). 202508 vẫn là bản đích của đợt khai tử 2026-10-12 nên chưa gãy |
-| `GET /affiliate_seller/202508/marketplace_creators/{id}` | kocs.ts | **202608** | như trên; 202608 có `data_groups` để lấy bớt nhóm dữ liệu, thêm chỉ số 30 ngày |
-| `POST /affiliate_seller/202601/marketplace_creators/search/filter` | kocs.ts | **202608** | 202608 đổi hẳn cấu trúc response (`option_list`, `sorters` thay `advanced_filters`), sửa parser khi nâng |
+| `POST /affiliate_seller/202508/marketplace_creators/search` | creator-sync.ts | 202608 | cố ý giữ 202508 (2026-10-31): TikTok vẫn bổ sung trường cho 202508 (`creator_level`, `data_groups`), chưa có lịch khai tử |
+| `GET /affiliate_seller/202508/marketplace_creators/{id}` | kocs.ts | 202608 | như trên; 202608 thêm `creator_profile` (chỉ số 30/90 ngày) |
+| `POST /affiliate_seller/202601/marketplace_creators/search/filter` | kocs.ts | 202608 | giữ 202601 cùng cặp với search 202508. 202608 đổi hẳn cấu trúc (`option_list` có id, `sorters`), nâng phải làm lại màn lọc KOC |
 
 Webhook Booking đã nối: 1, 7, 11, 12, 64, 65, 67 (xem `docs/TIKTOK_SHOP_WEBHOOK_TOPICS.md` trong Booking).
 
