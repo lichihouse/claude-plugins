@@ -4,7 +4,7 @@ Marketplace plugin Claude Code, gắn theo **tài khoản claude.ai** nên dùng
 
 | Plugin | Mô tả |
 |---|---|
-| [`lichi`](plugins/lichi/) | Kiến thức riêng của LICHI: skill `shopee-open-api` (461 API Shopee v2, 64 trang hướng dẫn, 35 webhook, bài học từ Booking, thiết kế nạp BigQuery). |
+| [`lichi`](plugins/lichi/) | Kiến thức riêng của LICHI: skill `shopee-open-api` (461 API Shopee v2, 64 trang hướng dẫn, 35 webhook) và `tiktok-shop-api` (318 API TikTok Shop, 44 webhook, changelog, hướng dẫn); kèm bài học từ Booking, thiết kế nạp BigQuery, script tải lại. |
 | [`pstack`](plugins/pstack/) | pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: `/pstack:poteto-mode`, how / why, arena / swarm / interrogate, 24 principle, playbook có kiểm chứng. |
 
 ## Gắn vào tài khoản (làm một lần)
