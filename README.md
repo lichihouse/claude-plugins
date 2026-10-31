@@ -4,13 +4,14 @@ Marketplace plugin Claude Code, gắn theo **tài khoản claude.ai** nên dùng
 
 | Plugin | Mô tả |
 |---|---|
+| [`lichi`](plugins/lichi/) | Kiến thức riêng của LICHI: skill `shopee-open-api` (461 API Shopee v2, 64 trang hướng dẫn, 35 webhook, bài học từ Booking, thiết kế nạp BigQuery). |
 | [`pstack`](plugins/pstack/) | pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: `/pstack:poteto-mode`, how / why, arena / swarm / interrogate, 24 principle, playbook có kiểm chứng. |
 
 ## Gắn vào tài khoản (làm một lần)
 
 1. Mở claude.ai bằng **trình duyệt** → **Customize** → tab **Plugins**.
 2. **Personal plugins** → **+** → **Add marketplace** → **Add from a repository** → `lichihouse/claude-plugins`.
-3. Cài **pstack** từ marketplace này.
+3. Cài **pstack** và **lichi** từ marketplace này.
 
 Từ đó mọi phiên Claude Code của tài khoản tự nạp plugin (terminal cần bản ≥ 2.1.273 và đăng nhập claude.ai). Chi tiết, cách dự phòng và cách dùng: [`plugins/pstack/README.md`](plugins/pstack/README.md).
 
@@ -19,6 +20,7 @@ Từ đó mọi phiên Claude Code của tài khoản tự nạp plugin (termina
 ```bash
 claude plugin validate --strict .
 claude plugin validate --strict plugins/pstack
+claude plugin validate --strict plugins/lichi
 bash plugins/pstack/tools/lint-port.sh
 bash plugins/pstack/tools/test-hooks.sh
 ```

@@ -1,0 +1,11 @@
+{
+  "name": "lichi",
+  "displayName": "LICHI",
+  "version": "0.1.0",
+  "description": "Kiến thức nghiệp vụ và tích hợp riêng của LICHI, dùng cho mọi repo (Booking, Quan-ly-Kho, BigQuery). Bản đầu: skill shopee-open-api.",
+  "author": {
+    "name": "Lichi House"
+  },
+  "repository": "https://github.com/lichihouse/claude-plugins",
+  "keywords": ["lichi", "shopee", "open-api", "bigquery", "warehouse"]
+}

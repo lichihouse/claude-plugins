@@ -23,6 +23,7 @@ jobs:
         run: |
           claude plugin validate --strict .
           claude plugin validate --strict plugins/pstack
+          claude plugin validate --strict plugins/lichi
 
       - name: Lint bản port (chặn cơ chế chỉ Cursor hiểu)
         run: bash plugins/pstack/tools/lint-port.sh

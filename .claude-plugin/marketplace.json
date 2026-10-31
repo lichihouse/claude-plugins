@@ -12,6 +12,12 @@
       "source": "./plugins/pstack",
       "description": "pstack của poteto (Lauren Tan) port từ Cursor sang Claude Code: poteto-mode, how/why, arena/swarm/interrogate, 24 principle, playbook có kiểm chứng.",
       "category": "developer-tools"
+    },
+    {
+      "name": "lichi",
+      "source": "./plugins/lichi",
+      "description": "Kiến thức riêng của LICHI dùng cho mọi repo: skill shopee-open-api (toàn bộ tài liệu Shopee Open Platform API v2, bài học từ Booking, thiết kế nạp BigQuery).",
+      "category": "productivity"
     }
   ]
 }
