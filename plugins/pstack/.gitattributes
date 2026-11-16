@@ -1,0 +1,6 @@
+.gitattributes export-ignore
+docs/guide/images export-ignore
+evals export-ignore
+tools export-ignore
+**/*.test.* export-ignore
+skills/statechart/scripts/test export-ignore

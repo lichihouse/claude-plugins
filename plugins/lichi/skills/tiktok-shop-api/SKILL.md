@@ -25,13 +25,13 @@ Mọi đường dẫn tính từ thư mục chứa file SKILL.md này. Chỉ đ�
 | `reference/oas-gap.md` | Chênh lệch với spec OAS cũ của toolkit TikTok (`tts-openapi-guide`) |
 | `scripts/` | Tải lại tài liệu khi TikTok thay đổi (mục 5) |
 
-Cần trang chưa có hoặc nghi cũ: JSON công khai `https://partner.tiktokshop.com/api/v1/document/detail?document_id=<slug>&workspace_id=3&aid=359713&locale=en-US` (slug = phần cuối URL docv2, vd `get-order-detail-202507`), và `/api/v1/document/api_meta?src_document_id=<slug>&aid=359713&locale=en-US` (schema có cấu trúc, `scope_list`). Hai URL này chỉ trả dữ liệu khi gọi từ trong trang đã mở (cookie), nên dùng Playwright như `scripts/fetch-docs.js`; curl thẳng trả "internal error".
+Cần trang chưa có hoặc nghi cũ: JSON công khai `https://partner.tiktokshop.com/api/v1/document/detail?document_id=<slug>&workspace_id=3&aid=359713&locale=en-US` (slug = phần cuối URL docv2, vd `get-order-detail-202507`), và `/api/v1/document/api_meta?src_document_id=<slug>&aid=359713&locale=en-US` (schema có cấu trúc, `scope_list`). Gọi thẳng bằng curl được (kiểm 2026-11-16, trả `code 0`). Nếu có lúc trả "internal error" thì gọi từ trong trang đã mở bằng Playwright, như đường dự phòng trong `scripts/fetch-docs.js`.
 
 Code thật: repo Booking `artifacts/api-server/src/lib/tiktok-shop/` (`client.ts` → `callOpenApi`, `webhook.ts`, các `*-sync.ts`). Dùng lại client có sẵn, đừng viết ký request mới.
 
 ## 2. Điều bắt buộc nhớ
 
-- **Chọn version cao nhất** trong `04-muc-luc-api.md` cho đúng năng lực cần. Chỉ dùng bản cũ khi có lý do ghi rõ (vd VN chưa roll-out), nêu nguồn. Partner Center chỉ hiện bản mới nhất; bản cũ còn chạy ít nhất 2 tháng sau khi có bản mới, khai tử được báo trước ≥2 tháng trong changelog. Lỗi `36009014` = version không hợp lệ/đã khai tử.
+- **Chọn version cao nhất** trong `04-muc-luc-api.md` cho đúng năng lực cần. Chỉ dùng bản cũ khi có lý do ghi rõ (vd VN chưa roll-out), nêu nguồn. Partner Center chỉ hiện bản mới nhất; bản cũ còn chạy ít nhất 2 tháng sau khi có bản mới, khai tử được báo trước ≥2 tháng trong changelog. Lỗi `36009014` = version không hợp lệ/đã khai tử; gateway cũ có thể trả `36009004` kèm message `Invalid API version`.
 - **Thị trường**: nhiều API/trường chỉ cho US/EU/UK/JP. Đọc dòng "Markets"/"Target market" trong doc. LICHI bán ở **VN**. Ở VN: duyệt/từ chối hoàn dùng 202309; aftersales/RMA chưa roll-out; kháng nghị không có API.
 - **Scope**: cột scope trong mục lục. Scope mới chỉ có hiệu lực sau khi shop **kết nối lại**; `105005` = thiếu quyền.
 - **Chữ ký**: HMAC-SHA256(app_secret, `app_secret + path + query đã sắp xếp (bỏ sign, access_token) nối key+value + body + app_secret`), hex. Token ở header `x-tts-access-token`. Chỉ HTTPS.
@@ -52,7 +52,7 @@ Code thật: repo Booking `artifacts/api-server/src/lib/tiktok-shop/` (`client.t
 
 ## 5. Cập nhật khi TikTok thay đổi
 
-Cần Node 18+ có Playwright + Chromium, Python 3. Chạy từ thư mục skill:
+Cần Node 18+ và Python 3. Playwright + Chromium chỉ cần khi TikTok chặn gọi thẳng (script tự chuyển sang). Chạy từ thư mục skill:
 
 ```bash
 node scripts/fetch-docs.js /tmp/tts-moi/raw                    # ~3 phút, chỉ đọc trang công khai

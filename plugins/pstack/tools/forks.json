@@ -339,6 +339,23 @@
       "kind": "policy",
       "why": "Sửa trước bản gốc lỗi trên macOS (TMPDIR /var là symlink tới /private/var): ceiling của mise và lệnh cài dùng đường dẫn thật (realpathSync, pwd -P); test lấy đường dẫn thật của thư mục tạm, test rename bằng LD_PRELOAD chỉ chạy trên Linux. Bản gốc sửa rồi thì bỏ mục này.",
       "since": "0.15.32-claude.2"
+    },
+    {
+      "paths": [
+        "agents/reader.md"
+      ],
+      "kind": "policy",
+      "why": "disallowedTools chặn thêm theo tên đúng các tool MCP ghi của tài khoản Lichi House (merge / sửa PR, gửi mail, share Drive, ghi Sheets / Docs, lái trình duyệt, nhắn thread, tạo trigger). Tool MCP không có tên trong danh sách và lệnh ghi qua Bash (gh pr merge) vẫn chỉ bị chặn bằng lời dặn. Thêm connector có tool ghi thì thêm tên vào đây.",
+      "since": "0.15.32-claude.3"
+    },
+    {
+      "paths": [
+        "skills/control-ui/SKILL.md",
+        "skills/control-cli/SKILL.md"
+      ],
+      "kind": "policy",
+      "why": "Description nhường skill verify-* của repo (verify-booking, verify-kho), vì ngoài poteto-mode model vẫn tự gọi được hai skill này và dễ dựng harness mới thay stack verify có sẵn.",
+      "since": "0.15.32-claude.3"
     }
   ]
 }

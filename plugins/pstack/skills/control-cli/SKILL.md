@@ -1,6 +1,6 @@
 ---
 name: control-cli
-description: "Dựng hoặc sửa harness local để lái, soi, đo hiệu năng một CLI hoặc TUI tương tác, không cần dịch vụ ngoài. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, terminal demos (kiểm tra UX CLI, khởi động chậm, rò bộ nhớ, treo, luồng prompt, demo terminal)."
+description: "Dựng hoặc sửa harness local để lái, soi, đo hiệu năng một CLI hoặc TUI tương tác, không cần dịch vụ ngoài. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, terminal demos (kiểm tra UX CLI, khởi động chậm, rò bộ nhớ, treo, luồng prompt, demo terminal). Repo có skill verify-* riêng thì dùng skill đó trước."
 ---
 
 # Control CLI

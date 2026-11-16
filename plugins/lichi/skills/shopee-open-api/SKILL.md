@@ -16,11 +16,13 @@ Mọi đường dẫn dưới đây tính từ thư mục chứa file SKILL.md n
 | `01-nen-tang-va-bai-hoc.md` | Trước khi viết code gọi Shopee: quyền theo loại app, chữ ký, token, định dạng ngày/tiền, giới hạn khoảng ngày + phân trang, push, 10 bài học từ code Booking |
 | `02-api-cho-warehouse.md` | Cần dữ liệu: đơn affiliate/KOC, hiệu quả KOC/video/sản phẩm, chi phí ads, tiền thực nhận, hoàn hàng. Bảng trường giải thích tiếng Việt |
 | `03-nap-bigquery.md` | Thiết kế bảng `raw_shopee` trên BigQuery, lịch nạp, khoá nối |
-| `04-muc-luc-461-api.md` | Tìm xem có API nào làm việc X (mỗi API 1 dòng) |
+| `04-muc-luc-461-api.md` | Tìm xem có API nào làm việc X (mỗi API 1 dòng). File 72 KB, đừng đọc cả: `grep -n -i "<từ khoá>" 04-muc-luc-461-api.md` |
 | `reference/api/<Module>.md` | Chi tiết nguyên văn 1 module: method, path, app được gọi, mọi tham số, mọi trường response, lỗi, lịch sử cập nhật. Tìm 1 API: grep `^## v2.<module>.<tên>` |
 | `reference/push.md` | 35 loại webhook: code, trường, ví dụ, retry |
 | `reference/guides/*.md` | Developer Guide (0016 gọi API, 0020 xác thực, 0018 push, 0031 enum trạng thái, 0229 đơn, 0227 hoàn, 0702 AMS, 0277 Ads, 0706 Video, 0669 Live, 0733 Brand Portal...) |
 | `scripts/fetch_shopee_docs.py` | Tải lại toàn bộ khi nghi tài liệu đã đổi: `python3 -I scripts/fetch_shopee_docs.py /tmp/shopee-moi` (cần curl, pandoc, ~3 phút, chỉ đọc trang công khai), rồi `diff -r reference /tmp/shopee-moi/reference` |
+
+Kiểm lần cuối 2026-11-16 bằng `scripts/fetch_shopee_docs.py`: trên mạng có 463 API, 65 trang guide. Bản lưu thiếu 2 API Logistics `v2.logistics.set_order_count_limit_outside_instant_operating_time` và `v2.logistics.get_order_count_limit_outside_instant_operating_time`, và nhiều trang module đã có sửa nhỏ. Cần chi tiết mới nhất thì lấy JSON công khai bên dưới. Tải lại cả bộ thì sửa luôn các con số 461 trong 01–04 và tên file 04.
 
 Nếu cần một API mà bản lưu chưa có hoặc nghi đã cũ, lấy thẳng JSON công khai (trang open.shopee.com là SPA, không đọc được bằng fetch HTML):
 `https://open.shopee.com/opservice/api/v1/doc/api/?version=2&api_name=v2.order.get_order_detail` (trường `params` là JSON chuỗi có `request_params`/`response_params` lồng `children`; `api_permission` = loại app được gọi; `error_list`; `update_log_list`). Danh sách module: `/opservice/api/v1/doc/module/?version=2`.
