@@ -35,7 +35,7 @@ Rà ngày 2026-10-31 từ Partner Center (nguồn chi tiết trong `reference/gu
 
 ## 4. Repo Booking đang gọi gì (kiểm 2026-11-16)
 
-Bảng là bản chụp, code đổi nhanh hơn. Trước khi dựa vào nó, lấy danh sách thật ở gốc repo Booking: `rg -o --no-filename -e 'path: *[`"][^`"]+' artifacts/api-server/src/lib/tiktok-shop artifacts/api-server/src/routes | sort -u`.
+Bảng là bản chụp, code đổi nhanh hơn. Trước khi dựa vào nó, lấy danh sách thật ở gốc repo Booking: `` rg -o --no-filename -e 'path: *[`"][^`"]+' artifacts/api-server/src/lib/tiktok-shop artifacts/api-server/src/routes | sort -u ``.
 
 Hàm gọi chung: `artifacts/api-server/src/lib/tiktok-shop/client.ts` → `callOpenApi({ path, method, query, body, withShopCipher, shopId? })` (ký, chèn shop_cipher, tự refresh token, backoff 36009002). Webhook: `POST /api/tiktok-shop/webhook`, chống trùng qua bảng `tiktok_webhook_events`.
 
