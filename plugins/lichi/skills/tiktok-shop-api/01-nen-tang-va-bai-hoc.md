@@ -10,7 +10,7 @@ Rà ngày 2026-10-31 từ Partner Center (nguồn chi tiết trong `reference/gu
 - Header: `x-tts-access-token: <access_token>`, `content-type: application/json`.
 - Chữ ký: HMAC-SHA256 với khoá = **app_secret**, chuỗi = `app_secret + path + (các query trừ sign, access_token, xếp theo tên, nối key+value) + body (nếu có, nguyên văn) + app_secret`, xuất hex. Chi tiết và code mẫu: `reference/guides/tiktok-shop-api-concepts.md`, mục "Sign your API request".
 - Token: `auth_code` sống 30 phút, dùng 1 lần. `access_token` mặc định 7 ngày. `refresh_token` sống bằng thời hạn uỷ quyền shop. Webhook 7 báo trước 30 ngày khi uỷ quyền sắp hết.
-- Lỗi trả trong body (`code` khác 0) kể cả khi HTTP 200. Hay gặp: `36009002` hoặc HTTP 429 = bị giới hạn tốc độ (lùi + jitter rồi thử lại), `36009014` = version không hợp lệ hoặc đã khai tử, `105005` = thiếu scope (bật scope ở Partner Center rồi **kết nối lại shop**; refresh token không cấp scope mới).
+- Lỗi trả trong body (`code` khác 0) kể cả khi HTTP 200. Hay gặp: `36009002` hoặc HTTP 429 = bị giới hạn tốc độ (lùi + jitter rồi thử lại), `36009014` = version không hợp lệ hoặc đã khai tử (gateway cũ có thể trả `36009004` với message `Invalid API version`, nên xét cả message), `105005` = thiếu scope (bật scope ở Partner Center rồi **kết nối lại shop**; refresh token không cấp scope mới).
 - Rate limit động theo cặp app × shop, không có con số cố định. Gợi ý khởi điểm của TikTok: API đọc/đồng bộ 3–10 req/s, analytics nặng 0,2–1 req/s.
 - Vòng đời version: bản mới ra thì bản cũ còn ít nhất 2 tháng; khai tử được báo trong changelog ít nhất 2 tháng trước. Partner Center chỉ hiện bản mới nhất, bản cũ xem qua menu version trên trang doc.
 - Sandbox/test shop: giới hạn 1000 request/giờ; shop ở trạng thái inactive bị chặn gọi API.
@@ -31,9 +31,11 @@ Rà ngày 2026-10-31 từ Partner Center (nguồn chi tiết trong `reference/gu
 - Tài chính VN dùng bản Transactions **202501** (bản 202309 đã khai tử 2025-12-31).
 - Không có API đọc đánh giá sản phẩm của khách. Không có chi phí quảng cáo (GMV Max, Live ads): cần TikTok for Business Marketing API riêng; chỉ thấy gián tiếp qua phí trong finance (vd `gmv_max_coupon_fee`).
 - Thông tin cá nhân người mua bị che tuỳ loại app (từ 2026-10-12). Warehouse không cần và không nên lưu.
-- Skill `tts-openapi-guide` mà toolkit chính thức của TikTok cài (`@tts-open-toolkit/cli` 0.1.7, cũng là bản trong `Booking/.agents/skills/`) **đã cũ**: thiếu 74 API và 35 bản mới, kể cả Search Returns/Cancellations 202602 mà Booking đang gọi. Xem `reference/oas-gap.md`. Dùng skill này thay cho nó.
+- Skill `tts-openapi-guide` mà toolkit chính thức của TikTok cài (`@tts-open-toolkit/cli` 0.1.7, đã gỡ khỏi `Booking/.agents/skills/` ở commit Booking `5a8ef0554`) **đã cũ**: thiếu 74 API và 35 bản mới, kể cả Search Returns/Cancellations 202602 mà Booking đang gọi. Xem `reference/oas-gap.md`. Dùng skill này thay cho nó.
 
-## 4. Repo Booking đang gọi gì (2026-10-31)
+## 4. Repo Booking đang gọi gì (kiểm 2026-11-16)
+
+Bảng là bản chụp, code đổi nhanh hơn. Trước khi dựa vào nó, lấy danh sách thật ở gốc repo Booking: `` rg -o --no-filename -e 'path: *[`"][^`"]+' artifacts/api-server/src/lib/tiktok-shop artifacts/api-server/src/routes | sort -u ``.
 
 Hàm gọi chung: `artifacts/api-server/src/lib/tiktok-shop/client.ts` → `callOpenApi({ path, method, query, body, withShopCipher, shopId? })` (ký, chèn shop_cipher, tự refresh token, backoff 36009002). Webhook: `POST /api/tiktok-shop/webhook`, chống trùng qua bảng `tiktok_webhook_events`.
 
@@ -48,7 +50,9 @@ Hàm gọi chung: `artifacts/api-server/src/lib/tiktok-shop/client.ts` → `call
 | `GET /return_refund/202309/reject_reasons` | tiktok-shop.ts | 202309 | ổn |
 | `GET /return_refund/202601/decision_eligibility` | tiktok-shop.ts | 202601 | ổn; có API mới Get Available Review Decisions 202606 (gom theo RMA, chủ yếu US/EMEA) |
 | `POST /return_refund/202603/aftersales/search`, `POST /return_refund/202604/rma/search` | returns-sync.ts | 202603 / 202604 | chưa roll-out VN, giữ dạng thăm dò |
+| `GET /return_refund/202606/review_decision` | tiktok-shop.ts (probe) | 202606 | thăm dò; `seller_id` bắt buộc nhưng chưa rõ lấy ở đâu, đang thử `shop_id` |
 | `POST /return_refund/202603/aftersales/review` | tiktok-shop.ts (probe) | **202609** | VN không dùng |
+| `POST /order/202309/orders/search` | orders-sync.ts | 202309 | ổn |
 | `GET /order/202507/orders` | cancellations-sync.ts | 202507 | ổn; trường mới `room_id`, `buyer_nickname`, `is_exchange_order`, `is_replacement_order`... |
 | `GET /fulfillment/202309/orders/{id}/tracking` | parcel-tracking.ts | 202309 | ổn; có thêm `GET /logistics/202604/orders/{id}/tracking` |
 | `GET /product/202309/categories`, `/product/202309/brands`, `GET /product/202309/products/{id}` | category-names.ts, brands-sync.ts, product-listing-enrich.ts | 202309 | ổn |

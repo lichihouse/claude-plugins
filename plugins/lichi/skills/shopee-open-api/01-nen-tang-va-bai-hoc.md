@@ -77,10 +77,10 @@ Rate limit: 287/461 trang không ghi, các trang còn lại ghi `[0, 0, 0]` (t�
 
 ## 6. Bài học thực tế từ Booking (`artifacts/api-server/src/lib/shopee/`)
 
-Booking đang gọi 13 API: `auth/token/get`, `auth/access_token/get`, `shop/get_shop_info`, `order/get_order_list`, `order/get_order_detail`, `logistics/get_tracking_number`, `logistics/get_tracking_info`, `returns/get_return_list`, `get_return_detail`, `get_reverse_tracking_info`, `get_available_solutions`, `get_return_dispute_reason`, `returns/confirm` (ghi, sau công tắc `shopee_write_enabled`).
+Danh sách API Booking đang gọi lấy từ code, đừng tin bản chụp: `rg -o --no-filename '"/api/v2/[a-z_/]+"' artifacts/api-server/src/lib/shopee | sort -u` ở gốc repo Booking. Ngày 2026-11-16 là 17 path, gồm `product/get_item_list`, `get_item_base_info`, `get_model_list`, `payment/get_escrow_detail_batch`. API ghi duy nhất là `returns/confirm`, sau công tắc `shopee_write_enabled`.
 
 1. **refresh_token dùng 1 lần**: mọi lần refresh đi qua khoá theo shop (`tokens.ts`), đọc lại dòng sau khi khoá. Hai tiến trình (VD Booking và bộ nạp BigQuery) **không được** cùng refresh một shop của cùng app; bộ nạp phải xin token qua Booking hoặc dùng app riêng.
-2. Staging dump từ prod phải xoá token (`DELETE FROM shopee_connections`, `enabled=false`), nếu không staging xoay token làm chết token prod (AGENTS.md Booking §212).
+2. Staging dump từ prod phải xoá token (`DELETE FROM shopee_connections`, `enabled=false`), nếu không staging xoay token làm chết token prod (AGENTS.md Booking §8).
 3. Lượt kéo theo mốc (watermark) + cửa sổ ≤14 ngày (chừa 1 ngày cho làm tròn), đọc lùi 1 giờ trước mốc để bắt đơn cập nhật trễ và lệch đồng hồ (`windows.ts`). Lượt đầu lùi 30 ngày.
 4. `get_return_list`: tài liệu ghi `page_no` "Default is 0" nhưng mẫu dùng 1; Shopee coi 0 như 1 nên trang 0 và 1 trùng nhau. Bỏ trang trùng, dừng khi trang lặp hoặc trang rỗng mà vẫn báo còn (`paging.ts`).
 5. Mẫu tài liệu `get_return_list` có `"error": "-"` kèm `response`: chỉ coi là thành công khi có `response`.

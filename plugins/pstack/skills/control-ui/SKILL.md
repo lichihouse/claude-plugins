@@ -1,6 +1,6 @@
 ---
 name: control-ui
-description: "Dựng hoặc sửa harness trình duyệt/CDP local để lái và soi giao diện web, IDE hoặc Electron. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs (kiểm tra UI, chụp màn hình, đo hiệu năng, tái hiện bug giao diện)."
+description: "Dựng hoặc sửa harness trình duyệt/CDP local để lái và soi giao diện web, IDE hoặc Electron. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, reproducing UI bugs (kiểm tra UI, chụp màn hình, đo hiệu năng, tái hiện bug giao diện). Repo có skill verify-* riêng thì dùng skill đó trước."
 ---
 
 # Control UI
