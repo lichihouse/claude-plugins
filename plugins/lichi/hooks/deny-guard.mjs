@@ -57,9 +57,10 @@ export function splitCommand(cmd) {
   }
   parts.push(cur);
   const nested = [];
-  for (let i = cmd.indexOf("$("); i !== -1; i = cmd.indexOf("$(", i + 2)) {
+  for (let i = cmd.indexOf("$("); i !== -1; ) {
     const end = closingIndex(cmd, i + 1);
     nested.push(...splitCommand(cmd.slice(i + 2, end)));
+    i = cmd.indexOf("$(", end + 1);
   }
   for (const m of cmd.matchAll(/`([^`]*)`/g)) nested.push(...splitCommand(m[1]));
   return [...parts, ...nested].map((p) => p.trim()).filter(Boolean);
