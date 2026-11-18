@@ -7,6 +7,17 @@ Kiến thức nghiệp vụ và tích hợp riêng của LICHI, dùng được t
 | `shopee-open-api` | Viết code gọi Shopee, thiết kế nạp dữ liệu Shopee vào BigQuery, hỏi về API Shopee. Gồm toàn bộ tài liệu Shopee Open Platform API v2 (tải 2026-10-31), bài học từ code Booking, đề xuất bảng `raw_shopee`, và script tải lại tài liệu. |
 | `tiktok-shop-api` | Viết code gọi TikTok Shop, chọn version API, thiết kế nạp dữ liệu TikTok vào BigQuery, hỏi về API TikTok Shop. Gồm toàn bộ tài liệu Partner Center (318 API, 44 webhook, changelog, Developer Guide, tải 2026-10-31), bảng endpoint Booking đang gọi và việc cần nâng, hạn khai tử, đề xuất bảng `raw_tiktok`, và script tải lại tài liệu. |
 
+## Hook (từ 0.3.0)
+
+Chỉ chạy khi phiên mở ở thư mục cha chứa nhiều repo (thread Project của claude.ai mở ở `/home/user`). Phiên mở trong một repo thì Claude Code tự nạp `AGENTS.md` và `.claude/settings.json`, hook đứng ngoài.
+
+| Hook | Việc |
+|---|---|
+| `SessionStart`, `SubagentStart` (`hooks/agents-md.mjs`) | Thêm vào ngữ cảnh danh sách `AGENTS.md` của mọi repo con (cả file lồng như `artifacts/ios-app/AGENTS.md`) và nhắc Read trước khi làm. Subagent cũng nhận. |
+| `PreToolUse` (`hooks/deny-guard.mjs`) | Áp phần `deny` trong `.claude/settings.json` của repo con. Lệnh Bash nêu tên đúng 1 repo (`cd Booking && …`) dùng deny list của repo đó; lệnh không nêu repo nào dùng hợp của mọi repo. Edit / Write theo repo chứa file. Hook lỗi thì không chặn (ruleset GitHub vẫn chặn nhánh chính) và ghi lỗi ra stderr. |
+
+Test: `node --test plugins/lichi/hooks/hooks.test.mjs` (CI chạy).
+
 Cài trên máy: `/plugin marketplace add lichihouse/claude-plugins` rồi `/plugin install lichi@lichihouse` (hoặc qua claude.ai → Customize → Plugins, xem README gốc).
 
 Claude tự gọi skill khi việc liên quan Shopee hoặc TikTok Shop; gọi tay: `/lichi:shopee-open-api`, `/lichi:tiktok-shop-api`.

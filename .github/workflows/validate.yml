@@ -31,6 +31,9 @@ jobs:
       - name: Test hook
         run: bash plugins/pstack/tools/test-hooks.sh
 
+      - name: Test hook lichi
+        run: node --test plugins/lichi/hooks/hooks.test.mjs
+
       - name: Test script đi kèm poteto-mode
         working-directory: plugins/pstack/skills/poteto-mode/scripts
         run: |
