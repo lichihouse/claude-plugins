@@ -125,6 +125,22 @@ test("after cd into a repo the guard still applies, using that repo's rules", ()
   });
 });
 
+test("$(...) and ${...} stay inside the command they belong to", () => {
+  const { root } = fixture();
+  for (const cmd of ["git add -A ${F}", "cd kho && git -c user.name=${N} push x", "git -c user.name=$(whoami) push x", "echo \"$(cd x && (git add -A))\"", "x=$(git add -A)"]) {
+    assert.ok(bash(root, cmd), `should block: ${cmd}`);
+  }
+  for (const cmd of ["echo ${HOME}", "awk '{print $1}' f", "git commit -m \"fix (a)\""]) {
+    assert.equal(bash(root, cmd), null, `should pass: ${cmd}`);
+  }
+});
+
+test("parent folder that is itself a repo: reminder says the guard is off", () => {
+  const { root } = fixture();
+  mkdirSync(join(root, ".git"));
+  assert.match(reminder(root), /KHÔNG chặn thay/);
+});
+
 test("subshells and groups are split like Claude Code does", () => {
   const { root } = fixture();
   for (const cmd of ["(cd web && git add -A)", "{ git add -A; }", "cd web; (git push origin main)"]) {

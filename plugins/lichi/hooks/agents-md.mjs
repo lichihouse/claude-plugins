@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { childRepos, nestedAgentsFiles, projectDir, readHookInput } from "./repos.mjs";
+import { childRepos, isRepo, nestedAgentsFiles, projectDir, readHookInput } from "./repos.mjs";
 
 export function reminder(cwd) {
   if (!cwd || existsSync(join(cwd, "AGENTS.md"))) return "";
@@ -11,7 +11,7 @@ export function reminder(cwd) {
   if (repos.length === 0) return "";
   const lines = [
     "<lichi-agents-md>",
-    `Phiên này mở ở thư mục cha (${cwd}), nên Claude Code KHÔNG tự nạp AGENTS.md của repo con, và deny list .claude/settings.json của repo cũng không tự áp (hook lichi chặn thay).`,
+    `Phiên này mở ở thư mục cha (${cwd}), nên Claude Code KHÔNG tự nạp AGENTS.md của repo con, và deny list .claude/settings.json của repo cũng không tự áp${isRepo(cwd) ? " (thư mục cha là repo nên hook lichi cũng KHÔNG chặn thay: tự tránh lệnh trong deny list repo con)" : " (hook lichi chặn thay)"}.`,
     "Trước khi đọc code, sửa, chạy lệnh hay trả lời về một repo dưới đây: Read AGENTS.md gốc của repo đó, và AGENTS.md lồng trong thư mục đang làm. Luật trong đó thắng mọi hướng dẫn khác về cách làm việc ở repo đó.",
     "Giao việc cho subagent: ghi đường dẫn AGENTS.md của repo vào brief.",
   ];

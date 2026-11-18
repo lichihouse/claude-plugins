@@ -7,6 +7,23 @@ const SEPARATORS = ["&&", "||", "|&", ";", "|", "&", "\n", "(", ")", "{", "}"];
 const WRAPPERS = new Set(["time", "nice", "nohup", "stdbuf", "command", "builtin", "noglob"]);
 const FILE_TOOLS = new Set(["Edit", "Write", "MultiEdit", "NotebookEdit"]);
 
+function closingIndex(cmd, open) {
+  const pair = { "(": ")", "{": "}" };
+  const stack = [];
+  let quote = null;
+  for (let i = open; i < cmd.length; i++) {
+    const c = cmd[i];
+    if (quote) {
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === "'" || c === '"') quote = c;
+    else if (c === "(" || c === "{") stack.push(pair[c]);
+    else if (c === stack[stack.length - 1] && (stack.pop(), stack.length === 0)) return i;
+  }
+  return cmd.length - 1;
+}
+
 export function splitCommand(cmd) {
   const parts = [];
   let cur = "";
@@ -23,6 +40,12 @@ export function splitCommand(cmd) {
       cur += c;
       continue;
     }
+    if (c === "$" && (cmd[i + 1] === "(" || cmd[i + 1] === "{")) {
+      const end = closingIndex(cmd, i + 1);
+      cur += cmd.slice(i, end + 1);
+      i = end;
+      continue;
+    }
     const s = SEPARATORS.find((x) => cmd.startsWith(x, i));
     if (s) {
       parts.push(cur);
@@ -34,7 +57,11 @@ export function splitCommand(cmd) {
   }
   parts.push(cur);
   const nested = [];
-  for (const m of cmd.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)) nested.push(...splitCommand(m[1] ?? m[2]));
+  for (let i = cmd.indexOf("$("); i !== -1; i = cmd.indexOf("$(", i + 2)) {
+    const end = closingIndex(cmd, i + 1);
+    nested.push(...splitCommand(cmd.slice(i + 2, end)));
+  }
+  for (const m of cmd.matchAll(/`([^`]*)`/g)) nested.push(...splitCommand(m[1]));
   return [...parts, ...nested].map((p) => p.trim()).filter(Boolean);
 }
 
