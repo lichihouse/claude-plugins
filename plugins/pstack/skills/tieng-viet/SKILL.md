@@ -24,7 +24,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:in-your-own-words` | Agent nói lại mục tiêu và vấn đề của bạn bằng lời của nó, để thấy nó hiểu sai trước khi làm. |
 | `/pstack:sharpen` | Viết lại prompt sâu hơn (không to hơn) trước khi gửi: chuyên gia sẽ làm gì thêm, dùng dữ liệu thô và cách nào, cái gì ngoài bạn và AI chứng minh kết quả đúng. Chỉ trả prompt, không làm việc. |
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt code ở đâu? |
-| `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
+| `/pstack:why` | Sao ngày xưa làm vậy? Trả lời từ lịch sử commit và PR (gh hoặc GitHub MCP), kèm mức chắc. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI: nhắm kết quả thật, dùng dữ liệu thô, mời nhiều ngành, có người chấm bên ngoài. |
 | `/pstack:ketchup` | Nãy giờ trong chat có gì mới: lời dễ hiểu, hình nhỏ, liệt kê đủ mọi việc chờ bạn quyết, mỗi việc đủ bối cảnh để quyết ngay. |
@@ -34,7 +34,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:architect` | Việc lớn: phác kiểu, hàm, file rồi mới viết code. |
 | `/pstack:arena` | Nhiều model làm cùng một việc, chọn bản tốt, ghép điểm hay. |
 | `/pstack:swarm` | Chia nhiều việc nhỏ, chạy song song, gom một báo cáo. |
-| `/pstack:interrogate` | Nhiều model soi lỗ hổng một diff. Chỉ kết luận, không tự sửa. |
+| `/pstack:interrogate` | Nhiều model thử phá một diff, chỉ giữ lỗi chạy lại thấy được. Chỉ kết luận, không tự sửa. |
 | `/pstack:figure-it-out` | Việc lớn chưa có cách làm sẵn. Viết quy trình rồi mới làm. |
 | `/pstack:show-me-your-work` | Nhật ký quyết định (làm gì, vì sao, bằng chứng) để xem lại sau. |
 | `/pstack:tdd` | Viết test fail trước rồi mới sửa. Chỉ khi người dùng xin. |

@@ -39,3 +39,9 @@ jobs:
         run: |
           bun install --frozen-lockfile
           bun test watch-pr check-playbooks
+
+      - name: Test script statechart
+        working-directory: plugins/pstack/skills/statechart/scripts
+        run: |
+          npm install --no-save --no-package-lock fast-check@4.5.3
+          node --disable-warning=ExperimentalWarning --test test/*.test.ts

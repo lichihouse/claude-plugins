@@ -154,7 +154,7 @@ Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) v
 
 ## Bảng model mặc định
 
-Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
+Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh` (`max` được đọc thành `xhigh`, vì không vai nào chạy trên `xhigh`).
 
 Tên trong app Claude và giá trị ghi trong bảng model:
 

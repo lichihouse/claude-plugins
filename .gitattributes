@@ -5,5 +5,6 @@
 *.mjs text eol=lf
 *.ts text eol=lf
 **/watch-pr/watch-pr text eol=lf
+**/statechart/scripts/statechart text eol=lf
 *.png binary
 *.jpg binary
