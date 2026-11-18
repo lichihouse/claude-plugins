@@ -1,0 +1,17 @@
+{
+  "description": "lichi: ở phiên mở thư mục cha (thread Project), nhắc đọc AGENTS.md của repo con cho phiên chính và mỗi subagent, và áp deny list .claude/settings.json của repo con.",
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/agents-md.mjs\"", "timeout": 10 }] }
+    ],
+    "SubagentStart": [
+      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/agents-md.mjs\"", "timeout": 10 }] }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Read",
+        "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/deny-guard.mjs\"", "timeout": 10 }]
+      }
+    ]
+  }
+}
