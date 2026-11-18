@@ -214,5 +214,20 @@ project_prompt a3 '/poteto-mode' >/dev/null; project_prompt a3 'turn 2' >/dev/nu
 check "an active flag survives cleanup" "$(project_prompt a3 'turn 3')" "pstack poteto-mode is on."
 check_empty "missing session id is a no-op" "$(printf '{"prompt":"/pstack:poteto-mode"}' | CLAUDE_PLUGIN_DATA="$tmp/data" bash "$plugin/hooks/poteto-mode-sticky.sh")"
 
+# interrogate scope-patch.sh: a clean tree gives no patch; a dirty tree rebuilds in a worktree that starts elsewhere.
+sp="$plugin/skills/interrogate/scripts/scope-patch.sh"
+g() { git -c user.email=t@t -c user.name=t "$@"; }
+repo="$tmp/sp/repo"; mkdir -p "$repo" && (cd "$repo" && g init -q -b main && echo a > a && g add a && g commit -qm a && g switch -q -c feat && echo c > c && g add c && g commit -qm c)
+out=$(cd "$repo" && bash "$sp" "$tmp/sp/store")
+check "scope-patch prints HEAD on a clean tree" "$(printf '%s' "$out" | head -n 1)" "$(git -C "$repo" rev-parse HEAD)"
+[ -z "$(printf '%s\n' "$out" | sed -n 2p)" ] && echo "ok   scope-patch gives no patch on a clean tree" || { echo "FAIL scope-patch gives no patch on a clean tree"; fails=$((fails + 1)); }
+(cd "$repo" && echo b >> a && printf '\0\1' > bin && echo w > ':weird' && mkdir -p sub && echo n > 'sub/new f')
+before=$(git -C "$repo" status --porcelain)
+out=$(cd "$repo/sub" && bash "$sp" "$tmp/sp/store")
+check "scope-patch leaves the real index alone" "$(git -C "$repo" status --porcelain)" "$before"
+git -C "$repo" worktree add -q --detach "$tmp/sp/wt" main
+(cd "$tmp/sp/wt" && git checkout -q --detach "$(printf '%s\n' "$out" | sed -n 1p)" && git apply "$(printf '%s\n' "$out" | sed -n 2p)")
+diff -r -x .git "$repo" "$tmp/sp/wt" > /dev/null && echo "ok   scope-patch rebuilds the session tree" || { echo "FAIL scope-patch rebuilds the session tree"; fails=$((fails + 1)); }
+
 [ "$fails" -eq 0 ] && echo "test-hooks: all passed" || echo "test-hooks: $fails failed"
 exit "$fails"
