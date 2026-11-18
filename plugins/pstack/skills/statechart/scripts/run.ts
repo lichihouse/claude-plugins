@@ -194,8 +194,11 @@ const runToFiles = (
 async function findTlc(cwd: string) {
   const { TLA2TOOLS, JAVA } = process.env;
   if (TLA2TOOLS) return { jar: TLA2TOOLS, java: JAVA || "java" };
+  // mise matches the ceiling against the real path of its cwd, so a ceiling under a
+  // symlinked TMPDIR (macOS /var) would never stop its config walk.
+  const ceiling = fs.realpathSync(cwd);
   const mise = (...args: string[]) =>
-    runChild("mise", args, { cwd, env: { ...process.env, MISE_CEILING_PATHS: cwd } });
+    runChild("mise", args, { cwd, env: { ...process.env, MISE_CEILING_PATHS: ceiling } });
   const where = () =>
     Promise.all([mise("where", TLC_TOOL), mise("which", "java", "--tool", JAVA_TOOL)]);
   let found = await where();

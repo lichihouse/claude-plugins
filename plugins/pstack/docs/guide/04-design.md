@@ -12,21 +12,9 @@ The two most common design mistakes are taking the agent's first design and poli
 /pstack:architect design the import pipeline before writing any code. i care most about how callers use it.
 ```
 
-<<<<<<< port
-[`/pstack:architect`](../../skills/architect/SKILL.md) grounds itself first, running `/pstack:how` over the code the design touches and `/pstack:why` when it moves ownership or layers. Then it runs `/pstack:arena` to produce competing design sketches, with the caller's usage written first in each, followed by types, signatures, and a module map.
+[`/pstack:architect`](../../skills/architect/SKILL.md) traces every system the change touches first. Then it sketches two different shapes, each with types, signatures, and module boundaries, and picks the one where each piece of state has one owner, each task has one way to do it, and callers need to know least. For a large or contested design, it runs `/pstack:arena` instead of sketching alone. If you want to see the design before any code, say so in the prompt.
 
-By default it proceeds straight from the synthesized design into implementation. If you want to see the design first, say so:
-
-```text
-/pstack:architect with checkpoint. stop and show me before implementing.
-```
-
-The design isn't sacred once code starts. If implementation shows the same workaround in unrelated places, or types that only compile with `any` or forced casts, `/pstack:architect` treats that as proof the design is wrong. It scraps the sketch and starts over instead of patching around it.
-=======
-[`/architect`](../../skills/architect/SKILL.md) traces every system the change touches first. Then it sketches two different shapes, each with types, signatures, and module boundaries, and picks the one where each piece of state has one owner, each task has one way to do it, and callers need to know least. For a large or contested design, it runs `/arena` instead of sketching alone. If you want to see the design before any code, say so in the prompt.
-
-The design isn't sacred once code starts. If the same workaround keeps coming back, `/architect` redesigns instead of patching around it.
->>>>>>> upstream@35a90942a7f0
+The design isn't sacred once code starts. If the same workaround keeps coming back, `/pstack:architect` redesigns instead of patching around it.
 
 ## Fan out attempts with `/pstack:arena`
 
@@ -34,11 +22,7 @@ The design isn't sacred once code starts. If the same workaround keeps coming ba
 /pstack:arena take my prompt to the arena verbatim. i want to compare their proposals with yours.
 ```
 
-<<<<<<< port
-[`/pstack:arena`](../../skills/arena/SKILL.md) is the general tool underneath. N subagents attempt the same design or code brief in parallel, each writing to its own worktree or directory. A read-only judge, on a different model when your configuration allows one, scores every candidate against a rubric. The coordinator reads each candidate end to end, picks a base, grafts in the best ideas from the losers, and verifies the result.
-=======
-[`/arena`](../../skills/arena/SKILL.md) is the general tool underneath. N subagents attempt the same design or code brief in parallel, each writing to its own worktree or directory. A read-only judge from a different model vendor scores every candidate against a rubric. When no model from another vendor can run, the coordinator skips the judge and picks the base itself. The coordinator reads each candidate end to end, picks a base, grafts in the best ideas from the losers, and verifies the result.
->>>>>>> upstream@35a90942a7f0
+[`/pstack:arena`](../../skills/arena/SKILL.md) is the general tool underneath. N subagents attempt the same design or code brief in parallel, each writing to its own worktree or directory. A read-only judge, on a different model from your chat when the cross-judge pool has one, scores every candidate against a rubric. When no judge can run, the coordinator skips it and picks the base itself. The coordinator reads each candidate end to end, picks a base, grafts in the best ideas from the losers, and verifies the result.
 
 ```mermaid
 flowchart LR
@@ -76,11 +60,7 @@ Reach for it when parallelism buys coverage or lets independent checks race. `/p
 /pstack:interrogate the whole branch, but skeptically. no nitpicks unless it's an actual bug or regression.
 ```
 
-<<<<<<< port
-[`/pstack:interrogate`](../../skills/interrogate/SKILL.md) sends the same diff, intent, and rubric to reviewers on different models, each with its own review lens. Diversity is the point. Different models have different blind spots, so a finding two models raise independently is high-confidence signal. The lead sorts everything into `Act on`, `Consider`, `Noted`, and `Dismissed`, with a reason for each dismissal, and applies nothing automatically.
-=======
-[`/interrogate`](../../skills/interrogate/SKILL.md) gives the change and its intent to adversaries on the configured models, and each tries to break it with a run against the real code. Adversaries find different failures. A finding survives only when rerunning its command shows a failure that breaks the intent. The report lists every verified finding with the adversaries that found it, then what each adversary dropped and why, and applies nothing.
->>>>>>> upstream@35a90942a7f0
+[`/pstack:interrogate`](../../skills/interrogate/SKILL.md) gives the change and its intent to adversaries on the configured models, and each tries to break it with a run against the real code. Every adversary here is a Claude model, so each also gets its own lens, such as races and edge cases or destructive data paths. Adversaries find different failures. A finding survives only when rerunning its command shows a failure that breaks the intent. The report lists every verified finding with the adversaries that found it, then what each adversary dropped and why, and applies nothing.
 
 Read the Dropped list too. You can override the verdict.
 
@@ -100,11 +80,7 @@ The same idea scales up to a real design. Pair `/pstack:architect` with prototyp
 /pstack:poteto-mode we need rate limiting for external webhooks. /pstack:architect it first, and answer open questions with prototypes. let me review before proceeding.
 ```
 
-<<<<<<< port
-Don't spend reviewers on an abstract plan. `/pstack:interrogate` belongs on a diff. Point adversarial review at a plan with no code behind it and the reviewers invent theoretical risks and edge cases that will never happen. Let prototypes settle the questions, then review what got built.
-=======
-Don't spend adversaries on an abstract plan. `/interrogate` drops every finding a run does not prove, so a plan with no code behind it gives them little to break. Let prototypes settle the questions, then review what got built.
->>>>>>> upstream@35a90942a7f0
+Don't spend adversaries on an abstract plan. `/pstack:interrogate` drops every finding a run does not prove, so a plan with no code behind it gives them little to break. Let prototypes settle the questions, then review what got built.
 
 ## Write the README first for shared code
 
@@ -138,17 +114,10 @@ For a migration, state the bar in the prompt:
 
 You might be wondering whether every change needs this. No. Most changes need none of it. A rough ladder:
 
-<<<<<<< port
 - A small, finished change you're unsure about needs `/pstack:interrogate` alone.
-- A change that crosses function boundaries or moves ownership earns `/pstack:architect`, which brings `/pstack:arena` with it.
+- A change that crosses function boundaries or moves ownership earns `/pstack:architect`, which brings `/pstack:arena` with it when the design is large or contested.
 - A standalone decision where independent attempts would help, like naming, formats, or an algorithm, is `/pstack:arena` directly.
 - A coverage matrix, set of parallel checks, or race with declared arms is `/pstack:swarm`.
-=======
-- A small, finished change you're unsure about needs `/interrogate` alone.
-- A change that crosses function boundaries or moves ownership earns `/architect`, which brings `/arena` with it when the design is large or contested.
-- A standalone decision where independent attempts would help, like naming, formats, or an algorithm, is `/arena` directly.
-- A coverage matrix, set of parallel checks, or race with declared arms is `/swarm`.
->>>>>>> upstream@35a90942a7f0
 - An open question you could answer by running something, like a layout, a timing, or an approach, gets a prototype, not a debate.
 - A contested design that's expensive to reverse gets `/pstack:architect`, then `/pstack:interrogate` before shipping.
 - Work that spans several PRs gets a plan, written after the design settles.

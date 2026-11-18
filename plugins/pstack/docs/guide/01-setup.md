@@ -24,15 +24,11 @@ Run:
 
 [`/pstack:setup-pstack`](../../skills/setup-pstack/SKILL.md) detects the models you have access to, asks for a reasoning budget, shows you each role (code delegates, judgment, the review panels), and asks what you want. Answer the questions. It writes the pstack model map, `.claude/pstack-models.md` for the project or `~/.claude/pstack-models.md` for you. The plugin's SessionStart hook injects it into every new session, so every pstack skill reads it.
 
-<<<<<<< port
-The defaults match the `unlimited` budget, with `fable` on the hardest work. `large` caps every role at `opus`. `medium` and `small` move more roles to `sonnet` or `haiku` and spend fewer tokens.
+The defaults are the same as the `large` budget, an `opus` ceiling. The code roles run on `opus` at `medium` effort, bug fix and the hardest tasks on `opus` at `high`, and the review panels mix `opus` and `sonnet`. No role defaults to `fable`. It runs when you name it for a task, put it on a role yourself, or pick `unlimited`, which moves the hardest work to `fable`. `medium` and `small` move more roles to `sonnet` or `haiku` and spend fewer tokens. A map with no `# budget` line reads as `large`.
 
-You only override what you care about. A role with no line in the map keeps the skill's default. To restore a default, delete that role's line. A project line overrides a user line for the same role. A rerun of `/pstack:setup-pstack` keeps any role whose model or effort differs from the default. When a default changes, a map written before the change still pins the old default, so delete those role lines, or delete the file, then run `/pstack:setup-pstack` again. A value can carry an effort word, such as `opus medium`, on the roles that spawn `pstack:poteto-agent` (the code roles, hardest tasks, and judgment and prose).
-=======
-The defaults are the same as the `large` budget. Code, prose, and judgment run on Opus 5.5 at `xhigh` reasoning, and the review panels and swarm workers run at `high`. No role runs above `xhigh`. Outside a review panel, Fable 5.2 runs only when you name it for a task or after two Opus 5.5 runs of the same brief fail their check. `medium` lowers each role one level and `small` lowers it two, and both spend fewer tokens.
+The map has eleven roles: `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, `judgment and prose`, `hardest tasks`, `how explainer`, `arena runners`, `arena cross-judge pool`, `swarm workers`, and `interrogate reviewers`. A line for a retired role from an older map, such as `how explorer` or `architect runners`, is ignored, and the next `/pstack:setup-pstack` run drops it.
 
-You only override what you care about. A role with no line in the rule keeps the skill's default. To restore a default, delete that role's line. A rerun of `/setup-pstack` keeps any role whose model differs from the default. When a default changes, a rule written before the change still pins the old default until you run `/setup-pstack` again. That run replaces the old defaults it recognizes, tells you which, and keeps your other choices. To drop a pin it does not recognize, delete that role's line or the file first.
->>>>>>> upstream@35a90942a7f0
+You only override what you care about. A role with no line in the map keeps the skill's default. To restore a default, delete that role's line. A project line overrides a user line for the same role. A rerun of `/pstack:setup-pstack` keeps any role whose model or effort differs from the default. When a default changes, a map written before the change still pins the old default until you run `/pstack:setup-pstack` again. That run replaces the old defaults it recognizes, tells you which, and keeps your other choices. To drop a pin it does not recognize, delete that role's line or the file first. A value can carry an effort word, such as `opus medium`, on the roles that spawn `pstack:poteto-agent` (the code roles, hardest tasks, and judgment and prose).
 
 You might be wondering how to keep every subagent on the model you chose for the chat. Set a role to `inherit-parent` and pstack omits the subagent `model` field, so the subagent inherits your parent chat model. `auto` means the same thing, kept for maps carried over from Cursor. Neither is a model name. For a panel role the value is a list, and one subagent runs per entry, so the list length sets the panel size. Setup also configures `swarm workers`, the default model for every `/pstack:swarm` worker unless a race names a model for each arm.
 
@@ -65,11 +61,7 @@ Pick something real but small, and describe it the way you'd describe it to a co
 /pstack:poteto-mode add a --json flag to this command. text output stays byte-identical. verify both.
 ```
 
-<<<<<<< port
-Watch the todo list. Its first items are the matched playbook's steps copied in, the Feature playbook for this prompt. If `/pstack:poteto-mode` skips a step, the step stays in the list with `skip: <reason>`, so you can see what it chose not to do.
-=======
 Watch the todo list. Its first items are the matched playbook's steps copied in, the Feature playbook for this prompt.
->>>>>>> upstream@35a90942a7f0
 
 From here you can type normal follow-ups. `/pstack:poteto-mode` is sticky. It stays on for the conversation until you opt out by saying so.
 

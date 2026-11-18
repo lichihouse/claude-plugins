@@ -21,13 +21,10 @@
       "paths": [
         "agents/reader.md",
         "skills/how/SKILL.md",
-        "skills/why/SKILL.md",
-        "skills/interrogate/SKILL.md",
-        "skills/reflect/SKILL.md",
         "skills/arena/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "Thay Task `readonly: true` của Cursor: agent pstack:reader chỉ đọc nhưng vẫn giữ MCP và web. how, why, interrogate, reflect, arena gọi pstack:reader thay generalPurpose + readonly.",
+      "why": "Thay Task `readonly: true` của Cursor: agent pstack:reader chỉ đọc nhưng vẫn giữ MCP và web. how (explainer) và arena (cross-judge) gọi pstack:reader thay generalPurpose + readonly.",
       "since": "0.15.5-claude.1"
     },
     {
@@ -52,16 +49,18 @@
         "skills/automate-me/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "Claude Code không có create-skill: dùng skill-creator nếu có, không thì playbook Authoring a skill; kiểm bằng claude plugin validate. reflect lấy transcript từ khối hook. AskUserQuestion chỉ 2-4 lựa chọn.",
+      "why": "Claude Code không có create-skill: dùng skill-creator nếu có, không thì playbook Authoring a skill. reflect lấy transcript từ khối hook. AskUserQuestion chỉ 2-4 lựa chọn.",
       "since": "0.15.5-claude.1"
     },
     {
       "paths": [
         "skills/why/SKILL.md",
-        "skills/interrogate/SKILL.md"
+        "skills/interrogate/SKILL.md",
+        "skills/arena/SKILL.md",
+        "skills/recall/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "why dò MCP theo tên tool mcp__<server>__ và fallback gh / GitHub MCP. interrogate có chuỗi model dự phòng fable → opus → sonnet → haiku khi model không có.",
+      "why": "why và recall dò MCP theo tên tool mcp__<server>__ (deferred thì ToolSearch) và fallback gh / GitHub MCP. arena (và interrogate qua arena Phase A) có chuỗi model dự phòng fable → opus → sonnet → haiku khi model bị từ chối, thay luật 'slug cùng family' của gốc.",
       "since": "0.15.5-claude.1"
     },
     {
@@ -84,14 +83,11 @@
       "paths": [
         "skills/poteto-mode/playbooks/autopilot-full.md",
         "skills/poteto-mode/playbooks/autopilot-stack.md",
-        "skills/poteto-mode/playbooks/multi-phase-plan.md",
-        "skills/poteto-mode/scripts/check-plan.mjs",
-        "skills/poteto-mode/playbooks/orchestrate.md",
         "skills/swarm/SKILL.md",
         "skills/poteto-mode/playbooks/opening-a-pr.md"
       ],
       "kind": "port-feature",
-      "why": "Owner là agent chạy nền (Agent + worktree, hoặc create_session) thay Cursor cloud agent; đọc playbook từ <pstack root> thay git show origin/main; phiên cloud không có /loop thì dùng send_later / Routine. check-plan.mjs nhận marker regex cho <pstack root>. orchestrate và swarm chạy worker bằng Agent + isolation worktree hoặc create_session / get_session, store là pstack store. opening-a-pr đặt draft: false cho PR tool của phiên remote và GitHub MCP.",
+      "why": "Owner là agent chạy nền (Agent + worktree, hoặc create_session) thay Cursor cloud agent; đọc playbook từ <pstack root> thay git show origin/main; phiên cloud không có /loop thì dùng send_later / Routine. swarm chạy worker bằng Agent + isolation worktree hoặc create_session / get_session, store là pstack store. opening-a-pr đặt draft: false cho PR tool của phiên remote và GitHub MCP.",
       "since": "0.15.5-claude.1"
     },
     {
@@ -135,7 +131,7 @@
         "hooks/session-start.sh"
       ],
       "kind": "policy",
-      "why": "Vai viết code mặc định opus effort medium (subagent_type pstack:poteto-agent + model opus + effort medium), không phải sonnet.",
+      "why": "Vai viết code mặc định opus effort medium (subagent_type pstack:poteto-agent + model opus + effort medium), không phải sonnet. Từ 0.15.43-claude.1 vai bug-fix mặc định opus effort high. Gốc để mọi vai code ở claude-opus-5-5-xhigh-fast.",
       "since": "0.15.5-claude.2"
     },
     {
@@ -159,7 +155,6 @@
       "paths": [
         "skills/recall/SKILL.md",
         "skills/deslop/SKILL.md",
-        "skills/why/references/synthesizer-prompt.md",
         "agents/comment-sicko.md"
       ],
       "kind": "policy",
@@ -217,10 +212,7 @@
         "skills/poteto-mode/SKILL.md",
         "agents/poteto-agent.md",
         "skills/poteto-mode/playbooks/*.md",
-        "skills/how/SKILL.md",
-        "skills/why/SKILL.md",
         "skills/interrogate/SKILL.md",
-        "skills/reflect/SKILL.md",
         "skills/arena/SKILL.md",
         "skills/no-comments/SKILL.md",
         "skills/swarm/SKILL.md",
@@ -230,7 +222,7 @@
         "skills/figure-it-out/SKILL.md"
       ],
       "kind": "port-feature",
-      "why": "\"Match the effort to the job\" thay luật chọn reasoning level và fast mode của upstream (#613): chỉ áp cho spawn pstack:poteto-agent; dòng vai có từ effort thì truyền tham số effort của Agent và nâng / hạ một bậc trong cùng vai, không có thì bỏ effort. Skill không gọi thẳng pstack:poteto-agent (reader, comment-sicko, general-purpose, verification) bỏ câu \"Pick each subagent's effort\" của upstream. Claude Code không có fast mode.",
+      "why": "\"Match the effort to the job\" thay luật chọn reasoning level và fast mode của upstream (#613): chỉ áp cho spawn pstack:poteto-agent; dòng vai có từ effort thì truyền tham số effort của Agent và nâng / hạ một bậc trong cùng vai, không có thì bỏ effort. Skill không gọi thẳng pstack:poteto-agent (reader, comment-sicko, general-purpose, verification) bỏ câu \"Pick each subagent's effort\" của upstream. Claude Code không có fast mode. Từ 0.15.43-claude.1 nâng tối đa xhigh (theo gốc #1249: không vai nào chạy trên xhigh), panel giữ model và mức đã ghi; model / effort bị từ chối thì không truyền lại mà lùi theo chuỗi dòng vai → fallback của skill → alias gần nhất → bỏ model.",
       "since": "0.15.25-claude.1"
     },
     {
@@ -333,12 +325,12 @@
     },
     {
       "paths": [
-        "skills/statechart/scripts/tlc-tools.mjs",
-        "skills/statechart/scripts/test/statechart.test.mjs"
+        "skills/statechart/scripts/run.ts",
+        "skills/statechart/scripts/test/cli.test.ts"
       ],
       "kind": "policy",
-      "why": "Sửa trước bản gốc lỗi trên macOS (TMPDIR /var là symlink tới /private/var): ceiling của mise và lệnh cài dùng đường dẫn thật (realpathSync, pwd -P); test lấy đường dẫn thật của thư mục tạm, test rename bằng LD_PRELOAD chỉ chạy trên Linux. Bản gốc sửa rồi thì bỏ mục này.",
-      "since": "0.15.32-claude.2"
+      "why": "Sửa trước bản gốc lỗi trên macOS (TMPDIR /var là symlink tới /private/var): findTlc trong run.ts đặt MISE_CEILING_PATHS bằng đường dẫn thật (realpathSync) của thư mục tạm, không thì mise đi lên quá trần và đọc config của thư mục cha; test launcher qua symlink tương đối (cli.test.ts linkedLauncher) dựng link từ đường dẫn thật của thư mục tạm. Bản gốc sửa rồi thì bỏ mục này.",
+      "since": "0.15.43-claude.1"
     },
     {
       "paths": [
@@ -356,6 +348,81 @@
       "kind": "policy",
       "why": "Description nhường skill verify-* của repo (verify-booking, verify-kho), vì ngoài poteto-mode model vẫn tự gọi được hai skill này và dễ dựng harness mới thay stack verify có sẵn.",
       "since": "0.15.32-claude.3"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md",
+        "skills/poteto-mode/playbooks/bug-fix.md",
+        "skills/setup-pstack/SKILL.md",
+        "skills/arena/SKILL.md",
+        "skills/interrogate/SKILL.md",
+        "skills/swarm/SKILL.md",
+        "hooks/session-start.sh",
+        "tools/lint-port.sh",
+        "README.md",
+        "docs/guide/01-setup.md",
+        "evals/session-map/case.yaml"
+      ],
+      "kind": "policy",
+      "why": "Fable tạm ngừng: model map mặc định trần opus (feature, refactoring opus medium, bug-fix opus high, perf-issue và hillclimb opus medium, judgment and prose opus, hardest tasks opus high, how explainer opus, arena runners và interrogate reviewers opus, sonnet, sonnet, cross-judge opus, sonnet, swarm workers sonnet). Budget mặc định large; unlimited chỉ đưa hardest tasks lên fable. Fable chỉ chạy khi người dùng gọi tên hoặc model map ghi; bỏ luật gốc 'hai lượt Opus xhigh hỏng thì lên Fable'. Gốc #1236/#1249 bỏ các vai how explorer, why investigators, why synthesizer, reflect tooling, reflect judgment, architect runners (port bỏ theo) và cả hardest tasks, how explainer (port giữ: poteto-mode và hook SessionStart của port còn đọc hardest tasks, /how của port cần model tường minh cho pstack:reader). Bản đồ còn 11 vai, lint-port.sh đếm 11.",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Trigger rút gọn của gốc #1249 map sang Claude Code: kickoff worker.md áp cho Agent và phiên start_session / create_session (thay Project worker); /pstack:deslop và control-ui / control-cli là skill của pstack (không có cursor-team-kit), skill verify-* của dự án đi trước; Babysit thay 'Cursor built-in babysit'; bot review (Bugbot, Claude Code Review) vẫn trỏ references/bugbot-triage.md; second opinion là model khác (Claude Code không có vendor khác).",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "agents/poteto-agent.md"
+      ],
+      "kind": "port-feature",
+      "why": "Không lấy dòng `model: claude-opus-5-5-xhigh-fast` của gốc #1249. Port truyền model + effort trên mỗi lệnh Agent theo model map; để trống model trong frontmatter thì dòng inherit-parent (bỏ model) vẫn chạy pstack:poteto-agent trên model của phiên cha, không phải chuyển sang general-purpose như gốc.",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/worker.md"
+      ],
+      "kind": "policy",
+      "why": "Thêm câu AGENTS.md / CLAUDE.md của repo thắng luật worker.md khi khác nhau (vd Booking bắt review độc lập và PR nháp khi còn sửa, worker.md gốc cấm thêm vòng review và cấm PR nháp). Ghi rõ tool hỏi người là AskUserQuestion hoặc thẻ lựa chọn của phiên (request_decision).",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/poteto-mode/playbooks/babysit.md"
+      ],
+      "kind": "port-feature",
+      "why": "Watcher watch-pr cần gh. Phiên Claude Code trên web không có gh, nên babysit đọc trạng thái PR qua GitHub MCP (pull_request_read, get_check_run, get_job_logs) và thức dậy bằng subscribe_pr_activity cộng heartbeat send_later dài. Đường dẫn watcher ghi <pstack root>/skills/poteto-mode/scripts/watch-pr/watch-pr.",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/setup-pstack/SKILL.md",
+        "hooks/session-start.sh"
+      ],
+      "kind": "port-feature",
+      "why": "Lấy ý dòng `# defaults: N` của gốc #1249 nhưng theo mặc định của port: file thiếu `# defaults: 2` thì thay các giá trị là mặc định cũ (hardest tasks: fable, panel fable, opus, sonnet, cross-judge fable, opus, budget unlimited, sonnet trên vai code của bản 0.15.5-claude.1). Không lấy budget theo effort của gốc (large/medium/small hạ effort): port giữ budget theo bậc model vì effort chỉ áp cho vai spawn pstack:poteto-agent. Lấy luật gốc không vai nào chạy trên xhigh: `max` đọc thành `xhigh` (hook SessionStart in xhigh khi file ghi max).",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/interrogate/SKILL.md"
+      ],
+      "kind": "port-feature",
+      "why": "Gốc #1249 viết lại interrogate trên arena: adversary chứng minh lỗi bằng lần chạy thật trong worktree riêng. Port spawn adversary bằng general-purpose + isolation worktree (gốc ghi generalPurpose), mặc định dòng interrogate reviewers là opus, sonnet, sonnet. Bỏ lens theo từng reviewer và các bucket Act on / Consider của port cũ theo gốc.",
+      "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/statechart/references/render.md"
+      ],
+      "kind": "port-feature",
+      "why": "Bản gốc chỉ nói 'cài Pele một lần, ngoài repo'. Bản port ghi chỗ cài cụ thể trong cache người dùng (`${XDG_CACHE_HOME:-$HOME/.cache}/statechart/pele-1.9.0`, cùng thư mục cache test render.test.ts dùng), cần mạng, và đặt XDG_CACHE_HOME khi thư mục đó không ghi được (mang từ câu --png cũ của SKILL.md bản port).",
+      "since": "0.15.43-claude.1"
     }
   ]
 }

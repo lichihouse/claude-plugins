@@ -82,30 +82,18 @@ The contract above drives one task to one finish condition. Some nights hold mor
 [Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md) is Autopilot-full without the merge. You wake up to verified PRs, each with its verdict, and you review and land them yourself. A PR stacks only on a PR it builds on. Pick it over Autopilot-full when you want your own eyes on the work before anything merges:
 
 ```text
-<<<<<<< port
-/pstack:poteto-mode autopilot these five changes but stack them, don't ship. i'll land the stack in the morning.
-=======
-/poteto-mode autopilot these five changes, but don't merge. i'll land them in the morning.
->>>>>>> upstream@35a90942a7f0
+/pstack:poteto-mode autopilot these five changes, but don't merge. i'll land them in the morning.
 ```
 
-A whole program, such as a migration across many packages, has no playbook of its own. `/poteto-mode` routes large or cross-cutting work to [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs one rigorous run for it:
+A whole program, such as a migration across many packages, has no playbook of its own. `/pstack:poteto-mode` routes large or cross-cutting work to [`/pstack:figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs one rigorous run for it:
 
 ```text
-<<<<<<< port
-/pstack:poteto-mode orchestrate the store migration. own it until every package is converted and merged. i'll check in twice a day.
-=======
-/poteto-mode migrate every package to the new store. own it until each one is converted and merged. i'll check in twice a day.
->>>>>>> upstream@35a90942a7f0
+/pstack:poteto-mode migrate every package to the new store. own it until each one is converted and merged. i'll check in twice a day.
 ```
 
 ## Run many projects in parallel
 
-<<<<<<< port
-Give one coordinator session a long-lived home in the cloud, such as a Claude Code on the web session or a Claude project's coordinator chat. The coordinator doesn't write code. It directs subagents and remote sessions that run in the cloud, so the work continues when your laptop is closed. That's the shape the Orchestrate playbook expects. Start your prompts to the coordinator with `/pstack:poteto-mode`, and the sessions it spawns follow the playbooks.
-=======
-A [Cursor Project](https://cursor.com/blog/projects) gives one coordinator agent a persistent thread. The coordinator doesn't write code. It directs subagents, which run in the cloud by default, so the work continues when your laptop is closed. Start your prompts to the coordinator with `/poteto-mode`, and the subagents it spawns follow the playbooks. Each agent it starts reads [`worker.md`](../../skills/poteto-mode/worker.md) first, so workers hold to the kickoff's bar, decide reversible calls instead of asking you, and open PRs ready for review.
->>>>>>> upstream@35a90942a7f0
+Give one coordinator session a long-lived home in the cloud, such as a Claude Code on the web session or a Claude project's coordinator chat. The coordinator doesn't write code. It directs subagents and remote sessions that run in the cloud, so the work continues when your laptop is closed. Start your prompts to the coordinator with `/pstack:poteto-mode`, and the sessions it spawns follow the playbooks. Each agent it starts reads [`worker.md`](../../skills/poteto-mode/worker.md) first, so workers hold to the kickoff's bar, decide reversible calls instead of asking you, and open PRs ready for review.
 
 A few habits help:
 

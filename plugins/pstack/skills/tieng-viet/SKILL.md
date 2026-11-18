@@ -28,7 +28,7 @@ Lệnh gõ có tiền tố `/pstack:` khi pstack là plugin. Nếu repo cài pst
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, dựng từng sơ đồ). |
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI: nhắm kết quả thật, dùng dữ liệu thô, mời nhiều ngành, có người chấm bên ngoài. |
 | `/pstack:ketchup` | Nãy giờ trong chat có gì mới: lời dễ hiểu, hình nhỏ, liệt kê đủ mọi việc chờ bạn quyết, mỗi việc đủ bối cảnh để quyết ngay. |
-| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide, việc chờ bạn quyết viết bên dưới. |
+| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide có phụ đề, việc chờ bạn quyết viết bên dưới. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
 | `/pstack:architect` | Việc lớn: phác kiểu, hàm, file rồi mới viết code. |

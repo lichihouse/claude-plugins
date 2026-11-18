@@ -20,10 +20,10 @@ graders:
   - name: hook-emitted-map
     type: regex
     target: trace
-    pattern: '"subtype":"hook_response"[^\n]*"hook_event":"SessionStart"[^\n]*pstack model map[^\n]*hardest tasks: fable  \[default\]'
-  - name: hardest-tasks-fable
+    pattern: '"subtype":"hook_response"[^\n]*"hook_event":"SessionStart"[^\n]*pstack model map[^\n]*hardest tasks: opus high  \[default\]'
+  - name: hardest-tasks-opus-high
     type: regex
-    pattern: 'hardest tasks:\s*fable\s*\[default\]'
+    pattern: 'hardest tasks:\s*opus high\s*\[default\]'
   - name: judgment-and-prose-opus
     type: regex
     pattern: 'judgment and prose:\s*opus\s*\[default\]'

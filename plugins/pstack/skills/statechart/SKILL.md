@@ -1,10 +1,6 @@
 ---
 name: statechart
-<<<<<<< port
-description: "Vẽ cách một hệ thống đi qua các trạng thái (luồng sản phẩm, giao thức, service) thành statechart Mermaid sinh từ mô hình TLA+. Mỗi bug là một đường đánh số tới trạng thái phạm luật. Dùng cho /pstack:statechart, cho PM / designer xem bug dưới dạng đường đi, biến sơ đồ đã thống nhất thành khung TLA+, hoặc soi code với spec TLA+ có sẵn."
-=======
-description: "Check a TLA+ model of a system that moves between states, such as a product flow, a protocol, or a service, and draw it as a Mermaid statechart. The report gives the shortest path to each state that breaks a rule. Use for /statechart, or to show a bug as a path through states."
->>>>>>> upstream@35a90942a7f0
+description: "Kiểm một mô hình TLA+ của hệ thống đi qua các trạng thái (luồng sản phẩm, giao thức, service) và vẽ nó thành statechart Mermaid. Báo cáo đưa đường ngắn nhất tới mỗi trạng thái phạm luật. Dùng cho /pstack:statechart, hoặc để xem bug dưới dạng đường đi qua các trạng thái."
 disable-model-invocation: true
 ---
 
@@ -12,16 +8,12 @@ disable-model-invocation: true
 
 The chart shows how a system moves between states, in the words of the person who reads it. That person, the reader, decides whether the behavior is right.
 
-<<<<<<< port
-Run `node "<pstack root>/skills/statechart/scripts/statechart.mjs" --help` for the commands and for how to read a chart. Work in a scratch folder outside the repo. The command writes its files next to its input. The first run installs TLC and Java with mise, which downloads about 305 MB and needs the network. The help's TLC section tells how to use a TLC and Java that you have. The first `--png` also runs `npm install` for the renderer, which needs the network, into `~/.cache/statechart/`. When that folder is not writable, set `XDG_CACHE_HOME` to one that is.
-=======
 ## Run
->>>>>>> upstream@35a90942a7f0
 
 Work in a scratch folder outside the repo. Write a TLA+ spec and its config. Then run:
 
 ```sh
-<skill dir>/scripts/statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
+"<pstack root>/skills/statechart/scripts/statechart" SPEC.tla [--config FILE] [--view FILE] [--out DIR]
 ```
 
 `scripts/statechart.ts` is TypeScript, so run it with a runtime that can execute TypeScript.
@@ -81,7 +73,7 @@ Aim for about 20 arrows or fewer, because a busier chart is hard to read. First 
 
 Show `chart.mmd` to the user as a `mermaid` code block. The chart has a budget of 500 states, counted by TLC on the config as written. Above that, the chart draws only the paths to the rules that break, and when no rule breaks, the command writes no `chart.mmd`. It still checks each rule, and the report gives the state count and each bug path. To see the whole graph, make the model smaller.
 
-Render charts with Pele. When the user asks for an image, or a chart is too large to read as text, follow `references/render.md`. Do not use a different renderer unless the user asks for it.
+Render charts with Pele. When the user asks for an image, or a chart is too large to read as text, follow `<pstack root>/skills/statechart/references/render.md`. Do not use a different renderer unless the user asks for it.
 
 ## Hand off
 

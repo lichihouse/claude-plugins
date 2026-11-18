@@ -1,20 +1,12 @@
 ---
 name: ketchup-video
-<<<<<<< port
-description: "Kể lại như /pstack:ketchup, nhưng phần đã xảy ra là một video ngắn không tiếng gồm vài slide, các việc chờ người dùng quyết viết thành chữ bên dưới. Dùng cho /pstack:ketchup-video, 'tóm tắt bằng video'."
-=======
-description: "Catch the user up like /ketchup, with a short subtitled video of slides for what happened and the waiting calls as text under it. Use for /ketchup-video."
->>>>>>> upstream@35a90942a7f0
+description: "Kể lại như /pstack:ketchup, nhưng phần đã xảy ra là một video ngắn gồm vài slide có phụ đề, các việc chờ người dùng quyết viết thành chữ bên dưới. Dùng cho /pstack:ketchup-video, 'tóm tắt bằng video'."
 disable-model-invocation: true
 ---
 
 # Ketchup video
 
-<<<<<<< port
-Follow [`/pstack:ketchup`](../ketchup/SKILL.md), but show what happened in a short silent video instead of its summary and visuals. Its window starts at the last message the user wrote before `/pstack:ketchup-video`, not before any earlier `/pstack:ketchup`. Writing and rendering the video, outside the repo, is the other exception to its read-only rule, next to its Artifact page. The reply is ketchup's opening sentence, the video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
-=======
-Follow [`/ketchup`](../ketchup/SKILL.md), but show what happened in a short subtitled video instead of its summary and visuals. Its window starts at the last message the user wrote before `/ketchup-video`, not before any earlier `/ketchup`. Writing and rendering the video, outside the repo, is the one exception to its read-only rule. The reply is ketchup's opening sentence, the embedded video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
->>>>>>> upstream@35a90942a7f0
+Follow [`/pstack:ketchup`](../ketchup/SKILL.md), but show what happened in a short subtitled video instead of its summary and visuals. Its window starts at the last message the user wrote before `/pstack:ketchup-video`, not before any earlier `/pstack:ketchup`. Writing and rendering the video, outside the repo, is the other exception to its read-only rule, next to its Artifact page. The reply is ketchup's opening sentence, the video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
 
 ## Slides
 
@@ -32,12 +24,8 @@ Give each slide one short subtitle line, about ten words, that says its point th
 
 ## Render
 
-<<<<<<< port
-Render one silent landscape video, such as an mp4, with motion between slides. Every frame is the slide itself, edge to edge. Make the frames from the slides, never by recording a screen. Hold each slide long enough to read its words, at least one second for each three words it adds. Words inside a screenshot do not count. Before you share the video, look at one frame from each slide in the rendered file, and count the words it adds against its hold in that file. Fix any slide you cannot read in that time, render again, and check again.
-
-Claude Code cannot play a video inside a reply. When the `Artifact` tool is available, put the video on one private Artifact page (follow the `artifact-design` skill if the session lists it) and link it. Otherwise give the video's path or link so the user can open it. Use `ffmpeg` for the render when it is installed. If no tool on this machine can render a video, say so in one line and give only the calls.
-=======
 Render one silent landscape video, such as an mp4, with motion between slides. Every frame is the slide itself, edge to edge, above its subtitle strip. Make the frames from the slides, never by recording a screen, and burn each subtitle into its slide's frames so it stays on screen for the slide's whole hold. The hold is the time a slide is fully on screen, not counting the motion into or out of it. Hold each slide long enough to read the words it adds, at least one second for each three words. A slide adds its subtitle and each word that was not on the slide before it, including a label it changes. The first slide adds all its words. Words inside a screenshot do not count.
 
-Before you embed the video, check the rendered file. Look at one frame from each slide at chat size, and check that its subtitle is readable and covers nothing. Measure each hold by matching the file's frames to the slide, not with a still-frame detector, which counts the faint ends of a fade as still. Count the words each slide adds against its measured hold. Fix any slide you cannot read in that time, render again, and check again.
->>>>>>> upstream@35a90942a7f0
+Before you share the video, check the rendered file. Look at one frame from each slide at chat size, and check that its subtitle is readable and covers nothing. Measure each hold by matching the file's frames to the slide, not with a still-frame detector, which counts the faint ends of a fade as still. Count the words each slide adds against its measured hold. Fix any slide you cannot read in that time, render again, and check again.
+
+Claude Code cannot play a video inside a reply. When the `Artifact` tool is available, put the video on one private Artifact page (follow the `artifact-design` skill if the session lists it) and link it. Otherwise give the video's path or link so the user can open it. Use `ffmpeg` for the render when it is installed. If no tool on this machine can render a video, say so in one line and give only the calls.

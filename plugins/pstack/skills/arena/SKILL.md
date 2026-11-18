@@ -14,11 +14,7 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-<<<<<<< port
-3. Pick the runners. Use the `arena runners` line in the pstack model map. If the map or that line is missing, default to one each on `fable`, `opus`, `sonnet`. An `inherit-parent` or `auto` entry in this line or the cross-judge line means the parent model, so omit `model` for it. If the Agent tool rejects a configured entry, run that seat on the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so. If it rejects a default, use the closest valid model from its error message. Spawn more runners when the arena covers multiple design directions. Use the same model N times when the work is generation-bound rather than judgment-sensitive.
-=======
-3. Pick the runners from the `arena runners` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, and `gemini-4-carbon-high`. An `auto` or `inherit-parent` entry is the parent model, so omit `model` and spawn `generalPurpose`. If the Task tool rejects a slug, use the nearest valid slug of the same family or drop the seat, keep at least two runners, and say so. Families go by prefix, and the longest match wins: `claude-fable-*`, `claude-*`, and `gemini-*`, after dropping a leading `cursor-`. Any other slug's family is its text before the first hyphen. Spawn more for multiple design directions, and repeat one model when the work is generation-bound, not judgment-sensitive. Pick each subagent's reasoning level per the Subagents section of the **poteto-mode** skill.
->>>>>>> upstream@35a90942a7f0
+3. Pick the runners from the `arena runners` line in the pstack model map, by default `opus`, `sonnet`, and `sonnet`. Spawn each candidate as `subagent_type: "general-purpose"`. An `inherit-parent` or `auto` entry is the parent model, so omit `model` for it. If the Agent tool rejects an entry, run that seat on the next tier down (`fable` → `opus` → `sonnet` → `haiku`) or drop the seat, keep at least two runners, and say so. All seats are Claude models, so diversity comes from the tier, not the vendor. Spawn more for multiple design directions, and repeat one model when the work is generation-bound, not judgment-sensitive.
 4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
@@ -29,11 +25,7 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-<<<<<<< port
-After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in the pstack model map. If the map or that line is missing, choose from `fable`, `opus`. Prefer a model different from the one this session runs on. Spawn one read-only judge subagent (`subagent_type: "pstack:reader"`) on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
-=======
-After all Phase B candidates complete, spawn one readonly judge from the `arena cross-judge pool` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-opus-5-5-high-fast`, `gemini-4-carbon-high`. The judge is never from the parent's vendor, and Fable counts as Claude for that check, so use the first entry from another vendor. An `auto` or `inherit-parent` entry is the parent model. If you do not know the parent's model, use the first real slug and say that the vendor check did not run. If the Task tool rejects a slug, use the nearest valid slug of the same family, then the next such entry, or skip the judge, and say so. While you read in Phase D, the judge scores each candidate, by path label, on each rubric criterion and recommends a base.
->>>>>>> upstream@35a90942a7f0
+After all Phase B candidates complete, spawn one read-only judge (`subagent_type: "pstack:reader"`) from the `arena cross-judge pool` line in the pstack model map, by default `opus`, `sonnet`. Every entry is a Claude model, so the judge cannot come from another vendor. Use the first entry whose model differs from the one this session runs on. An `inherit-parent` or `auto` entry is the parent model, so it never judges. If you do not know the parent's model, use the first entry and say that the different-model check did not run. If the Agent tool rejects an entry, use the next tier down, then the next entry, or skip the judge, and say so. While you read in Phase D, the judge scores each candidate, by path label, on each rubric criterion and recommends a base.
 
 ## Phase D: Pick a base
 

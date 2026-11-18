@@ -1,10 +1,6 @@
 ---
 name: principle-explain-the-number
-<<<<<<< port
-description: "Nội quy trước khi tin, báo hay hành động theo một con số tự đo (tốc độ, regression, throughput, latency, kết quả eval): tìm cái giới hạn nó, và loại trừ khả năng nó đo nhầm thứ khác."
-=======
-description: "Apply before you measure, and before you trust, report, or act on a number you measured: a speedup, a regression, a throughput, a latency, or an eval result. Find what limits it, and rule out that it measured something other than the work you think."
->>>>>>> upstream@35a90942a7f0
+description: "Nội quy trước khi đo, và trước khi tin, báo hay hành động theo một con số tự đo (tốc độ, regression, throughput, latency, kết quả eval): tìm cái giới hạn nó, và loại trừ khả năng nó đo nhầm thứ khác."
 disable-model-invocation: true
 ---
 
