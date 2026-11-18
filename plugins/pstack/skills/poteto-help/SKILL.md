@@ -43,11 +43,11 @@ Installing changes little until the user invokes a skill. Only `/pstack:setup-ps
 
 If cost is the worry, say where the tokens go and how to spend fewer. pstack spends extra tokens on subagents and review panels. Rerun `/pstack:setup-pstack` and pick a smaller budget, cheaper models, or a lower effort word. A role set to `inherit-parent` runs on the session's model, which saves tokens when the session runs a cheaper model. A shorter panel list runs fewer subagents, one for each entry. Save `/pstack:poteto-mode` for work that needs rigor.
 
-pstack was built for Cursor, and this is its Claude Code port. Its skills use the Agent Skills format, so other tools can read them. But most workflow skills, including `/pstack:poteto-mode`, `/pstack:how`, `/pstack:why`, and `/pstack:teach`, spawn Claude Code subagents with per-role models, and the sticky mode and the model map come from Claude Code hooks, so those parts may not work elsewhere.
+pstack was built for Cursor, and this is its Claude Code port. Its skills use the Agent Skills format, so other tools can read them. But most workflow skills, including `/pstack:poteto-mode`, `/pstack:how`, and `/pstack:teach`, spawn Claude Code subagents, some with per-role models, and the sticky mode and the model map come from Claude Code hooks, so those parts may not work elsewhere.
 
 ## Start a task with `/pstack:poteto-mode`
 
-`/pstack:poteto-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A step it skips stays in the list as `skip: <reason>`. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep. Read [`references/prompting.md`](references/prompting.md) before you help word one. [Guide page 2](../../docs/guide/02-poteto-mode.md) has examples.
+`/pstack:poteto-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep. Read [`references/prompting.md`](references/prompting.md) before you help word one. [Guide page 2](../../docs/guide/02-poteto-mode.md) has examples.
 
 The mode is sticky. After `/pstack:poteto-mode`, a UserPromptSubmit hook keeps it on for the rest of the session, and it stays out of the way on casual turns. `/pstack:poteto-mode off` or "tắt poteto-mode" turns it off for the session. A `# auto-route: off` line in `.claude/pstack-models.md` or `~/.claude/pstack-models.md` stops the hooks from turning it on by themselves; the project file wins.
 
@@ -68,7 +68,7 @@ The default answer is `/pstack:poteto-mode`, which runs most of the others when 
 | Understand a change or subsystem, explained plainly | [`/pstack:teach`](../teach/SKILL.md) |
 | Catch up on their own recent work on a topic | [`/pstack:recall`](../recall/SKILL.md) |
 | Catch up on what changed in this chat since their last message, in plain words and small visuals, with every item waiting on them listed and decidable from the reply alone | [`/pstack:ketchup`](../ketchup/SKILL.md) |
-| Catch up like `/pstack:ketchup`, in a short silent video of slides, with the waiting calls as text under it | [`/pstack:ketchup-video`](../ketchup-video/SKILL.md) |
+| Catch up like `/pstack:ketchup`, in a short subtitled video of slides, with the waiting calls as text under it | [`/pstack:ketchup-video`](../ketchup-video/SKILL.md) |
 | Know what a small diff could break outside itself | [`/pstack:blast-radius`](../blast-radius/SKILL.md) |
 | Settle types and module shape before code that crosses a function boundary | [`/pstack:architect`](../architect/SKILL.md) |
 | Get several attempts at one brief, merged into the best one | [`/pstack:arena`](../arena/SKILL.md) |
@@ -85,7 +85,7 @@ The default answer is `/pstack:poteto-mode`, which runs most of the others when 
 | Bring a verification skill and its feature map back in line with the app | [`/pstack:maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
 | Formally verify a race, invariant, or other property that tests rarely reach | [`/pstack:create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
 | Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | [`/pstack:maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md) |
-| Show a PM or designer what the user sees as a chart checked by a model, with each bug drawn as a numbered path, turn an agreed chart into a TLA+ skeleton, or audit the code against its TLA+ spec | [`/pstack:statechart`](../statechart/SKILL.md) |
+| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | [`/pstack:statechart`](../statechart/SKILL.md) |
 | Drive a web, IDE, or Electron UI, or a CLI or TUI, for screenshots and other evidence | [`/pstack:control-ui`](../control-ui/SKILL.md), [`/pstack:control-cli`](../control-cli/SKILL.md) |
 | Vet a performance number before reporting or acting on it | [`/pstack:benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/pstack:figure-it-out`](../figure-it-out/SKILL.md) |
@@ -103,16 +103,15 @@ Close calls:
 
 - `/pstack:how` explains what the code does. `/pstack:why` explains the reasons. `/pstack:teach` runs one or both and explains the result plainly.
 - `/pstack:arena` gives every worker the same brief and merges the best parts. `/pstack:swarm` splits work into slices or a race and returns one report.
-- `/pstack:architect` implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
 - `/pstack:interrogate` reviews the diff. `/pstack:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
 - `/pstack:recall` rebuilds context across recent chats. `/pstack:ketchup` covers only this chat since the user's last message. Resuming one specific chat or branch is the Session pickup playbook.
-- `/pstack:figure-it-out` designs one rigorous run. The Orchestrate playbook runs a program that spans days and many PRs. The Autonomous run playbook drives one task to a finish condition.
+- `/pstack:figure-it-out` designs one rigorous run. The Autonomous run playbook drives one task to a finish condition.
 
 Not in pstack:
 
 - `/loop` and `/goal` are Claude Code built-ins, and only the user can type `/goal`. pstack has no skill-authoring command: use the `skill-creator` skill when the session lists it, or `/pstack:poteto-mode write a skill for <workflow>`.
 - `make-bot-ui` from the Cursor pstack is not ported, because it depends on Cursor Automations.
-- pstack has no `/orchestrate` skill. Orchestrate is a `/pstack:poteto-mode` playbook. If the slash menu shows `/orchestrate`, another plugin provides it.
+- pstack has no `/orchestrate` skill. If the slash menu shows `/orchestrate`, another plugin provides it.
 
 ## Playbooks and principles
 
@@ -122,10 +121,10 @@ Playbooks are step lists inside `/pstack:poteto-mode`, not skills, so they have 
 - "land the stack" runs Shipping.
 - "take over this branch" runs Session pickup.
 - "pause safely" runs Pause safely.
-- "full autopilot on this queue" runs Autopilot-full. "stack them, don't ship" runs Autopilot-stack.
+- "full autopilot on this queue" runs Autopilot-full. "autopilot, don't merge" runs Autopilot-stack.
 - "run the eval playbook" runs Eval.
 
-A repository can pin its own version of a step in `.claude/playbooks/<name>.md`, and its `AGENTS.md` or `CLAUDE.md` wins over any playbook, so check both before you promise what a playbook does there. The Playbooks section of [`poteto-mode`](../poteto-mode/SKILL.md) lists every playbook and when it applies. [Guide page 6](../../docs/guide/06-verify-and-ship.md) covers opening, babysitting, and landing a PR.
+A repository can pin its own version of a step in `.claude/playbooks/<name>.md`, and its `AGENTS.md` or `CLAUDE.md` wins over any playbook, so check both before you promise what a playbook does there. The Playbooks section of [`poteto-mode`](../poteto-mode/SKILL.md) lists every playbook. [Guide page 6](../../docs/guide/06-verify-and-ship.md) covers opening, babysitting, and landing a PR.
 
 pstack has no planning skill. Claude Code's plan mode works alongside it. For work that spans phases or stacked PRs, asking `/pstack:poteto-mode` for a plan runs the [Multi-phase plan playbook](../poteto-mode/playbooks/multi-phase-plan.md), which writes the plan and doesn't implement it. For a design question, the Prototype playbook or `/pstack:architect` settles it in code first.
 

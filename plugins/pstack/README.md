@@ -2,8 +2,8 @@
 
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ như bản gốc, trừ các chỗ ghi trong sổ [`tools/forks.json`](tools/forks.json): chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud) và vài lựa chọn riêng của Lichi House. Description các skill đã dịch sang tiếng Việt.
 
-- Dựa trên upstream **0.15.32**, commit `99b609a72323` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.32-claude.3`.
+- Dựa trên upstream **0.15.43**, commit `35a90942a7f0` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.43-claude.1`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
@@ -91,20 +91,20 @@ when: Sửa bug ở repo này.
 |---|---|
 | `/pstack:poteto-mode` | Việc cần làm kỹ, gọn, có kiểm chứng. Điểm vào mặc định. |
 | `/pstack:how` | Cái này chạy thế nào? File nào phụ trách? Nên đặt ở đâu? |
-| `/pstack:why` | Sao ngày xưa làm vậy? Tra git, PR, ticket, chat, log qua MCP. |
+| `/pstack:why` | Sao ngày xưa làm vậy? Trả lời từ lịch sử, không từ code: commit và thảo luận PR lúc thêm và mỗi lần sửa, thiếu thì tra nguồn khác. Trích lời tác giả, ghi rõ chỗ nào là suy luận, chỗ nào lịch sử không trả lời. |
 | `/pstack:teach` | Giải thích cho tôi hiểu thật (how + why, từng sơ đồ). |
 | `/pstack:ambition` | Viết lại prompt giao việc cho AI tham vọng hơn (Tốc độ, Độ cao, Độ sâu, Độ rộng). |
 | `/pstack:poteto-help` | Hỏi cách dùng pstack: cài đặt, nên chọn skill / playbook nào, sửa lượt chạy hỏng. |
 | `/pstack:in-your-own-words` | Agent nói lại mục tiêu và vấn đề bằng lời của nó trước khi làm. |
-| `/pstack:sharpen` | Viết lại prompt sâu hơn (không to hơn) trước khi gửi: chuyên gia sẽ làm gì thêm, dùng dữ liệu thô và cách nào, cái gì ngoài bạn và AI chứng minh kết quả đúng. Chỉ trả prompt, không làm việc. |
+| `/pstack:sharpen` | Viết lại prompt sâu hơn (không to hơn) trước khi gửi: chuyên gia sẽ làm gì thêm, dùng dữ liệu thô và cách nào, cái gì ngoài bạn và AI chứng minh kết quả đúng. Prompt mới bảo agent làm prototype cho lựa chọn nào thử được, còn lựa chọn sản phẩm / sở thích để bạn quyết. Chỉ trả prompt, không làm việc. |
 | `/pstack:ketchup` | Nãy giờ trong chat có gì mới: lời dễ hiểu, hình nhỏ, liệt kê đủ mọi việc chờ bạn quyết, mỗi việc đủ bối cảnh để quyết ngay. |
-| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide, việc chờ bạn quyết viết bên dưới. |
+| `/pstack:ketchup-video` | Như ketchup nhưng phần đã làm là video ngắn vài slide có phụ đề, việc chờ bạn quyết viết bên dưới. |
 | `/pstack:recall` | Tôi đang làm dở chỗ nào? Dựng lại ngữ cảnh từ lịch sử chat. |
 | `/pstack:blast-radius` | Sửa cái này thì vỡ chỗ nào? Chạy thật để chứng minh. |
-| `/pstack:architect` | Phác kiểu, chữ ký hàm, module trước khi viết code. |
+| `/pstack:architect` | Phác hai hướng (kiểu, chữ ký hàm, ranh giới module) trước khi viết code, chọn hướng mỗi state có một chủ. Thiết kế lớn hoặc còn tranh cãi thì chạy arena. |
 | `/pstack:arena` | Nhiều model làm cùng một việc, chọn bản tốt, ghép điểm hay. |
 | `/pstack:swarm` | Chia nhiều việc nhỏ, chạy song song, gom một báo cáo. |
-| `/pstack:interrogate` | Nhiều model soi lỗ hổng một diff. Chỉ kết luận, không tự sửa. |
+| `/pstack:interrogate` | Nhiều model tìm cách làm vỡ một diff bằng lệnh chạy thật. Chỉ giữ lỗi chạy lại thấy được, không tự sửa. |
 | `/pstack:figure-it-out` | Việc lớn chưa có playbook. Thiết kế quy trình rồi mới làm. |
 | `/pstack:show-me-your-work` | Nhật ký quyết định (TSV) để review sau. |
 | `/pstack:tdd` | Viết test fail trước rồi mới sửa. |
@@ -118,10 +118,10 @@ when: Sửa bug ở repo này.
 | `/pstack:maintain-verification-skill` | Skill verify đã lệch app, sửa lại. |
 | `/pstack:create-formal-verification-skill` | Chứng minh một tính chất của code đúng trong mọi trường hợp (race, retry, state machine) mà test khó chạm. Tạo skill để kiểm lại mỗi lần sửa. |
 | `/pstack:maintain-formal-verification-skill` | Code đã đổi sau lần kiểm chứng hình thức trước: sửa mô hình cho khớp, chạy lại, nói lỗi là lệch mô hình hay bug thật. |
-| `/pstack:statechart` | Vẽ sơ đồ trạng thái người dùng thấy (sinh từ mô hình TLA+), mỗi bug là một đường đánh số, cho PM / designer xem. |
+| `/pstack:statechart` | Kiểm mô hình TLA+, vẽ sơ đồ trạng thái người dùng thấy (Mermaid), đánh dấu trạng thái phạm luật và đường ngắn nhất tới nó, cho PM / designer xem. |
 | `/pstack:control-ui` / `/pstack:control-cli` | Lái trình duyệt / CLI để lấy bằng chứng (Playwright, CDP). |
 | `/pstack:typescript-best-practices` | Quy tắc TypeScript. |
-| `/pstack:reflect` | Học từ phiên vừa xong, đề xuất sửa skill. |
+| `/pstack:reflect` | Học từ phiên vừa xong, chỉ giữ bài học đổi được cách làm lần sau, đề xuất sửa skill và chờ bạn duyệt. |
 | `/pstack:correct` | Agent cứ mắc lại cùng một lỗi: tìm các loại lỗi lặp, chặn từng loại bằng kiến trúc / type / lint / test, giữ bảng luật ↔ cái chặn nó. |
 | `/pstack:automate-me` | Tạo `<tên-bạn>-mode` từ thói quen làm việc của bạn. |
 | `/pstack:setup-pstack` | Đổi model và mức nỗ lực (effort) cho từng vai. |
@@ -154,7 +154,7 @@ Không port: `make-bot-ui` (gắn với webhook Cursor Automations / Grok Bot) v
 
 ## Bảng model mặc định
 
-Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh`, `max`.
+Mỗi dòng trong bảng model là `<model>` hoặc `<model> <effort>`. Model là `fable`, `opus`, `sonnet`, `haiku` (luôn là bản mới nhất của dòng đó) hoặc `inherit-parent` (dùng model của phiên chính, ví dụ `inherit-parent medium`). Effort là `low`, `medium`, `high`, `xhigh` (`max` được đọc thành `xhigh`, vì không vai nào chạy trên `xhigh`).
 
 Tên trong app Claude và giá trị ghi trong bảng model:
 
@@ -162,7 +162,7 @@ Tên trong app Claude và giá trị ghi trong bảng model:
 |---|---|---|
 | Low · Medium · High | `low` · `medium` · `high` | `med` cũng được |
 | **Extra** | `xhigh` | `extra` cũng được, hook tự đổi thành `xhigh` |
-| Max | `max` | |
+| Max | `xhigh` | Không vai nào chạy trên `xhigh`: ghi `max` thì hook đọc thành `xhigh` và báo lại. |
 | **Ultracode** | không phải mức effort | Là chế độ của phiên: `xhigh` + tự điều phối workflow. Ghi `ultracode` trong bảng thì hook đọc thành `xhigh` và báo lại. |
 
 Haiku không hỗ trợ effort, nên `haiku high` được đọc thành `haiku`. Luôn ghi đúng giá trị trong cột giữa khi sửa file agent: Claude Code âm thầm bỏ qua giá trị lạ (chỉ ghi log debug), lint của plugin chặn lỗi này.
@@ -171,19 +171,25 @@ Tool `Agent` của Claude Code nhận tham số `effort` khi gọi (đã thử 1
 
 | Vai | Mặc định |
 |---|---|
-| feature, refactoring · bug-fix · perf-issue · hillclimb | `opus medium` |
-| judgment and prose | `opus` |
-| hardest tasks | `fable` |
-| how explorer · why investigators · swarm workers · reflect tooling | `sonnet` |
-| how explainer · why synthesizer · reflect judgment | `opus` |
-| arena runners · architect runners · interrogate reviewers | `fable, opus, sonnet` |
-| arena cross-judge pool | `fable, opus` |
+| feature, refactoring · perf-issue · hillclimb | `opus medium` |
+| bug-fix | `opus high` |
+| judgment and prose · how explainer | `opus` |
+| hardest tasks | `opus high` |
+| swarm workers | `sonnet` |
+| arena runners · interrogate reviewers | `opus, sonnet, sonnet` |
+| arena cross-judge pool | `opus, sonnet` |
 
-"Budget" của `/pstack:setup-pstack` là **trần model**, giữ nguyên effort: unlimited → fable, large → opus, medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt.
+Bảng có đúng 11 vai. Các vai của bản cũ (how explorer, why investigators, why synthesizer, reflect tooling, reflect judgment, architect runners) đã bỏ theo bản gốc: hook bỏ qua dòng đó và `/pstack:setup-pstack` xoá khi ghi lại file.
 
-Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên `interrogate` giao thêm cho mỗi reviewer một góc nhìn riêng: đúng / race / edge case · phân quyền / bảo mật / dữ liệu destructive · nghiệp vụ (tiền, múi giờ, parity giữa các đường đọc).
+Mặc định không vai nào dùng `fable` (tạm ngừng). Muốn dùng thì gọi tên nó cho một việc, ghi `fable` vào một vai, hoặc chọn budget unlimited (chỉ đưa `hardest tasks` lên `fable`).
+
+"Budget" của `/pstack:setup-pstack` là **trần model**, giữ nguyên effort: unlimited → fable cho việc khó nhất, large → opus (bằng mặc định; file không có dòng `# budget` thì hook in `large (skill defaults)`), medium → sonnet nhưng giữ opus cho các vai phán đoán, small → sonnet + haiku cho việc đọc hàng loạt.
+
+Bản gốc dùng 3 hãng khác nhau cho panel review để có góc nhìn khác nhau. Ở đây cả panel là Claude, nên độ đa dạng đến từ model khác nhau (`opus, sonnet, sonnet`). `interrogate` chạy trên arena: mỗi adversary chứng minh lỗi bằng một lần chạy thật trong worktree riêng.
 
 Nâng từ `0.15.5-claude.1`: nếu đã chạy `/pstack:setup-pstack` ở bản đó, file bảng model đang ghi `sonnet` cho 4 vai code. Chạy lại `/pstack:setup-pstack` (nó nhận ra file bản cũ và chuyển sang `opus medium`) hoặc xoá 4 dòng đó. File ghi bằng bản mới giữ nguyên `sonnet` nếu bạn chủ động chọn.
+
+Mặc định đổi ở bản mới thì file ghi trước đó vẫn ghim mặc định cũ tới khi chạy lại `/pstack:setup-pstack`. Lần chạy đó thay các mặc định cũ nó nhận ra, báo đã thay gì, giữ các lựa chọn khác của bạn. Dòng ghim nào nó không nhận ra thì xoá tay dòng đó (hoặc cả file) trước.
 
 Đổi riêng cho một repo: chạy `/pstack:setup-pstack`, chọn ghi vào `.claude/pstack-models.md` của repo đó rồi commit. Đổi cho mọi repo trên máy: chọn `~/.claude/pstack-models.md`.
 
@@ -222,7 +228,7 @@ claude plugin eval plugins/pstack --runs 1 --ablation none --scaffold --allow-to
 | Case | Chứng minh |
 |---|---|
 | `how-spawns-reader` | `/pstack:how` với câu hỏi hẹp gọi đúng một `Agent` loại `pstack:reader`, model `opus` lấy từ bảng model, và câu trả lời nêu clamp. |
-| `session-map` | Hook SessionStart chạy và bơm bảng model. Câu trả lời trích `hardest tasks: fable  [default]` và `judgment and prose: opus  [default]` mà không đọc file. |
+| `session-map` | Hook SessionStart chạy và bơm bảng model. Câu trả lời trích `hardest tasks: opus high  [default]` và `judgment and prose: opus  [default]` mà không đọc file. |
 | `poteto-bugfix-routing` | `/pstack:poteto-mode` với bug "repro first" đọc `playbooks/bug-fix.md`, không đọc playbook khác, rồi mở todo (`TaskCreate`) có bước repro đứng đầu. |
 | `reader-cannot-edit` | `pstack:reader` từ chối tạo file dù phiên có Write. Không có lệnh Write nào, và file không xuất hiện. |
 | `poteto-no-todo-tool` | Phiên không có tool todo (model mới mặc định như vậy). Run đọc `playbooks/bug-fix.md`, đưa các bước vào câu trả lời thành checklist: mục đầu là repro, repro đứng trước Binary-search. Không ghi file, không đọc `math.js`, không Grep / Glob trừ khi lệnh nhắc tới playbook hay poteto-mode. Chạy trên model mới, vd thêm `--model claude-opus-5-5` vào lệnh eval ở trên; trên model cũ phiên có sẵn `TaskCreate` nên case này fail. Phần hook in cổng thiết lập do `tools/test-hooks.sh` kiểm, vì trace của eval không chứa output UserPromptSubmit. |

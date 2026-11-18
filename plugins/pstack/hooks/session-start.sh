@@ -61,7 +61,8 @@ awk '
 		return out
 	}
 	# App labels and CLI aliases to the effort values the Agent tool accepts:
-	# Extra is xhigh, med is medium, and Ultracode (xhigh plus workflows, a session mode) reads as xhigh.
+	# Extra is xhigh, med is medium, Ultracode (xhigh plus workflows, a session mode) reads as xhigh,
+	# and max reads as xhigh because no role runs above xhigh.
 	function canon(v,   a, k, i, w, n, x, out) {
 		k = split(tolower(v), a, ",")
 		out = ""
@@ -71,6 +72,7 @@ awk '
 				if (w[2] == "extra") w[2] = "xhigh"
 				else if (w[2] == "med") w[2] = "medium"
 				else if (w[2] == "ultracode") { w[2] = "xhigh"; if (w[1] != "haiku") ultra = 1 }
+				else if (w[2] == "max") { w[2] = "xhigh"; if (w[1] != "haiku") maxed = 1 }
 				x = w[1] " " w[2]
 			}
 			out = out (i > 1 ? ", " : "") x
@@ -106,7 +108,7 @@ awk '
 		if (role !~ /^[a-z][a-z ,-]*[a-z]$/) next
 		if (src == "default") { order[++n] = role; def[role] = norm(val); next }
 		if (!(role in def)) { unknown[src]++; next }
-		ultra = 0; val = canon(val)
+		ultra = 0; maxed = 0; val = canon(val)
 		if (!valid(val)) { bad = bad "(ignored " src " line with a value that is not a model alias: " role ")\n"; next }
 		if (val ~ /(^|, )haiku [a-z]+/) {
 			gsub(/haiku [a-z]+/, "haiku", val)
@@ -117,12 +119,13 @@ awk '
 			bad = bad "(ignored the effort word on the " src " line for " role ": only roles that spawn pstack:poteto-agent take one)\n"
 		}
 		if (ultra && val ~ / xhigh/) bad = bad "(ultracode on the " src " line for " role " is read as xhigh: its workflow part is a session mode, not an agent setting)\n"
+		if (maxed && val ~ / xhigh/) bad = bad "(max on the " src " line for " role " is read as xhigh: no role runs above xhigh)\n"
 		v[src SUBSEP role] = norm(val)
 	}
 	END {
 		if (n == 0) { print "pstack: default model map not found in skills/setup-pstack/SKILL.md (anchor line \"# pstack model map.\")."; exit }
-		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "unlimited (skill defaults)")
-		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call on subagent_type pstack:poteto-agent with BOTH model and effort set (for example model \"opus\", effort \"medium\"). The effort parameter fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means effort \"medium\" with no model. Effort words are low, medium, high, xhigh (the Claude apps label it Extra), max; a role with no effort word runs at the session effort when one is set, else the model default, and haiku runs without effort. The Agent effort overrides the session effort, including Extra, Max and Ultracode, unless CLAUDE_CODE_EFFORT_LEVEL is set; an organization effort cap still applies."
+		bud = ("project" in budget) ? budget["project"] : (("user" in budget) ? budget["user"] : "large (skill defaults)")
+		print "pstack model map (budget: " bud "). Project .claude/pstack-models.md overrides user ~/.claude/pstack-models.md overrides skill default. inherit-parent or auto means omit the Agent model. An effort word (opus medium) means an Agent call on subagent_type pstack:poteto-agent with BOTH model and effort set (for example model \"opus\", effort \"medium\"). The effort parameter fixes only the effort, so leaving model out runs the parent model. inherit-parent medium means effort \"medium\" with no model. Effort words are low, medium, high, xhigh (the Claude apps label it Extra); no role runs above xhigh, so max reads as xhigh; a role with no effort word runs at the session effort when one is set, else the model default, and haiku runs without effort. The Agent effort overrides the session effort, including Extra, Max and Ultracode, unless CLAUDE_CODE_EFFORT_LEVEL is set; an organization effort cap still applies."
 		for (k = 1; k <= n; k++) {
 			r = order[k]
 			if (("project" SUBSEP r) in v) { val = v["project" SUBSEP r]; s = "project" }

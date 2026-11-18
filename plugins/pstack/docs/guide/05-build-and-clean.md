@@ -56,7 +56,7 @@ In context, that's enough. [`/pstack:tdd`](../../skills/tdd/SKILL.md) writes the
 
 ## Clean before you commit
 
-The [Opening a PR playbook](../../skills/poteto-mode/playbooks/opening-a-pr.md) runs `/pstack:deslop` on the diff before each commit and applies [`/pstack:unslop`](../../skills/unslop/SKILL.md) to the PR description and commit bodies. `/pstack:deslop` comes from Cursor's `cursor-team-kit` plugin, and this Claude Code port bundles it. It removes unnecessary comments, defensive checks abnormal for trusted code paths, `any` casts used to dodge type errors, deep nesting that early returns would flatten, and other patterns inconsistent with the surrounding code.
+The [Opening a PR playbook](../../skills/poteto-mode/playbooks/opening-a-pr.md) runs `/pstack:deslop` on the diff before each commit, and poteto-mode applies [`/pstack:unslop`](../../skills/unslop/SKILL.md) to the PR description and commit bodies. `/pstack:deslop` comes from Cursor's `cursor-team-kit` plugin, and this Claude Code port bundles it. It removes unnecessary comments, defensive checks abnormal for trusted code paths, `any` casts used to dodge type errors, deep nesting that early returns would flatten, and other patterns inconsistent with the surrounding code.
 
 For prose, `/pstack:unslop` takes a target and any extra rules you have:
 

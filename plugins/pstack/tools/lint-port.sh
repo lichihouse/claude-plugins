@@ -95,8 +95,8 @@ done
 
 # The SessionStart hook reads the default model map from this fenced block.
 roles=$(awk '/^# pstack model map\./ { on = 1; next } on && /^```/ { exit } on && /^[a-z][a-z ,-]*:/ { n++ } END { print n + 0 }' skills/setup-pstack/SKILL.md)
-if [ "$roles" != 17 ]; then
-	echo "skills/setup-pstack/SKILL.md: default model map has $roles role lines, expected 17 (anchor line '# pstack model map.')"
+if [ "$roles" != 11 ]; then
+	echo "skills/setup-pstack/SKILL.md: default model map has $roles role lines, expected 11 (anchor line '# pstack model map.')"
 	status=1
 fi
 
