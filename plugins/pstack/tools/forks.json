@@ -423,6 +423,15 @@
       "kind": "port-feature",
       "why": "Bản gốc chỉ nói 'cài Pele một lần, ngoài repo'. Bản port ghi chỗ cài cụ thể trong cache người dùng (`${XDG_CACHE_HOME:-$HOME/.cache}/statechart/pele-1.9.0`, cùng thư mục cache test render.test.ts dùng), cần mạng, và đặt XDG_CACHE_HOME khi thư mục đó không ghi được (mang từ câu --png cũ của SKILL.md bản port).",
       "since": "0.15.43-claude.1"
+    },
+    {
+      "paths": [
+        "skills/interrogate/SKILL.md",
+        "skills/interrogate/scripts/scope-patch.sh"
+      ],
+      "kind": "port-feature",
+      "why": "Worktree của subagent Claude Code có thể bắt đầu từ nhánh mặc định thay HEAD của phiên. Gốc chỉ ghi 'copy uncommitted changes'. Port thêm scope-patch.sh: in SHA HEAD và một patch đủ file untracked + binary (index tạm, không dùng git add -A vì Booking cấm, không đụng index thật); brief bắt adversary checkout --detach SHA rồi git apply.",
+      "since": "0.15.43-claude.1"
     }
   ]
 }
