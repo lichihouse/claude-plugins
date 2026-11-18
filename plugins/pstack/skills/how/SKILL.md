@@ -6,6 +6,7 @@ disable-model-invocation: true
 
 # How
 
+<<<<<<< port
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
 Every spawn is an `Agent` subagent with `subagent_type: "pstack:reader"` (read-only, keeps MCP). Explorers use the `how explorer` line in the pstack model map (injected at session start; see the **setup-pstack** skill), default `sonnet`, and every explainer uses the `how explainer` line, default `opus`. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so.
@@ -26,11 +27,18 @@ Decompose the question into 2 to 4 angles, each a distinct slice of the subsyste
 ## 3. Synthesize (complex only)
 
 Once all explorers have returned, spawn one explainer with `references/explainer-prompt.md` and every explorer's findings filled in.
+=======
+Explore the codebase to answer "how does X work?" questions.
 
-## 4. Present
+If the scope is ambiguous, state your interpretation and explore. The user can redirect.
 
-Present the explainer's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
+## 1. Explain
+>>>>>>> upstream@35a90942a7f0
 
-## Output format
+Spawn one Task subagent with `subagent_type: generalPurpose` and `readonly: true` that explores and explains in one pass. Give it the user's question and this brief:
 
-The explanation uses the sections defined in `references/explainer-prompt.md`, dropping any that do not apply: Overview, Key Concepts, How It Works, Where Things Live, Gotchas.
+> You are writing an architectural explanation for a senior engineer. Explore the codebase and write an explanation that a senior engineer unfamiliar with this area could read and walk away with a solid mental model. They should understand the architecture well enough to start working in it confidently. You have read-only access to the codebase.
+
+## 2. Present
+
+Present the subagent's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.

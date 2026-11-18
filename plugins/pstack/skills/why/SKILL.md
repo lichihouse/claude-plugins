@@ -1,11 +1,16 @@
 ---
 name: why
+<<<<<<< port
 description: "Giải thích vì sao: 'why does X work this way', vì sao chọn Y, lý do thiết kế, regression, postmortem, ngưỡng dựa trên dữ liệu. Tra song song các MCP có sẵn (git, issue, docs, chat, monitoring, error tracking, analytics) rồi trả kết luận có trích nguồn. Hỏi code chạy thế nào thì dùng how."
+=======
+description: "Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Returns a cited read on decisions and tradeoffs. Use how for runtime behavior."
+>>>>>>> upstream@35a90942a7f0
 disable-model-invocation: true
 ---
 
 # Why
 
+<<<<<<< port
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 
 Each spawn below names a role line in the pstack model map (injected at session start; see the **setup-pstack** skill) and a default. Set `model` to that line's value, or to the default if the map or the line is missing. Leave `model` unset when the value is `inherit-parent` or `auto`. If the Agent tool rejects a value, use the default and say so. If it rejects the default, use the next tier down (`fable` → `opus` → `sonnet` → `haiku`) and say so.
@@ -96,3 +101,6 @@ After Sources Consulted, if the user's `why` question is a precursor to changing
 ## Common Failure Modes to Avoid
 
 - **Recency bias**. Assuming the most recent commit is authoritative. The current shape is often the accretion of many earlier decisions. Trace back.
+=======
+Answer from the record, not the code: read the commits and PR discussions that introduced the target and each later change, and other sources if the trail is thin. Cite what the authors wrote, mark your own inferences as inferences, and say what the record does not answer.
+>>>>>>> upstream@35a90942a7f0

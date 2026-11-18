@@ -22,6 +22,7 @@ If this turn's hook message says poteto-mode is now off, or the arguments are on
 
 The Principles section below grounds every trigger. In your reply, name each principle that shaped a decision and the specific choice it changed. Cite only principles whose leaf SKILL.md you read this session.
 
+<<<<<<< port
 Remaining triggers:
 
 - Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
@@ -42,6 +43,21 @@ Remaining triggers:
 - Bugbot, Claude Code Review, or another review bot or security reviewer commented → skeptical posture. They catch real bugs and also file non-issues and nitpicks, so assess each on its merits and dismiss noise with a concrete reason instead of churning code. Triage fix / dismiss / ask per `references/bugbot-triage.md`.
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
 - Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back", "/loop until X") → a decision trail via the **show-me-your-work** skill. Commit it when stakes need an auditable record. Keep it local otherwise.
+=======
+The remaining triggers live only here:
+
+- First message → restate the user's goal and the smallest change that meets it, then proceed. Open each subagent brief, PR `## Why`, and final report with the goal.
+- Starting any agent, whether a Task subagent or a Project worker → the first line of its kickoff is `Read <path>/worker.md before anything else.`, with `<path>` the absolute path of this skill's folder. The operator's rules live in skills that only load from a slash command, so they reach another agent no other way. Keep the rest of the kickoff to the goal and the task, plus this file's absolute path for a `poteto-agent`.
+- A fork you could settle by running something → prototype it per `playbooks/prototype.md` instead of asking.
+- Code → name the data shape first. Across a function boundary → **architect**. Fan-out → **swarm**. Bakeoff → **arena**. Contested design → **interrogate**.
+- Prose, your reply included → **unslop**. Docs, PR descriptions, commit messages → **technical-writing**.
+- Before commit → `/deslop` from the `cursor-team-kit` plugin. Before review → **no-comments**.
+- Shipping UI / IDE / CLI → `control-ui` or `control-cli` from `cursor-team-kit`.
+- A number you measured → **benchmark-checklist**.
+- PR status → the **Babysit** playbook, not Cursor's built-in babysit skill. Landing a green stack → the **Shipping** playbook.
+- Bot review comments → judge each on its merits.
+- Long or unattended work → **show-me-your-work**.
+>>>>>>> upstream@35a90942a7f0
 
 ## Principles
 
@@ -75,7 +91,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 - **Fix Root Causes.** Debugging. Trace each symptom back to the first place the system went wrong and fix it there. A guard is a fix only when the state it handles is legitimate.
 - **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**). Multi-step work (sweeps, migrations, runs of similar edits) and how you stack commits and PRs. Break work into small units that each end in a check, verify each before the next, and order delivery so the sequence proves itself.
 - **Test Behavior, Not Implementation.** Writing, changing, or keeping a test. Assert what the code's users can observe, so the test fails when that behavior breaks and keeps passing when only the internals change.
-- **Explain the Number.** Before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). Find what limits it, and rule out that it measured something other than the work you think.
+- **Explain the Number.** Apply before you measure, and before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). Find what limits it, and rule out that it measured something other than the work you think.
 
 **Delegation**
 
@@ -98,36 +114,37 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 ## Subagents
 
+<<<<<<< port
 **Use `subagent_type: "pstack:poteto-agent"` for any subagent you spawn inside a playbook step** (code-writing delegates, ad-hoc helpers). The chat that receives `/pstack:poteto-mode` runs the playbook. Never spawn a `pstack:poteto-agent` to run the playbook itself. Routed workflow skills (`how`, `why`, `interrogate`, `reflect`, `swarm`) set their own `subagent_type` for diverse-model review. Respect what the skill prescribes, don't override to `pstack:poteto-agent`.
 
 **Defaults for every `Agent` call.** `run_in_background: true`, a writing agent unless the skill prescribes read-only (`pstack:reader` keeps MCP and web), `isolation: "worktree"` when two writers could touch the same checkout, file pointers not inlined context, explicit model per role, and effort where the role's line names one (configurable via `/pstack:setup-pstack`. Defaults `opus` at `medium` effort for code, `opus` for prose and judgment, `fable` for the hardest tasks). Code delegates tier by difficulty. The hardest changes (cross-cutting design, gnarly concurrency, subtle algorithms) go to your strongest model (`fable`, per the `hardest tasks` line), whether the task needs judgment on vague intent or is a precisely specified sequence of steps to execute to the letter. Trivial mechanical edits go to your configured code model. Per-role lines in the pstack model map override these defaults and the model choices in the routed skills (`how`, `why`, `arena`, `swarm`, `architect`, `interrogate`, `reflect`). A role with no line keeps its default, and a role line of `inherit-parent` (or `auto`, kept for maps carried over from Cursor) runs that role on the parent chat model (omit the Agent `model`). Each code playbook's configured model comes from its line (`feature, refactoring`, `bug-fix`, `perf-issue`, or `hillclimb`), and the hardest changes read `hardest tasks`. Prose and judgment read `judgment and prose`.
 
 **Match the effort to the job.** This applies only to spawns of `pstack:poteto-agent`. Skills that name another `subagent_type` (`pstack:reader`, `pstack:comment-sicko`, `general-purpose`) keep it and take no `effort`, and verification keeps the `swarm workers` model with no `effort`. Pick the model first: the hardest work goes to the `hardest tasks` line, prose and judgment to `judgment and prose`, code to its playbook's line. Then the effort. When that line names an effort word, spawn `pstack:poteto-agent` with `effort` set to it, moving one step from it within the same role: up (at most `max`) for the subtlest work, down (no lower than `low`) for routine work. When the line names no effort word, leave `effort` out, so the agent runs at the session effort when one is set, else the model's default. `haiku` takes no `effort`. A role on `inherit-parent` follows the same rule with no `model`: with an effort word it sets `effort`, without one it leaves it out. Keep the model the role names, so a diverse panel stays diverse. If the Agent tool rejects `effort` (an older Claude Code), spawn without it and say so.
+=======
+**Use `subagent_type: "poteto-agent"` for any subagent you spawn directly inside a playbook step.** The chat that receives `/poteto-mode` runs the playbook itself. Routed workflow skills (`interrogate`, `swarm`) set their own `subagent_type`. Respect it.
 
-You own every subagent's work. Review the diff and write your own summary, don't pass through what it said. A second opinion is the same prompt against a different model. Agreement is high-signal.
+**Defaults for every `Task` call.** `run_in_background: true`, agent mode (readonly strips MCP), file pointers not inlined context, and an explicit model per role, Project workers included. `/setup-pstack` writes `~/.cursor/rules/pstack-models.mdc`, whose per-role lines override the defaults below and the role models in the routed skills (`arena`, `swarm`, `interrogate`). A role with no line keeps its default. A line of `inherit-parent` or `auto` runs the role on the parent model, so omit `model` and spawn `generalPurpose`, because `poteto-agent` defaults to Opus 5.5. Each code playbook reads its own line (`feature, refactoring`, `bug-fix`, `perf-issue`, or `hillclimb`), prose and judgment read `judgment and prose`, and trivial mechanical edits read `swarm workers`. If the rule has no `# defaults: 3` line, an older setup wrote it. Keep honoring its lines, and tell the user once per session to rerun `/setup-pstack`.
 
-**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Resume, message, or queue a follow-up on an existing subagent only when the new work strictly needs state that lives in that agent and is costly to move: its local checkout, its uncommitted changes, or a process it still runs, such as a dev server, a simulator, or a babysit watcher. A stop or hold order to a running agent is not reuse. A role such as a PR owner outlives its agent. Once that agent returns, a fresh agent takes the role's next round. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary.
+- Code, prose, and judgment: `claude-opus-5-5-xhigh-fast`.
+- Trivial mechanical edits: `claude-opus-5-5-high-fast`.
+- Diverse review and design panels: one runner each on `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, and `gemini-4-carbon-high`.
+>>>>>>> upstream@35a90942a7f0
+
+**Fable 5.2 is an exception.** It runs outside a panel only when the user named it for this task or two Opus 5.5 xhigh runs of the same brief failed its check. Say which. Difficulty alone never qualifies.
+
+**Match the model to the job.** Start from the role's line or default, keep its family, and set the level the job needs. The `/setup-pstack` budget sets each role's starting level. Panel seats keep their listed level. Raise any other role one step, up to xhigh, for the hardest or subtlest work, lower it one step for judgment, and two or more steps for routine work. No role runs above xhigh. Opus 5.5 always runs its `-fast` slug. Verification always runs on the `swarm workers` model, `claude-opus-5-5-high-fast` by default. A Gemini seat never runs above `gemini-4-carbon-high`, its top slug. If the Task tool rejects a slug, never pass it again. Fall back to the role's line or default, then the calling skill's fallback, then the closest valid slug of the same family, then omit `model`. Say so.
+
+You own every subagent's work. Review the diff and write your own summary. A second opinion is the same prompt on another vendor's model.
+
+**Fresh subagents by default.** Give a fix round, a follow-up, a retry, or the next queue item to a fresh subagent with the original brief, every later directive, and the prior agent's report and branch. Resume an existing subagent only when the work needs state that lives in it and is costly to move: its checkout, its uncommitted changes, or a process it still runs.
 
 ## Writing the reply
 
-Write the reply clean as you draft it. A cleanup pass after drafting does not remove these patterns.
-
-- **Short declarative sentences.** One thought per sentence, ended with a period.
-- **No long-dash character anywhere.** Write a file-list bullet as a sentence ("`main.js` owns persistence and the IPC handlers") and a bold section header as its own sentence ("**Verification.** End to end via CDP").
-- **A colon as a mid-sentence connector is also out** (unslop rule 14). A colon before a list is fine.
-- **Terse is not an excuse to drop content.** Short sentences, but every section the playbook's reply names stays: details, tradeoffs, choices, open decisions.
-- **Frame impact for the consumer and the maintainer.** Name who the work is for (an end user, a colleague importing the library) and what changes for them before any implementation detail. Then what the next engineer who owns this code inherits. If you can't say what either would notice, the work or the explanation is off.
-- **Never fabricate a link, citation, or transcript reference.** Link only artifacts you produced or read this session.
-- **Every claim carries its evidence or its label in the same sentence.** Measured, inferred, or guess. A prediction or an unseen cause is a guess. Never hand the human a check you could run.
-
-Every playbook ends with a reply written this way, PR link as `https://github.com/<owner>/<repo>/pull/<number>`. Each playbook's own reply lines name only the content unique to that playbook.
-
-## Comments
-
-Comments follow the same rule as the reply. Write them clean as you go. Keep a comment only for a non-obvious *why* the code can't show. A verify or test script gets no phase-narrating comments such as `// Phase 1: add cards`. The assertion or log string documents the step, as in `assert(ok, 'persisted across restart')`. This applies to every file you produce, including the delegate's diff.
+Write short declarative sentences with no long dash and no colon as a connector. Lead with what changes for the user. Give each claim its evidence or a label (measured, inferred, or guess). Never hand the human a check you could run.
 
 ## Playbooks
 
+<<<<<<< port
 Match the task to a playbook below, open its full steps at `playbooks/<title>.md` (the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file) plus the matching project playbook and its check (see Project playbooks), and open a todo list whose first items are that playbook's steps, copied in verbatim, before any task-specific todos. Do this before any other tool call for the task, code reads included. A step you choose not to do stays in the list with a one-line `skip: <reason>`. Use the first todo tool the session has: `TaskCreate`, `TodoWrite`, or the desktop app's `update_plan` where it is mounted. Newer models run with none of them by default. With none of them, the todo list is a numbered markdown checklist (`- [ ] 1. …`) in your reply. Post it in full once, then repost the whole list, one short label and a tick per item, whenever an item changes state. Skipped items keep their `skip: <reason>`. Do not change settings on your own to get a todo tool back. If the user asks for one, point them to the "Bắt đầu" section of `plugins/pstack/README.md` in `lichihouse/claude-plugins`.
 
 **Project playbooks.** A repository can add playbooks of its own under `.claude/playbooks/`, one Markdown file each. Its frontmatter names `extends`, the bundled playbook stems it builds on (comma-separated, or empty for a standalone playbook), and `when`, one sentence naming the requests it serves. The SessionStart hook lists the repository's project playbooks by file name. If that list is not in context, list `.claude/playbooks/`. Reading the matching project playbook and running its check are part of the setup step above, before the todo list opens and before any code read. A project playbook never re-enables a bundled playbook that the repository's rules forbid. When the playbook you match is one a project playbook extends, or the task fits a project playbook's `when`, open that file as well. Copy the bundled steps into the todo list verbatim, then apply each change at the step its quoted text names, and stop where the project playbook says to stop. A change is a list item that starts with `**After**`, `**Before**`, `**Replace**` or `**In**` followed by a straight-quoted run of the bundled step's own words, as written in its Markdown source (backticks and `**` included) on one line. Before you apply a project playbook, run `node <pstack root>/skills/poteto-mode/scripts/check-playbooks.mjs` from the repository root. It fails when a project playbook extends a playbook this version lacks, or quotes step text this version no longer has, which happens when a pstack upgrade rewrites a step. Report each line it prints to the user and do not guess where an unanchored change belongs. The repository's AGENTS.md or CLAUDE.md still wins over both playbooks.
@@ -157,3 +174,8 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Multi-phase or multi-PR plan.** Work that spans phases or stacked PRs. File: `playbooks/multi-phase-plan.md`.
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). File: `playbooks/worktree-cleanup.md`.
 - **Opening a PR.** Invoked at the end of every other playbook.
+=======
+Match the task to a playbook and open its steps at `playbooks/<title>.md`, with the title in kebab case. Copy its steps into the todolist tool first. Large, cross-cutting, or unattended work, or a task no playbook fits, routes to the **figure-it-out** skill.
+
+Investigation, Bug fix, Perf issue, Hillclimb, Runtime forensics, Trace forensics, Feature, Refactoring, Prototype, Visual parity, Authoring a skill, Eval, Babysit, Shipping, Autonomous run, Autopilot-full, Autopilot-stack, Session pickup, Pause safely, Multi-phase plan, Worktree cleanup, Opening a PR.
+>>>>>>> upstream@35a90942a7f0

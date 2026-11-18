@@ -6,8 +6,9 @@ disable-model-invocation: true
 
 # Architect
 
-Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple model perspectives, then fill in code against the chosen sketch.
+Before writing code, trace every system the change touches, then sketch two different shapes for it (types, signatures, module boundaries) and pick the one where each piece of state has one owner, each task has one way to do it, and callers need to know least. Redesign instead of patching if workarounds repeat.
 
+<<<<<<< port
 ## Start
 
 Open a todo list with one entry per phase before starting.
@@ -77,3 +78,6 @@ When you scrap:
 ## Outputs
 
 The caller's usage is written first and the type sketch derived from it. One file with new types and signatures for small changes. Module map plus type definitions for larger work. The rationale ships alongside, shaped per `references/rationale-template.md`, including the usage sketch and the synthesis decision.
+=======
+For a large or contested design, run the **arena** skill instead of sketching alone.
+>>>>>>> upstream@35a90942a7f0

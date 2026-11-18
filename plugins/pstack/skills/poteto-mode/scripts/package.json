@@ -3,7 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+<<<<<<< port
     "test": "bun test orch watch-pr check-playbooks check-plan.test.ts",
+=======
+    "test": "bun test watch-pr",
+>>>>>>> upstream@35a90942a7f0
     "typecheck": "tsc --project watch-pr/tsconfig.json --noEmit --strict"
   },
   "dependencies": {
