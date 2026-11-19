@@ -26,3 +26,5 @@ bash plugins/pstack/tools/test-hooks.sh
 ```
 
 CI (`.github/workflows/validate.yml`) chạy đúng các lệnh này cho mỗi push và PR.
+
+Muốn chứng minh một thay đổi chạy thật trong phiên Claude Code (hook bắn, slash command, subagent), dùng skill project [`verify-plugins`](.claude/skills/verify-plugins/SKILL.md).
