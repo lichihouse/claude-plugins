@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# Harness của verify-plugins: chạy một phiên Claude Code con (headless, `claude -p`) nạp
+# pstack + lichi từ checkout này, trong một thư mục làm việc dùng một lần, và lưu toàn bộ
+# stream-json làm bằng chứng.
+#
+#   control-plugins launch                     tạo RUN_DIR + fixture, in RUN_DIR
+#   control-plugins doctor [--probe]           kiểm instance có đáng lái không
+#   control-plugins drive <tên> [tuỳ chọn] -- "<prompt>"
+#   control-plugins summary <file.jsonl>       tóm tắt một bằng chứng
+#   control-plugins cleanup                    xoá fixture + transcript phiên con, giữ evidence/
+#
+# RUN_DIR lấy từ biến VERIFY_PLUGINS_RUN, hoặc lần launch gần nhất (/var/tmp/verify-plugins/latest).
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/../../../.." && pwd)"
+base="${VERIFY_PLUGINS_BASE:-/var/tmp/verify-plugins}"
+
+die() { echo "control-plugins: $*" >&2; exit 1; }
+
+run_dir() {
+	local d="${VERIFY_PLUGINS_RUN:-}"
+	[ -n "$d" ] || d="$(readlink -f "$base/latest" 2>/dev/null || true)"
+	[ -n "$d" ] && [ -f "$d/env" ] || die "chưa có RUN_DIR. Chạy 'control-plugins launch' trước."
+	printf '%s' "$d"
+}
+
+# Phiên con thừa hưởng env của phiên cha. Bỏ các biến nối phiên con vào thread / socket
+# nhắn tin của phiên cha, để phiên con không nói được với người dùng thay phiên cha.
+child_env() {
+	env -u CLAUDE_CODE_MESSAGING_SOCKET -u CLAUDE_CODE_MESSAGING_TOKEN \
+		-u CLAUDE_CODE_CHILD_NOTES_DIR -u CLAUDE_CODE_COORDINATOR_EXTRA_TOOLS \
+		-u CLAUDE_PROJECT_DIR -u CLAUDE_PLUGIN_ROOT -u CLAUDE_PLUGIN_DATA \
+		"$@"
+}
+
+make_fixtures() {
+	local w="$1"
+	# bare: một repo git rỗng có một file code, như repo bình thường của người dùng.
+	mkdir -p "$w/bare"
+	git -C "$w/bare" init -q -b main
+	printf 'export function add(a: number, b: number) {\n  return a + b;\n}\n' > "$w/bare/math.ts"
+	git -C "$w/bare" add -A && git -C "$w/bare" -c user.name=verify -c user.email=verify@example.invalid commit -qm init
+
+	# parent: thư mục cha KHÔNG phải repo, chứa hai repo con có AGENTS.md và deny list,
+	# giống /home/user của thread Project (Booking + Quan-ly-Kho).
+	mkdir -p "$w/parent"
+	for r in RepoA RepoB; do
+		mkdir -p "$w/parent/$r/.claude"
+		git -C "$w/parent/$r" init -q -b main
+		printf '# AGENTS.md %s\n\nLuật fixture verify-plugins của %s.\n' "$r" "$r" > "$w/parent/$r/AGENTS.md"
+	done
+	mkdir -p "$w/parent/RepoA/web"
+	printf '# AGENTS.md lồng của RepoA/web\n' > "$w/parent/RepoA/web/AGENTS.md"
+	printf '{"permissions":{"deny":["Bash(git add -A:*)","Bash(rm -rf:*)","Edit(secrets/**)"]}}\n' > "$w/parent/RepoA/.claude/settings.json"
+	printf '{"permissions":{"deny":["Bash(git push origin main:*)"]}}\n' > "$w/parent/RepoB/.claude/settings.json"
+}
+
+cmd_launch() {
+	command -v claude >/dev/null || die "không thấy lệnh claude"
+	command -v python3 >/dev/null || die "không thấy python3"
+	local ts d
+	ts="$(date -u +%Y%m%d-%H%M%S)"
+	d="$base/$ts"
+	mkdir -p "$d/evidence" "$d/work"
+	make_fixtures "$d/work"
+	{
+		echo "REPO=$repo"
+		echo "PSTACK=$repo/plugins/pstack"
+		echo "LICHI=$repo/plugins/lichi"
+		echo "WORK=$d/work"
+		echo "GIT_REV=$(git -C "$repo" rev-parse --short HEAD)$(git -C "$repo" diff --quiet HEAD -- plugins || echo '+dirty')"
+	} > "$d/env"
+	: > "$d/sessions"
+	ln -sfn "$d" "$base/latest"
+	echo "READY fixture: $d/work/bare, $d/work/parent"
+	echo "$d"
+}
+
+cmd_doctor() {
+	local d probe=0 fail=0
+	[ "${1:-}" = "--probe" ] && probe=1
+	d="$(run_dir)"
+	# shellcheck disable=SC1091
+	. "$d/env"
+	ok() { echo "ok   $*"; }
+	bad() { echo "FAIL $*"; fail=1; }
+
+	local v
+	v="$(claude --version 2>/dev/null | awk '{print $1}')"
+	if [ "$v" != 2.1.273 ] && printf "%s\n2.1.273\n" "$v" | sort -V -C 2>/dev/null; then bad "claude $v < 2.1.273 (plugin theo tài khoản cần >= 2.1.273)"; else ok "claude $v"; fi
+	[ "$REPO" = "$repo" ] && ok "RUN_DIR thuộc checkout $repo" || bad "RUN_DIR của checkout khác ($REPO)"
+	[ -d "$WORK/bare/.git" ] && [ -f "$WORK/parent/RepoA/.claude/settings.json" ] && ok "fixture đủ" || bad "fixture thiếu, chạy launch lại"
+	for t in . plugins/pstack plugins/lichi; do
+		if (cd "$repo" && claude plugin validate --strict "$t" >/dev/null 2>&1); then ok "validate --strict $t"; else bad "validate --strict $t (chạy tay để xem lỗi)"; fi
+	done
+	ok "pstack $(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["version"])' "$PSTACK/.claude-plugin/plugin.json"), lichi $(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["version"])' "$LICHI/.claude-plugin/plugin.json"), rev $GIT_REV"
+
+	if [ "$probe" = 1 ]; then
+		# Một lượt haiku rẻ: chứng minh đăng nhập chạy được và phiên con nạp plugin từ checkout, không phải bản synced.
+		local out="$d/evidence/_doctor-probe.jsonl"
+		(cd "$WORK/bare" && child_env claude -p "Reply with exactly: PONG" --model haiku --max-turns 1 \
+			--plugin-dir "$PSTACK" --plugin-dir "$LICHI" --strict-mcp-config \
+			--output-format stream-json --verbose < /dev/null > "$out" 2> "$out.stderr") || true
+		python3 "$here/summarize.py" --check-probe "$out" "$PSTACK" "$LICHI" && ok "probe: đăng nhập được, pstack + lichi nạp từ checkout" || bad "probe hỏng, xem $out.stderr"
+	fi
+	[ "$fail" = 0 ] && echo "DOCTOR OK" || { echo "DOCTOR FAIL"; return 1; }
+}
+
+cmd_drive() {
+	local name="${1:-}"; shift || true
+	[ -n "$name" ] || die "drive cần <tên>"
+	local fixture=bare model="" resume="" turns=6 tools="Read,Glob,Grep,Agent,Skill,TaskCreate,TaskUpdate,TodoWrite" extra=()
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			--fixture) fixture="$2"; shift 2 ;;
+			--model) model="$2"; shift 2 ;;
+			--resume) resume="$2"; shift 2 ;;
+			--max-turns) turns="$2"; shift 2 ;;
+			--tools) tools="$2"; shift 2 ;;
+			--) shift; break ;;
+			*) die "tuỳ chọn lạ: $1" ;;
+		esac
+	done
+	[ $# -ge 1 ] || die "thiếu prompt sau --"
+	local prompt="$*" d
+	d="$(run_dir)"
+	# shellcheck disable=SC1091
+	. "$d/env"
+	local cwd="$WORK/$fixture"
+	[ -d "$cwd" ] || die "không có fixture $fixture"
+	local out="$d/evidence/$name.jsonl"
+	[ -e "$out" ] && die "$out đã có, đặt tên khác"
+	local args=(-p "$prompt" --plugin-dir "$PSTACK" --plugin-dir "$LICHI" --strict-mcp-config
+		--max-turns "$turns" --allowedTools "$tools" --output-format stream-json --verbose)
+	[ -n "$model" ] && args+=(--model "$model")
+	[ -n "$resume" ] && args+=(--resume "$resume")
+	printf '%s\n' "$prompt" > "$d/evidence/$name.prompt.txt"
+	echo "fixture=$fixture model=${model:-mặc định} resume=${resume:--} tools=$tools" > "$d/evidence/$name.meta.txt"
+	local rc=0
+	(cd "$cwd" && child_env claude "${args[@]}" < /dev/null > "$out" 2> "$d/evidence/$name.stderr") || rc=$?
+	echo "exit=$rc" >> "$d/evidence/$name.meta.txt"
+	python3 "$here/summarize.py" "$out" | tee "$d/evidence/$name.summary.txt"
+	python3 "$here/summarize.py" --session "$out" >> "$d/sessions" || true
+	return "$rc"
+}
+
+cmd_summary() { python3 "$here/summarize.py" "$@"; }
+
+cmd_cleanup() {
+	local d
+	d="$(run_dir)"
+	# shellcheck disable=SC1091
+	. "$d/env"
+	# Transcript ~/.claude/projects/<slug của cwd> và cờ poteto-mode của phiên con: chỉ những gì run này tạo.
+	local cfg="${CLAUDE_CONFIG_DIR:-$HOME/.claude}" f slug sid
+	for f in bare parent; do
+		slug="$(printf '%s' "$WORK/$f" | sed 's/[^A-Za-z0-9]/-/g')"
+		[ -d "$cfg/projects/$slug" ] && rm -r "$cfg/projects/$slug"
+		[ -d "$cfg/pstack/$slug" ] && rm -r "$cfg/pstack/$slug"
+	done
+	while read -r sid; do
+		[ -n "$sid" ] || continue
+		find "$cfg/plugins/data" -path '*/poteto-mode/*' -name "$sid" -type f -delete 2>/dev/null || true
+	done < "$d/sessions"
+	rm -r "$d/work"
+	echo "CLEANED. Bằng chứng còn ở $d/evidence"
+}
+
+case "${1:-}" in
+	launch) shift; cmd_launch "$@" ;;
+	doctor) shift; cmd_doctor "$@" ;;
+	drive) shift; cmd_drive "$@" ;;
+	summary) shift; cmd_summary "$@" ;;
+	cleanup) shift; cmd_cleanup "$@" ;;
+	*) sed -n '2,12p' "$0"; exit 2 ;;
+esac
