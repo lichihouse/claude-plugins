@@ -2,8 +2,8 @@
 
 Bản port của [pstack](https://github.com/cursor/plugins/tree/main/pstack) (poteto / Lauren Tan, MIT) từ Cursor sang Claude Code. Nội dung skill, playbook, principle giữ như bản gốc, trừ các chỗ ghi trong sổ [`tools/forks.json`](tools/forks.json): chỗ Cursor và Claude Code chạy khác nhau (tên tool, tên model, file cấu hình, đường dẫn transcript, agent chạy cloud) và vài lựa chọn riêng của Lichi House. Description các skill đã dịch sang tiếng Việt.
 
-- Dựa trên upstream **0.15.43**, commit `35a90942a7f0` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
-- Phiên bản port: `0.15.43-claude.1`.
+- Dựa trên upstream **0.15.44**, commit `e58dd0436005` (ghi trong [`tools/UPSTREAM`](tools/UPSTREAM)).
+- Phiên bản port: `0.15.44-claude.1`.
 - Hướng dẫn gốc (tiếng Anh, đã sửa lệnh cho Claude Code): [`docs/guide/`](docs/guide/README.md).
 
 ## Cài đặt: gắn vào tài khoản claude.ai (dùng cho mọi repo)
