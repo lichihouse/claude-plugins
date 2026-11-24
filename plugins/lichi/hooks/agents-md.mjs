@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -26,10 +27,34 @@ export const NEON_REMINDER = [
   "</lichi-neon-soat>",
 ].join("\n");
 
+const NEON_REPOS = /lichihouse\/(quan-ly-kho|booking)(\.git)?$/i;
+
+// Repo Kho hoặc Booking: nhận diện theo remote origin, nên worktree và thư mục đổi tên vẫn đúng.
+export function isNeonRepo(dir) {
+  try {
+    const url = execFileSync("git", ["-C", dir, "config", "--get", "remote.origin.url"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 3000,
+    }).trim();
+    return NEON_REPOS.test(url);
+  } catch {
+    return false;
+  }
+}
+
+function needsNeon(cwd) {
+  if (!cwd) return false;
+  if (isNeonRepo(cwd)) return true;
+  return childRepos(cwd).some(isNeonRepo);
+}
+
 export function hookOutput(input) {
   const event = input.hook_event_name ?? "SessionStart";
-  const text = reminder(projectDir(input));
-  const parts = [text, event === "SessionStart" && text ? NEON_REMINDER : ""].filter(Boolean);
+  const cwd = projectDir(input);
+  const text = reminder(cwd);
+  const neon = event === "SessionStart" && needsNeon(cwd) ? NEON_REMINDER : "";
+  const parts = [text, neon].filter(Boolean);
   if (parts.length === 0) return null;
   return { hookSpecificOutput: { hookEventName: event, additionalContext: parts.join("\n") } };
 }

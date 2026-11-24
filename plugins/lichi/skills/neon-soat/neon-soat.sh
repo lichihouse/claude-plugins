@@ -8,6 +8,8 @@
 #       đọc được cả repo, tự xem `git diff origin/<nhánh gốc>...HEAD`, chạy được test.
 #       Worktree riêng nên không đụng thư mục làm việc của Đức.
 #
+# Mỗi lượt ghi thêm vào ~/neon-soat/nhat-ky.md (giờ, repo, nhánh, exit, đầu ra) để tổng kết tuần.
+#
 # Exit: 0 xong · 1 t3 lỗi · 2 Neon hỏi lại · 4 brief rỗng · 5 sai repo / nhánh.
 set -u
 BRIEF=$(cat)
@@ -27,13 +29,28 @@ HIGH = sai tien / so lieu / mat du lieu / lo quyen / sap luong chinh. MED = sai 
 Khong neu loi style, dat ten, format. Chua chac thi mo dau dong bang NGHI:. Thieu ngu canh de ket luan thi ghi CAN_THEM: <can gi>.
 Dong cuoi cung bat buoc: KET_LUAN: HIGH=<n> MED=<n> LOW=<n>  (khong co loi thi ghi KET_LUAN: KHONG_CO_LOI).'
 
+NHAT_KY=~/neon-soat/nhat-ky.md
+ghi_nhat_ky() { # $1 = exit, $2 = file đầu ra
+  { printf '\n## %s · %s · %s · exit=%s\n' "$(date '+%Y-%m-%d %H:%M')" "${REPO:-brief}" "${NHANH:-}" "$1"
+    cat "$2"; } >> "$NHAT_KY" 2>/dev/null || true
+}
+chay_t3() { # chạy t3, in đầu ra như cũ, đồng thời ghi nhật ký
+  local out rc
+  out=$(mktemp)
+  t3 "$@" | tee "$out"
+  rc=${PIPESTATUS[0]}
+  ghi_nhat_ky "$rc" "$out"
+  rm -f "$out"
+  return "$rc"
+}
+
 MODEL=(--provider antigravity --model gemini-4-neon --option effort=medium)
 TITLE="Neon soat $(date +%m%d-%H%M)"
 
 if [ $# -eq 0 ]; then
   cd ~/neon-soat || exit 1
   printf '%s\n\n--- BRIEF ---\n%s\n' "$LUAT_CHUNG" "$BRIEF" \
-    | t3 thread start "${MODEL[@]}" --title "$TITLE" --wait . -
+    | chay_t3 thread start "${MODEL[@]}" --title "$TITLE" --wait . -
   exit $?
 fi
 
@@ -58,4 +75,5 @@ Xem thay doi: git diff origin/$GOC...HEAD (tong $SO_DONG dong them + xoa). Doc A
 Doc ca code xung quanh: ham goi va ham bi goi cua cho bi doi, test lien quan, schema DB neu dung toi."
 
 printf '%s\n\n%s\n\n--- BRIEF ---\n%s\n' "$LUAT_CHUNG" "$VI_TRI" "$BRIEF" \
-  | t3 thread start "${MODEL[@]}" --title "$TITLE $NHANH" --worktree "$REF" --wait "$REPO" -
+  | chay_t3 thread start "${MODEL[@]}" --title "$TITLE $NHANH" --worktree "$REF" --wait "$REPO" -
+exit $?

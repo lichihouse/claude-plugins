@@ -62,15 +62,27 @@ test("SubagentStart gets the same reminder under its own event name", () => {
   assert.match(out.hookSpecificOutput.additionalContext, /lichi-agents-md/);
 });
 
-test("SessionStart adds the Neon review reminder, subagents do not get it", () => {
-  const { root } = fixture();
-  const main = hookOutput({ cwd: root, hook_event_name: "SessionStart" }).hookSpecificOutput.additionalContext;
-  assert.match(main, /lichi-neon-soat/);
-  assert.match(main, /lichi:neon-soat/);
-  const sub = hookOutput({ cwd: root, hook_event_name: "SubagentStart" }).hookSpecificOutput.additionalContext;
-  assert.doesNotMatch(sub, /lichi-neon-soat/);
-  assert.equal(hookOutput({ cwd: mkdtempSync(join(tmpdir(), "lichi-empty-")), hook_event_name: "SessionStart" }), null);
-  assert.ok(Buffer.byteLength(main) < 3000);
+function setOrigin(repo, url) {
+  execFileSync("git", ["init", "-q", repo]);
+  execFileSync("git", ["-C", repo, "remote", "add", "origin", url]);
+}
+
+test("Neon reminder: main session in parent folder or inside Kho / Booking, never subagents or other repos", () => {
+  const { root, web, kho } = fixture();
+  const ctx = (cwd, ev = "SessionStart") => hookOutput({ cwd, hook_event_name: ev })?.hookSpecificOutput.additionalContext ?? "";
+  assert.doesNotMatch(ctx(root), /lichi-neon-soat/, "no Kho / Booking remote yet");
+  setOrigin(kho, "https://github.com/lichihouse/Quan-ly-Kho.git");
+  setOrigin(web, "git@github.com:someone/other.git");
+  assert.match(ctx(root), /lichi-neon-soat/);
+  assert.match(ctx(root), /lichi:neon-soat/);
+  assert.match(ctx(kho), /lichi-neon-soat/, "session opened directly in the Kho repo");
+  assert.doesNotMatch(ctx(kho), /lichi-agents-md/);
+  assert.equal(ctx(web), "", "other repo: nothing");
+  assert.doesNotMatch(ctx(root, "SubagentStart"), /lichi-neon-soat/);
+  const booking = makeRepo(mkdtempSync(join(tmpdir(), "lichi-bk-")), "booking", []);
+  setOrigin(booking, "https://github.com/lichihouse/booking");
+  assert.match(ctx(booking), /lichi-neon-soat/);
+  assert.ok(Buffer.byteLength(ctx(root)) < 3000);
 });
 
 test("reminder stays small enough for hook context limits", () => {

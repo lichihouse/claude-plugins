@@ -14,7 +14,7 @@ Chỉ chạy khi phiên mở ở thư mục cha chứa nhiều repo (thread Proj
 
 | Hook | Việc |
 |---|---|
-| `SessionStart`, `SubagentStart` (`hooks/agents-md.mjs`) | Thêm vào ngữ cảnh danh sách `AGENTS.md` của mọi repo con (cả file lồng như `artifacts/ios-app/AGENTS.md`) và nhắc Read trước khi làm. Subagent cũng nhận. Riêng phiên chính (SessionStart) nhận thêm lời nhắc dùng skill `neon-soat` (từ 0.4.0). |
+| `SessionStart`, `SubagentStart` (`hooks/agents-md.mjs`) | Thêm vào ngữ cảnh danh sách `AGENTS.md` của mọi repo con (cả file lồng như `artifacts/ios-app/AGENTS.md`) và nhắc Read trước khi làm. Subagent cũng nhận. Phiên chính (SessionStart) ở repo Kho / Booking (nhận theo remote origin), hoặc thư mục cha chứa chúng, nhận thêm lời nhắc dùng skill `neon-soat` (từ 0.4.0). |
 | `PreToolUse` (`hooks/deny-guard.mjs`) | Áp phần `deny` trong `.claude/settings.json` của repo con. Lệnh Bash nêu tên đúng 1 repo (`cd Booking && …`) dùng deny list của repo đó; lệnh không nêu repo nào dùng hợp của mọi repo. Edit / Write theo repo chứa file. Hook lỗi thì không chặn (ruleset GitHub vẫn chặn nhánh chính) và ghi lỗi ra stderr. |
 
 Test: `node --test plugins/lichi/hooks/hooks.test.mjs` (CI chạy).

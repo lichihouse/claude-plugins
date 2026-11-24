@@ -21,7 +21,7 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 
 Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
 
-Chỉ phiên chính gọi Neon. Subagent không gọi.
+Chỉ phiên chính gọi Neon. Subagent không gọi. Hook của plugin lichi nhắc phiên chính khi phiên mở ở repo Kho hoặc Booking, hay ở thư mục cha chứa một trong hai repo đó.
 
 Diff lớn hơn 1500 dòng (không tính test, file sinh, lockfile) thì chia thành nhiều lượt. Mỗi lượt một nhóm file, ghi rõ nhóm trong brief ("chỉ soát artifacts/api-server/src/lib/allocation*").
 
@@ -109,3 +109,38 @@ PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, 
 ```
 
 Plan hay kết luận gửi Đức: thêm một câu "Neon đã soát: ..." hoặc "Neon bỏ qua vì ...". Không dán nguyên văn đầu ra của Neon cho Đức.
+
+## 5. Tự cải thiện
+
+Mục tiêu: Neon bắt được nhiều lỗi thật hơn và báo nhầm ít đi theo thời gian. Mọi thay đổi đều phải **đo được** trên bộ đề kiểm, không sửa theo cảm giác.
+
+### Dữ liệu có sẵn
+
+- Dòng `- neon:` trong DoD của mỗi PR (Kho, Booking) ghi Neon báo gì, cái nào đã sửa, cái nào bác và vì sao.
+- `~/neon-soat/nhat-ky.md` trên Mac: script tự ghi đầu ra nguyên văn của mọi lượt (giờ, repo, nhánh, exit).
+- `de-kiem/` trong thư mục skill này: bộ đề kiểm. Mỗi ca là một thư mục gồm `brief.md` (chạy ở chế độ brief, tự chứa đủ code) và `dap-an.md` (lỗi phải bắt, và những gì không được báo là HIGH/MED).
+
+### Khi gặp sai thì làm ngay
+
+| Gặp | Làm |
+|---|---|
+| Neon bỏ sót lỗi HIGH/MED mà sau này mới lộ (reviewer, CI, Đức phát hiện) | Thêm một ca vào `de-kiem/`. Nếu do brief thiếu thì sửa mẫu brief (mục 2). Nếu do luật chung thì sửa `LUAT_CHUNG` trong `neon-soat.sh` |
+| Neon bắt được lỗi mà reviewer của Claude bỏ sót | Lỗi lọt cổng của repo: thêm chốt chặn theo AGENTS.md. Thêm ca vào `de-kiem/` để giữ khả năng này của Neon |
+| Neon báo nhầm cùng một kiểu từ 2 lần trở lên | Thêm 1 câu vào `LUAT_CHUNG` hoặc vào mục "Luat lien quan" của mẫu brief. Thêm ca có `dap-an.md` ghi rõ "không được báo" |
+| Script hay cách gọi lỗi | Sửa `neon-soat.sh` hoặc mục 2, kèm test tay |
+
+### Cách sửa (PR vào lichihouse/claude-plugins)
+
+1. Sửa xong thì chạy **toàn bộ** bộ đề trên Mac, cả bản cũ lẫn bản mới. Trên Mac: `git clone --depth 1 --branch <nhánh> https://github.com/lichihouse/claude-plugins /tmp/cp-neon`. Với mỗi ca, chạy `bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/cp-neon/plugins/lichi/skills/neon-soat/de-kiem/<ca>/brief.md`. Để chạy bản mới: chép `neon-soat.sh` mới vào `~/.claude/neon-soat.sh` sau khi đã sao lưu bản cũ thành `~/.claude/neon-soat.sh.bak-<ngày>`.
+2. Chấm từng ca theo `dap-an.md`: bắt đủ hay sót, có báo nhầm HIGH/MED không. Ghi bảng trước / sau vào mô tả PR.
+3. Bản mới **không kém hơn** ở ca nào thì giữ bản mới, merge theo luật thường của repo (CI xanh), tăng version lichi. Kém hơn ở bất kỳ ca nào thì trả `~/.claude/neon-soat.sh` về bản sao lưu và không merge.
+4. Báo Đức một dòng: đã đổi gì, kết quả bộ đề trước / sau.
+
+### Tổng kết hằng tuần
+
+Mỗi tuần một lần (trigger "Tổng kết Neon soát" của project Kho, nếu đã tạo), làm 3 việc:
+- Đọc dòng `- neon:` của các PR đã merge trong tuần ở Kho và Booking.
+- Đọc `~/neon-soat/nhat-ky.md` qua Remote Control.
+- Đếm số lượt, số lỗi đúng, số lỗi bác, số lượt bỏ qua và lý do. Tìm kiểu sai lặp lại rồi đi theo bảng "Khi gặp sai" ở trên.
+
+Không có gì đáng sửa thì chỉ báo số liệu, không mở PR.
