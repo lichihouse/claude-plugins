@@ -58,13 +58,20 @@ REPO=$1
 NHANH=${2:?thieu ten nhanh}
 GOC=${3:-}
 [ -d "$REPO/.git" ] || [ -f "$REPO/.git" ] || { echo "SAI_REPO: $REPO khong phai repo git"; exit 5; }
-git -C "$REPO" fetch --quiet origin || { echo "SAI_REPO: git fetch loi"; exit 5; }
+# Fetch dung ten nhanh: repo co the co refspec fetch hep (vd chi master), khi do `git fetch origin`
+# khong cap nhat origin/<nhanh> va Neon soat nham ban cu.
+lay_nhanh() {
+  git -C "$REPO" fetch --quiet origin "+refs/heads/$1:refs/remotes/origin/$1" \
+    || { echo "SAI_NHANH: git fetch origin $1 loi (nhanh khong co tren origin?)"; exit 5; }
+}
+lay_nhanh "$NHANH"
 REF=$(git -C "$REPO" rev-parse --verify --quiet "origin/$NHANH^{commit}") \
   || { echo "SAI_NHANH: khong co origin/$NHANH"; exit 5; }
 if [ -z "$GOC" ]; then
   GOC=$(git -C "$REPO" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')
   GOC=${GOC:-master}
 fi
+lay_nhanh "$GOC"
 git -C "$REPO" rev-parse --verify --quiet "origin/$GOC^{commit}" >/dev/null \
   || { echo "SAI_NHANH: khong co origin/$GOC"; exit 5; }
 SO_DONG=$(git -C "$REPO" diff --numstat "origin/$GOC...$REF" | awk '{s+=$1+$2} END {print s+0}')
