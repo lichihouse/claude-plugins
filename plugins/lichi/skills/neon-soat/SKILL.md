@@ -38,38 +38,54 @@ Nếu script mất hoặc hỏng (lỗi `No such file`, hoặc `No T3 Code proje
 
 ### a. Phiên đang chạy trên Mac (Remote Control, Claude Desktop, T3)
 
-Gửi plan hay kết luận: viết nội dung vào một file tạm, rồi chạy
+Luôn đi theo 3 bước. Mỗi bước là một lệnh riêng, không nối bằng ống `|`: lỗi ở giữa ống sẽ bị nuốt mất, và quyền allow chỉ phủ lệnh bắt đầu bằng `bash /Users/hiuduc/.claude/neon-soat.sh`.
 
-```bash
-bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md
-```
-
-Gửi diff của nhánh đang làm:
-
-```bash
-git diff origin/<nhánh gốc>...HEAD -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png' | bash /Users/hiuduc/.claude/neon-soat.sh
-```
+1. Dùng tool Write ghi bối cảnh 2-3 câu vào `/tmp/neon-boi-canh.md`. Không ghi bằng `echo "..."`, vì shell sẽ bung `$VAR` và chạy `` `...` `` có trong nội dung.
+2. Ghi nội dung cần soát vào `/tmp/neon-noi-dung.md`:
+   - Plan hay kết luận: dùng tool Write.
+   - Diff nhánh đang làm:
+     ```bash
+     git fetch origin && git diff origin/<nhánh gốc>...HEAD -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png' > /tmp/neon-noi-dung.md && test -s /tmp/neon-noi-dung.md && echo DIFF_OK
+     ```
+     Không thấy `DIFF_OK` thì dừng. Nguyên nhân là diff rỗng hoặc sai ref. Đừng gửi cho Neon, vì nó sẽ trả `KHONG_CO_LOI` giả.
+3. Gộp hai file rồi gọi Neon:
+   ```bash
+   cat /tmp/neon-boi-canh.md /tmp/neon-noi-dung.md > /tmp/neon-input.md
+   ```
+   ```bash
+   bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md
+   ```
 
 ### b. Thread cloud (thread Project của claude.ai, có tool `start_remote_control`)
 
-1. Gọi `start_remote_control` với `folder` là repo trên Mac: `/Users/hiuduc/Projects/Quan-ly-Kho` hoặc `/Users/hiuduc/Projects/Booking`. Viết `instructions` theo mẫu bên dưới. Đức đã duyệt sẵn hai thư mục này, nên không cần ai bấm.
-2. Kết quả trả về dưới dạng tin nhắn từ phiên trên Mac.
-3. Nhận kết quả xong thì gọi `stop_remote_control` ngay. Lý do: trong lúc Remote Control chạy, các tool thư mục của thread bị khoá.
+1. Gọi `start_remote_control`:
+   - `folder` là repo trên Mac: `/Users/hiuduc/Projects/Quan-ly-Kho` hoặc `/Users/hiuduc/Projects/Booking`. Đức đã duyệt sẵn hai thư mục này, nên không cần ai bấm.
+   - `instructions` theo mẫu bên dưới.
+2. Kết quả về dưới dạng tin nhắn từ phiên trên Mac.
+3. Luôn gọi `stop_remote_control`, kể cả khi lệnh lỗi hoặc Mac không trả lời. Lý do: trong lúc Remote Control chạy, các tool thư mục của thread bị khoá.
 
-Mẫu `instructions` cho diff PR (nhánh đã push):
+Mẫu `instructions`:
 
 ```
-Chỉ chạy đúng lệnh dưới, báo NGUYÊN VĂN đầu ra và exit code, không làm gì khác, không sửa file.
-cd <thư mục repo> && git fetch origin <nhánh> <nhánh gốc> && { echo "<bối cảnh 2-3 câu>"; git diff origin/<nhánh gốc>...origin/<nhánh> -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png'; } | bash /Users/hiuduc/.claude/neon-soat.sh; echo "exit=$?"
+Làm đúng các bước dưới, không sửa file nào khác. Báo NGUYÊN VĂN đầu ra và exit code của từng lệnh. Lệnh nào lỗi thì dừng và báo lỗi đó.
+1. Dùng tool Write ghi phần nằm giữa ===BOI_CANH=== và ===HET=== vào /tmp/neon-boi-canh.md.
+2. <Diff PR:> chạy trong <thư mục repo>:
+   git fetch origin && git diff origin/<nhánh gốc>...origin/<nhánh> -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png' > /tmp/neon-noi-dung.md && test -s /tmp/neon-noi-dung.md && echo DIFF_OK
+   <Plan / kết luận:> dùng tool Write ghi phần nằm giữa ===NOI_DUNG=== và ===HET=== vào /tmp/neon-noi-dung.md.
+3. cat /tmp/neon-boi-canh.md /tmp/neon-noi-dung.md > /tmp/neon-input.md
+4. bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md
+===BOI_CANH===
+<2-3 câu: repo, PR làm gì, soát gì>
+===HET===
 ```
 
-Mẫu cho plan hay kết luận: dán toàn văn nội dung vào `instructions`, dặn ghi ra `/tmp/neon-input.md` rồi chạy `bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md`. Nếu nội dung dài quá 30 KB thì lưu thành file trên nhánh và push lên trước, rồi trên Mac chạy `git fetch origin <nhánh> && git show origin/<nhánh>:<đường dẫn> | bash /Users/hiuduc/.claude/neon-soat.sh`.
+Nếu plan dài quá 30 KB: lưu thành file trên nhánh rồi push. Ở bước 2, thay bằng lệnh `git fetch origin && git show origin/<nhánh>:<đường dẫn> > /tmp/neon-noi-dung.md`.
 
 ### c. Không gọi được
 
-Gặp một trong các trường hợp sau thì bỏ qua và ghi lý do. Chỉ thử lại tối đa 1 lần.
+Gặp một trong các trường hợp sau thì bỏ qua và ghi lý do. Chỉ thử lại 1 lần, và chỉ khi lỗi có thể tự hết (Mac chưa trả lời, lỗi mạng). Thiếu tool, hết hạn mức hay diff rỗng thì không thử lại.
 - Không có `start_remote_control`, và phiên cũng không chạy trên Mac.
-- Mac không trả lời trong 2 phút.
+- Mac không trả lời trong 2 phút, hoặc Neon chạy quá 10 phút. Script không tự cắt giờ, vì Đức muốn không giới hạn; phiên gọi tự quyết bỏ qua.
 - Script trả exit code khác 0.
 - Đầu ra báo lỗi hạn mức (`quota`, `RESOURCE_EXHAUSTED`, `429`), hoặc đầu ra không có dòng HIGH/MED/LOW nào và cũng không có `KHONG_CO_LOI`.
 
