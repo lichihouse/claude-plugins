@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -20,11 +21,42 @@ export function reminder(cwd) {
   return lines.join("\n");
 }
 
+export const NEON_REMINDER = [
+  "<lichi-neon-soat>",
+  "Quy trình Đức chốt 24/11/2026: ở repo Kho và Booking, phiên chính nhờ Gemini 4 Neon soát thứ hai theo skill lichi:neon-soat (Read SKILL.md của skill đó khi tới lúc) ở 3 lúc: plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge, kết luận nguyên nhân / số đo trước khi báo. Neon không phải cổng chặn: không gọi được thì ghi `- neon: bỏ qua (lý do)` rồi làm tiếp.",
+  "</lichi-neon-soat>",
+].join("\n");
+
+const NEON_REPOS = /lichihouse\/(quan-ly-kho|booking)(\.git)?$/i;
+
+// Repo Kho hoặc Booking: nhận diện theo remote origin, nên worktree và thư mục đổi tên vẫn đúng.
+export function isNeonRepo(dir) {
+  try {
+    const url = execFileSync("git", ["-C", dir, "config", "--get", "remote.origin.url"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 3000,
+    }).trim();
+    return NEON_REPOS.test(url);
+  } catch {
+    return false;
+  }
+}
+
+function needsNeon(cwd) {
+  if (!cwd) return false;
+  if (isNeonRepo(cwd)) return true;
+  return childRepos(cwd).some(isNeonRepo);
+}
+
 export function hookOutput(input) {
-  const text = reminder(projectDir(input));
-  if (!text) return null;
   const event = input.hook_event_name ?? "SessionStart";
-  return { hookSpecificOutput: { hookEventName: event, additionalContext: text } };
+  const cwd = projectDir(input);
+  const text = reminder(cwd);
+  const neon = event === "SessionStart" && needsNeon(cwd) ? NEON_REMINDER : "";
+  const parts = [text, neon].filter(Boolean);
+  if (parts.length === 0) return null;
+  return { hookSpecificOutput: { hookEventName: event, additionalContext: parts.join("\n") } };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
