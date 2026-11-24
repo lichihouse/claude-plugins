@@ -27,7 +27,7 @@ HIGH = sai tien / so lieu / mat du lieu / lo quyen / sap luong chinh. MED = sai 
 Khong neu loi style, dat ten, format. Chua chac thi mo dau dong bang NGHI:. Thieu ngu canh de ket luan thi ghi CAN_THEM: <can gi>.
 Dong cuoi cung bat buoc: KET_LUAN: HIGH=<n> MED=<n> LOW=<n>  (khong co loi thi ghi KET_LUAN: KHONG_CO_LOI).'
 
-MODEL=(--provider antigravity --model gemini-4-neon --option effort=high)
+MODEL=(--provider antigravity --model gemini-4-neon --option effort=medium)
 TITLE="Neon soat $(date +%m%d-%H%M)"
 
 if [ $# -eq 0 ]; then

@@ -5,7 +5,7 @@ description: Nhờ Gemini 4 Neon (tài khoản Antigravity của Đức, chạy 
 
 # Nhờ Gemini Neon soát
 
-Đức chốt ngày 24/11/2026: mọi việc ở repo Kho (`lichihouse/Quan-ly-Kho`) và Booking đều qua thêm một lượt soát của Gemini 4 Neon. Claude vẫn làm chính. Neon chỉ đọc nội dung Claude gửi rồi nêu lỗi.
+Đức chốt ngày 24/11/2026: mọi việc ở repo Kho (`lichihouse/Quan-ly-Kho`) và Booking đều qua thêm một lượt soát của Gemini 4 Neon. Claude vẫn làm chính. Neon đọc repo thật (trong worktree riêng) cùng brief Claude viết, rồi nêu lỗi kèm kịch bản. Đức chốt: cần chất lượng review, không cần tiết kiệm token.
 
 Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac tắt, Neon hết hạn mức hay báo lỗi thì bỏ qua và ghi lý do. Không để việc đứng chờ Neon, và không nhờ Đức bấm gì.
 
@@ -13,99 +13,94 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 
 ## 1. Khi nào gọi
 
-| Lúc | Gửi gì cho Neon |
+| Lúc | Cách gọi |
 |---|---|
-| Plan việc rủi ro (tiền, VAT, giá, công nợ, allocation, quyền, DB, deploy): sau lượt soát của Claude, trước khi gửi Đức | Toàn văn plan, kèm các đoạn code mà plan dựa vào (file:line) |
-| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge | Diff của PR (bỏ lockfile, file sinh, ảnh), kèm 2-3 câu nói PR làm gì |
-| Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, hoặc đề xuất việc khó đảo ngược: trước khi báo Đức | Kết luận kèm bằng chứng thô (lệnh, output, file:line) |
+| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
+| Plan việc rủi ro (tiền, VAT, giá, công nợ, allocation, quyền, DB, deploy): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
+| Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm (hoặc nhánh gốc), brief ghi kết luận và bằng chứng thô |
 
-Không cần gọi Neon khi PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
+Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
 
 Chỉ phiên chính gọi Neon. Subagent không gọi.
 
+Diff lớn hơn 1500 dòng (không tính test, file sinh, lockfile) thì chia thành nhiều lượt. Mỗi lượt một nhóm file, ghi rõ nhóm trong brief ("chỉ soát artifacts/api-server/src/lib/allocation*").
+
 ## 2. Cách gọi
 
-Chỉ có một cửa để gọi Neon: script `/Users/hiuduc/.claude/neon-soat.sh` trên Mac của Đức.
+Chỉ có một cửa: script `/Users/hiuduc/.claude/neon-soat.sh` trên Mac của Đức. Mã nguồn của script là `neon-soat.sh` trong thư mục skill này. Đức đã cho phép sẵn `Bash(bash /Users/hiuduc/.claude/neon-soat.sh:*)`, nên lệnh chạy thẳng, không hỏi. Không gọi `t3` hay `agy` trực tiếp: auto mode chặn hai lệnh này.
 
-- Script đọc nội dung từ stdin và tự thêm lời dặn: "chỉ soát, trả HIGH/MED/LOW, không có lỗi thì ghi KHONG_CO_LOI".
-- Script gọi `gemini-4-neon` qua `t3`, chạy trong thư mục trống `~/neon-soat` (project T3 tên `neon-soat`). Vì vậy Neon không đọc hay sửa được code.
-- Không giới hạn số lượt. Mỗi lượt mất khoảng 10 đến 60 giây.
-- Đức đã cho phép sẵn `Bash(bash /Users/hiuduc/.claude/neon-soat.sh:*)`, nên lệnh chạy thẳng, không hỏi.
+Script tự ghép phần "luật chung" vào trước brief. Phần luật chung gồm: vai người soát độc lập tìm lỗi thật, được đọc file và chạy test, cấm sửa file, commit, push, đọc `.env`, và mẫu đầu ra bắt buộc. Gọi `gemini-4-neon` với `effort=medium` qua `t3` (Đức chọn 24/11). Không giới hạn lượt hay thời gian.
 
-Không gọi `t3` hay `agy` trực tiếp: auto mode chặn hai lệnh này, và Đức chỉ mở quyền cho script.
+Có hai chế độ:
 
-Nếu script mất hoặc hỏng (lỗi `No such file`, hoặc `No T3 Code project matches`), Đức cài lại bằng `cai-tren-mac.sh` trong thư mục skill này (Đức tự chạy trong Terminal, vì script này sửa quyền). Không tự cài.
+- **2a. Chế độ brief:** `bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-brief.md`. Neon chỉ thấy brief và chạy trong thư mục trống `~/neon-soat`. Dùng khi nội dung không nằm trên nhánh nào.
+- **2b. Chế độ repo:** `bash /Users/hiuduc/.claude/neon-soat.sh <thư mục repo trên Mac> <nhánh> [nhánh gốc] < /tmp/neon-brief.md`. Script làm 4 việc:
+  1. `git fetch`.
+  2. Kiểm `origin/<nhánh>` có tồn tại và có diff so với nhánh gốc. Không đạt thì exit 4 hoặc 5, không gọi Neon.
+  3. Tạo worktree riêng của T3 tại đúng commit đó. Neon không đụng thư mục làm việc của Đức.
+  4. Dặn Neon đọc `AGENTS.md` và code xung quanh trước khi kết luận.
+
+  Nhánh gốc mặc định theo `origin/HEAD`: Kho là `master`, Booking là `main`. Thư mục repo trên Mac: `/Users/hiuduc/Projects/Quan-ly-Kho`, `/Users/hiuduc/Projects/Booking` (cả hai đã là project T3).
+
+Exit code: 0 xong · 1 t3 lỗi · 2 Neon hỏi lại · 4 brief hoặc diff rỗng · 5 sai repo hoặc nhánh.
+
+### Viết brief (`/tmp/neon-brief.md`)
+
+Luôn ghi brief bằng tool Write, không dùng `echo "..."` (shell sẽ bung `$VAR` và backtick). Brief gồm đủ 5 mục:
+
+```
+1. Muc dich: <ai can, vi sao, 2-3 cau; trich nguyen van yeu cau cua Duc neu co>
+2. Dung la gi: <tieu chi dung / hanh vi mong doi; cai gi KHONG duoc doi>
+3. Luat lien quan: <muc AGENTS.md lien quan, vd "Kho §5 cong no, §8 schema chi ADD"; Neon tu doc file>
+4. Cho nghi nhat: <3-5 cau hoi cu the Claude muon Neon dao sau, vd "huy phieu giua chung co lam lech so du xuong khong">
+5. Ngoai pham vi: <phan khong can soat, vd file sinh, doi ten>
+```
+
+Không đưa vào brief:
+- Kết luận của reviewer khác (reviewer-kho, interrogate) hay "Claude đã kiểm X đúng". Neon phải đọc độc lập thì lượt soát thứ hai mới có giá trị. Claude tự gộp hai bên sau.
+- `.env`, khoá, mật khẩu, token, chuỗi kết nối DB, dữ liệu khách hàng thật (tên, số điện thoại, địa chỉ).
 
 ### a. Phiên đang chạy trên Mac (Remote Control, Claude Desktop, T3)
 
-Luôn đi theo 3 bước. Mỗi bước là một lệnh riêng, không nối bằng ống `|`: lỗi ở giữa ống sẽ bị nuốt mất, và quyền allow chỉ phủ lệnh bắt đầu bằng `bash /Users/hiuduc/.claude/neon-soat.sh`.
-
-1. Dùng tool Write ghi bối cảnh 2-3 câu vào `/tmp/neon-boi-canh.md`. Không ghi bằng `echo "..."`, vì shell sẽ bung `$VAR` và chạy `` `...` `` có trong nội dung.
-2. Ghi nội dung cần soát vào `/tmp/neon-noi-dung.md`:
-   - Plan hay kết luận: dùng tool Write.
-   - Diff nhánh đang làm:
-     ```bash
-     git fetch origin && git diff origin/<nhánh gốc>...HEAD -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png' > /tmp/neon-noi-dung.md && test -s /tmp/neon-noi-dung.md && echo DIFF_OK
-     ```
-     Không thấy `DIFF_OK` thì dừng. Nguyên nhân là diff rỗng hoặc sai ref. Đừng gửi cho Neon, vì nó sẽ trả `KHONG_CO_LOI` giả.
-3. Gộp hai file rồi gọi Neon:
-   ```bash
-   cat /tmp/neon-boi-canh.md /tmp/neon-noi-dung.md > /tmp/neon-input.md
-   ```
-   ```bash
-   bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md
-   ```
+Write brief ra `/tmp/neon-brief.md`. Push nhánh lên trước, vì script đọc `origin/<nhánh>`. Sau đó chạy lệnh của chế độ 2b (hoặc 2a), mỗi lệnh riêng, không nối bằng `|`.
 
 ### b. Thread cloud (thread Project của claude.ai, có tool `start_remote_control`)
 
-1. Gọi `start_remote_control`:
-   - `folder` là repo trên Mac: `/Users/hiuduc/Projects/Quan-ly-Kho` hoặc `/Users/hiuduc/Projects/Booking`. Đức đã duyệt sẵn hai thư mục này, nên không cần ai bấm.
-   - `instructions` theo mẫu bên dưới.
-2. Kết quả về dưới dạng tin nhắn từ phiên trên Mac.
-3. Luôn gọi `stop_remote_control`, kể cả khi lệnh lỗi hoặc Mac không trả lời. Lý do: trong lúc Remote Control chạy, các tool thư mục của thread bị khoá.
+1. Push nhánh. Gọi `start_remote_control` với `folder` là `/Users/hiuduc/Projects/Quan-ly-Kho` (Đức đã duyệt sẵn, không cần ai bấm; script nhận đường dẫn repo nên Booking cũng chạy được từ đây). `instructions` theo mẫu dưới.
+2. Kết quả về dưới dạng tin nhắn từ phiên trên Mac. Neon có thể chạy vài phút.
+3. Luôn gọi `stop_remote_control`, kể cả khi lỗi hay Mac không trả lời, vì trong lúc Remote Control chạy, các tool thư mục của thread bị khoá.
 
-Mẫu `instructions`:
+`instructions` không được chứa thẻ dạng HTML. Đừng viết `<...>` trong brief gửi qua đây, hãy viết bằng chữ.
 
 ```
-Làm đúng các bước dưới, không sửa file nào khác. Báo NGUYÊN VĂN đầu ra và exit code của từng lệnh. Lệnh nào lỗi thì dừng và báo lỗi đó.
-1. Dùng tool Write ghi phần nằm giữa ===BOI_CANH=== và ===HET=== vào /tmp/neon-boi-canh.md.
-2. <Diff PR:> chạy trong <thư mục repo>:
-   git fetch origin && git diff origin/<nhánh gốc>...origin/<nhánh> -- . ':(exclude)pnpm-lock.yaml' ':(exclude,glob)**/generated/**' ':(exclude,glob)**/*.png' > /tmp/neon-noi-dung.md && test -s /tmp/neon-noi-dung.md && echo DIFF_OK
-   <Plan / kết luận:> dùng tool Write ghi phần nằm giữa ===NOI_DUNG=== và ===HET=== vào /tmp/neon-noi-dung.md.
-3. cat /tmp/neon-boi-canh.md /tmp/neon-noi-dung.md > /tmp/neon-input.md
-4. bash /Users/hiuduc/.claude/neon-soat.sh < /tmp/neon-input.md
-===BOI_CANH===
-<2-3 câu: repo, PR làm gì, soát gì>
+Chi lam dung cac buoc duoi, khong sua file nao khac, khong chuyen nhanh. Bao NGUYEN VAN dau ra, thoi gian chay va exit code.
+1. Dung tool Write ghi phan nam giua ===BRIEF=== va ===HET=== vao /tmp/neon-brief.md.
+2. bash /Users/hiuduc/.claude/neon-soat.sh /Users/hiuduc/Projects/(Quan-ly-Kho|Booking) (nhanh) (nhanh goc) < /tmp/neon-brief.md; echo "exit=$?"
+===BRIEF===
+(5 muc brief)
 ===HET===
 ```
 
-Nếu plan dài quá 30 KB: lưu thành file trên nhánh rồi push. Ở bước 2, thay bằng lệnh `git fetch origin && git show origin/<nhánh>:<đường dẫn> > /tmp/neon-noi-dung.md`.
-
 ### c. Không gọi được
 
-Gặp một trong các trường hợp sau thì bỏ qua và ghi lý do. Chỉ thử lại 1 lần, và chỉ khi lỗi có thể tự hết (Mac chưa trả lời, lỗi mạng). Thiếu tool, hết hạn mức hay diff rỗng thì không thử lại.
+Gặp các trường hợp dưới thì bỏ qua, ghi lý do, rồi làm tiếp. Chỉ thử lại 1 lần, và chỉ khi lỗi có thể tự hết (Mac chưa trả lời, lỗi mạng). Thiếu tool, hết hạn mức, exit 4 hoặc 5 thì sửa đầu vào hoặc bỏ qua, không thử lại y nguyên.
 - Không có `start_remote_control`, và phiên cũng không chạy trên Mac.
-- Mac không trả lời trong 2 phút, hoặc Neon chạy quá 10 phút. Script không tự cắt giờ, vì Đức muốn không giới hạn; phiên gọi tự quyết bỏ qua.
-- Script trả exit code khác 0.
-- Đầu ra báo lỗi hạn mức (`quota`, `RESOURCE_EXHAUSTED`, `429`), hoặc đầu ra không có dòng HIGH/MED/LOW nào và cũng không có `KHONG_CO_LOI`.
+- Mac không trả lời trong 2 phút, hoặc Neon chạy quá 20 phút. Script không tự cắt giờ, phiên gọi tự quyết định bỏ qua.
+- Exit khác 0. Đầu ra báo lỗi hạn mức (`quota`, `RESOURCE_EXHAUSTED`, `429`). Đầu ra không có dòng `KET_LUAN:`.
+- Script mất hoặc hỏng (`No such file`, `No T3 Code project matches`): báo Đức chạy lại `cai-tren-mac.sh` của skill này trong Terminal. Script này sửa quyền nên không tự cài.
 
-## 3. Không gửi cho Neon
+## 3. Xử lý kết quả
 
-- File `.env`, khoá, mật khẩu, token, chuỗi kết nối DB.
-- Dữ liệu khách hàng thật: tên, số điện thoại, địa chỉ.
-
-Nếu diff chứa những thứ này thì loại file đó ra bằng `':(exclude)<đường dẫn>'`.
-
-## 4. Xử lý kết quả
-
-- Đối chiếu từng lỗi Neon nêu với code thật: Read đúng file:line, chạy test nếu cần. Neon chỉ thấy phần nội dung được gửi, nên dễ báo nhầm vì thiếu ngữ cảnh.
-- Lỗi đúng: sửa, rồi chạy lại cổng máy của repo. Không cần gọi Neon lần nữa, trừ khi phần sửa dài hơn 50 dòng.
-- Lỗi sai: bác, ghi một câu lý do.
+- Đối chiếu từng lỗi với code thật: Read đúng file:line, chạy lại kịch bản Neon nêu (test hoặc lệnh). Lỗi có `NGHI:` hay không kèm kịch bản thì kiểm kỹ hơn trước khi tin.
+- Lỗi đúng: sửa, rồi chạy lại cổng máy của repo. Phần sửa dài hơn 50 dòng thì gọi Neon thêm một lượt cho phần đó.
+- Lỗi sai: bác, ghi một câu lý do có bằng chứng.
+- `CAN_THEM:`: bổ sung vào brief rồi gọi lại một lượt nếu điểm đó quan trọng.
 - Neon bắt được lỗi mà reviewer của Claude bỏ sót: coi là lỗi lọt cổng theo AGENTS.md của repo, và thêm chốt chặn cho loại lỗi đó.
+- Neon sai nhiều lần cùng một kiểu (vd không hiểu luật X): thêm 1 câu về luật đó vào mục "Luat lien quan" của brief những lần sau. Luật chung thì đề xuất sửa `neon-soat.sh`.
 
-## 5. Ghi lại
+## 4. Ghi lại
 
-PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, theo một trong ba dạng:
+PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, theo một trong các dạng:
 
 ```
 - neon: HIGH=<n> MED=<n> LOW=<n> · đã sửa: <...> · bác: <... vì ...>
