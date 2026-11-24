@@ -20,11 +20,18 @@ export function reminder(cwd) {
   return lines.join("\n");
 }
 
+export const NEON_REMINDER = [
+  "<lichi-neon-soat>",
+  "Quy trình Đức chốt 24/11/2026: ở repo Kho và Booking, phiên chính nhờ Gemini 4 Neon soát thứ hai theo skill lichi:neon-soat (Read SKILL.md của skill đó khi tới lúc) ở 3 lúc: plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge, kết luận nguyên nhân / số đo trước khi báo. Neon không phải cổng chặn: không gọi được thì ghi `- neon: bỏ qua (lý do)` rồi làm tiếp.",
+  "</lichi-neon-soat>",
+].join("\n");
+
 export function hookOutput(input) {
-  const text = reminder(projectDir(input));
-  if (!text) return null;
   const event = input.hook_event_name ?? "SessionStart";
-  return { hookSpecificOutput: { hookEventName: event, additionalContext: text } };
+  const text = reminder(projectDir(input));
+  const parts = [text, event === "SessionStart" && text ? NEON_REMINDER : ""].filter(Boolean);
+  if (parts.length === 0) return null;
+  return { hookSpecificOutput: { hookEventName: event, additionalContext: parts.join("\n") } };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
