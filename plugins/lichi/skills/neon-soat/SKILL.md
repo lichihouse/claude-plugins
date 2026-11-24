@@ -17,7 +17,7 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 |---|---|
 | Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
 | Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: mục **Dừng hỏi**): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
-| Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm (hoặc nhánh gốc), brief ghi kết luận và bằng chứng thô |
+| Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm khi nhánh có commit khác nhánh gốc; kết luận về `main` / prod (không có diff, script ra exit 4) thì dùng chế độ brief. Brief ghi kết luận và bằng chứng thô |
 
 Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
 
@@ -108,6 +108,7 @@ PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, 
 - neon: KHONG_CO_LOI
 - neon: bỏ qua (<lý do>)
 - neon: N/A (chỉ docs)
+- neon: N/A (phiên chính là Neon)
 ```
 
 Plan hay kết luận gửi Đức: thêm một câu "Neon đã soát: ..." hoặc "Neon bỏ qua vì ...". Không dán nguyên văn đầu ra của Neon cho Đức.
