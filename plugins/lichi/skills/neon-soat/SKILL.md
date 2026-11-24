@@ -1,11 +1,11 @@
 ---
 name: neon-soat
-description: Nhờ Gemini 4 Neon (tài khoản Antigravity của Đức, chạy qua T3 Code trên Mac) làm người soát thứ hai cho Claude ở repo Kho và Booking. Dùng ở 3 lúc - plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge, kết luận về nguyên nhân hay số đo trước khi báo. Gồm cách gọi từ phiên trên Mac và từ thread cloud (Remote Control), cách xử lý kết quả, dòng ghi vào PR.
+description: Nhờ Gemini 4 Neon (tài khoản Antigravity của Đức, chạy qua T3 Code trên Mac) làm người soát thứ hai cho Claude ở repo Kho và Booking. Dùng ở 3 lúc - plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge (Booking: chỉ PR rủi ro §7), kết luận về nguyên nhân hay số đo trước khi báo. Gồm cách gọi từ phiên trên Mac và từ thread cloud (Remote Control), cách xử lý kết quả, dòng ghi vào PR.
 ---
 
 # Nhờ Gemini Neon soát
 
-Đức chốt ngày 24/11/2026: mọi việc ở repo Kho (`lichihouse/Quan-ly-Kho`) và Booking đều qua thêm một lượt soát của Gemini 4 Neon. Claude vẫn làm chính. Neon đọc repo thật (trong worktree riêng) cùng brief Claude viết, rồi nêu lỗi kèm kịch bản. Đức chốt: cần chất lượng review, không cần tiết kiệm token.
+Đức chốt ngày 24/11/2026: mọi việc ở repo Kho (`lichihouse/Quan-ly-Kho`) đều qua thêm một lượt soát, còn ở Booking chỉ PR rủi ro (AGENTS.md §7) và plan lớn của Gemini 4 Neon. Claude vẫn làm chính. Neon đọc repo thật (trong worktree riêng) cùng brief Claude viết, rồi nêu lỗi kèm kịch bản. Đức chốt: cần chất lượng review, không cần tiết kiệm token.
 
 Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac tắt, Neon hết hạn mức hay báo lỗi thì bỏ qua và ghi lý do. Không để việc đứng chờ Neon, và không nhờ Đức bấm gì.
 
@@ -15,11 +15,11 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 
 | Lúc | Cách gọi |
 |---|---|
-| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
-| Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: mục **Dừng hỏi**): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
+| PR có code (Kho: mọi PR có code; **Booking: chỉ PR rủi ro theo AGENTS.md §7**, PR thường không gọi Neon): sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
+| Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: plan có mục Đỏ gồm **Dừng hỏi**, ; hoặc plan nhiều PR / đổi hành vi diện rộng dù chỉ mức Vàng): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
 | Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm khi nhánh có commit khác nhánh gốc; kết luận về `main` / prod (không có diff, script ra exit 4) thì dùng chế độ brief. Brief ghi kết luận và bằng chứng thô |
 
-Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
+Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường. Ngoại lệ ở Booking: PR chạm mục "Luật và công cụ agent" §7 (vd `AGENTS.md`, `.claude/**`, `docs/agents/**`, `docs/ENGINEERING_PRINCIPLES.md`) là PR rủi ro nên vẫn gọi Neon dù chỉ là markdown. Booking: PR thường ghi `- neon: N/A (PR thường)`. Chi tiết khi nào soát hay soát lại (luồng staging, `fix/sync-dev-main-*`, cùng head SHA, PR thường thành rủi ro) theo AGENTS.md §6 mục Neon của Booking.
 
 Chỉ phiên chính gọi Neon. Subagent không gọi. Hook của plugin lichi nhắc phiên chính khi phiên mở ở repo Kho hoặc Booking, hay ở thư mục cha chứa một trong hai repo đó.
 
@@ -107,7 +107,8 @@ PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, 
 - neon: HIGH=<n> MED=<n> LOW=<n> · đã sửa: <...> · bác: <... vì ...>
 - neon: KHONG_CO_LOI
 - neon: bỏ qua (<lý do>)
-- neon: N/A (chỉ docs)
+- neon: N/A (chỉ docs)   # Booking: chỉ docs không thuộc PR rủi ro §7
+- neon: N/A (PR thường)   # chỉ Booking, theo AGENTS.md §7
 - neon: N/A (phiên chính là Neon)
 ```
 

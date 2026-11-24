@@ -23,7 +23,7 @@ export function reminder(cwd) {
 
 export const NEON_REMINDER = [
   "<lichi-neon-soat>",
-  "Quy trình Đức chốt 24/11/2026: ở repo Kho và Booking, phiên chính nhờ Gemini 4 Neon soát thứ hai theo skill lichi:neon-soat (Read SKILL.md của skill đó khi tới lúc) ở 3 lúc: plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge, kết luận nguyên nhân / số đo trước khi báo. Neon không phải cổng chặn: không gọi được thì ghi `- neon: bỏ qua (lý do)` rồi làm tiếp.",
+  "Quy trình Đức chốt 24/11/2026: ở repo Kho và Booking, phiên chính nhờ Gemini 4 Neon soát thứ hai theo skill lichi:neon-soat (Read SKILL.md của skill đó khi tới lúc) ở 3 lúc: plan việc rủi ro trước khi gửi Đức, diff PR có code trước khi merge (Booking: chỉ PR rủi ro theo AGENTS.md §7; PR thường ghi `- neon: N/A (PR thường)`), kết luận nguyên nhân / số đo trước khi báo. Neon không phải cổng chặn: không gọi được thì ghi `- neon: bỏ qua (lý do)` rồi làm tiếp.",
   "</lichi-neon-soat>",
 ].join("\n");
 

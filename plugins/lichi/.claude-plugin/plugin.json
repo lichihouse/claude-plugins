@@ -1,7 +1,7 @@
 {
   "name": "lichi",
   "displayName": "LICHI",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Kiến thức nghiệp vụ, tích hợp và hook làm việc riêng của LICHI, dùng cho mọi repo (Booking, Quan-ly-Kho, BigQuery). Skill: shopee-open-api, tiktok-shop-api, neon-soat (Gemini Neon soát thứ hai). Hook: nhắc đọc AGENTS.md và áp deny list repo con khi phiên mở ở thư mục cha.",
   "author": {
     "name": "Lichi House"
