@@ -5,7 +5,7 @@ Kiến thức nghiệp vụ và tích hợp riêng của LICHI, dùng được t
 | Skill | Dùng khi |
 |---|---|
 | `shopee-open-api` | Viết code gọi Shopee, thiết kế nạp dữ liệu Shopee vào BigQuery, hỏi về API Shopee. Gồm toàn bộ tài liệu Shopee Open Platform API v2 (tải 2026-10-31), bài học từ code Booking, đề xuất bảng `raw_shopee`, và script tải lại tài liệu. |
-| `neon-soat` | Repo Kho và Booking: nhờ Gemini 4 Neon (Antigravity của Đức, qua T3 Code trên Mac, script `~/.claude/neon-soat.sh`) soát thứ hai plan việc rủi ro, diff PR có code, kết luận trước khi báo. Không phải cổng chặn: không gọi được thì ghi lý do. Cài trên Mac: Đức chạy `skills/neon-soat/cai-tren-mac.sh`. |
+| `neon-soat` | Repo Kho và Booking: nhờ Gemini 4 Neon (Antigravity của Đức, qua T3 Code trên Mac, script `~/.claude/neon-soat.sh`) soát thứ hai plan việc rủi ro, diff PR có code (Booking: chỉ PR rủi ro §7), kết luận trước khi báo. Không phải cổng chặn: không gọi được thì ghi lý do. Cài trên Mac: Đức chạy `skills/neon-soat/cai-tren-mac.sh`. |
 | `tiktok-shop-api` | Viết code gọi TikTok Shop, chọn version API, thiết kế nạp dữ liệu TikTok vào BigQuery, hỏi về API TikTok Shop. Gồm toàn bộ tài liệu Partner Center (318 API, 44 webhook, changelog, Developer Guide, tải 2026-10-31), bảng endpoint Booking đang gọi và việc cần nâng, hạn khai tử, đề xuất bảng `raw_tiktok`, và script tải lại tài liệu. |
 
 ## Hook (từ 0.3.0)

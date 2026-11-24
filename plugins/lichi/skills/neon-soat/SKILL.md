@@ -15,11 +15,11 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 
 | Lúc | Cách gọi |
 |---|---|
-| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
-| Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: mục **Dừng hỏi**): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
+| PR có code (Kho: mọi PR có code; **Booking: chỉ PR rủi ro theo AGENTS.md §7**, PR thường không gọi Neon): sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
+| Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: plan có mục Đỏ gồm **Dừng hỏi**, và plan nhiều PR hoặc đổi hành vi diện rộng): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
 | Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm khi nhánh có commit khác nhánh gốc; kết luận về `main` / prod (không có diff, script ra exit 4) thì dùng chế độ brief. Brief ghi kết luận và bằng chứng thô |
 
-Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
+Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường. Ngoại lệ ở Booking: PR sửa `AGENTS.md`, `.claude/**`, `docs/agents/**` là PR rủi ro nên vẫn gọi Neon dù chỉ là markdown. Booking: PR thường ghi `- neon: N/A (PR thường)`.
 
 Chỉ phiên chính gọi Neon. Subagent không gọi. Hook của plugin lichi nhắc phiên chính khi phiên mở ở repo Kho hoặc Booking, hay ở thư mục cha chứa một trong hai repo đó.
 
@@ -108,6 +108,7 @@ PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, 
 - neon: KHONG_CO_LOI
 - neon: bỏ qua (<lý do>)
 - neon: N/A (chỉ docs)
+- neon: N/A (PR thường)   # chỉ Booking, theo AGENTS.md §7
 - neon: N/A (phiên chính là Neon)
 ```
 
