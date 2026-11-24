@@ -15,8 +15,8 @@ Neon là **người soát thứ hai, không phải cổng chặn**. Nếu Mac t�
 
 | Lúc | Cách gọi |
 |---|---|
-| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
-| Plan việc rủi ro (tiền, VAT, giá, công nợ, allocation, quyền, DB, deploy): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
+| Mọi PR có code: sau khi reviewer của repo báo sạch HIGH và MED, trước khi merge (Booking: trước `gh pr ready` / hẹn merge, PR còn nháp) | Chế độ repo (2b): Neon đọc nhánh PR trong worktree riêng |
+| Plan việc rủi ro theo AGENTS.md của repo (Kho: việc rủi ro; Booking: mục **Dừng hỏi**): sau lượt soát của Claude, trước khi gửi Đức | Đẩy plan lên một nhánh (file `docs/plan-*.md` hoặc trong mô tả commit), rồi dùng chế độ repo, để Neon đối chiếu plan với code thật. Không đẩy được thì dùng chế độ brief (2a) và dán kèm các đoạn code mà plan dựa vào |
 | Kết luận về nguyên nhân lỗi, kết luận dựa trên số đo, đề xuất việc khó đảo ngược: trước khi báo Đức | Chế độ repo trên nhánh đang làm (hoặc nhánh gốc), brief ghi kết luận và bằng chứng thô |
 
 Không gọi Neon cho PR chỉ đổi docs hay markdown, hoặc khi chỉ trả lời câu hỏi thường.
@@ -92,7 +92,8 @@ Gặp các trường hợp dưới thì bỏ qua, ghi lý do, rồi làm tiếp.
 ## 3. Xử lý kết quả
 
 - Đối chiếu từng lỗi với code thật: Read đúng file:line, chạy lại kịch bản Neon nêu (test hoặc lệnh). Lỗi có `NGHI:` hay không kèm kịch bản thì kiểm kỹ hơn trước khi tin.
-- Lỗi đúng: sửa, rồi chạy lại cổng máy của repo. Phần sửa dài hơn 50 dòng thì gọi Neon thêm một lượt cho phần đó.
+- Xếp lại từng lỗi theo thang HIGH / MED / LOW của reviewer repo (`reviewer-kho`, `reviewer-booking`), không theo mức Neon đặt.
+- Lỗi đúng mức HIGH / MED: sửa, rồi chạy lại cổng máy và review lại phần đổi như AGENTS.md của repo. LOW: ghi fix / dismiss + lý do, không mở vòng sửa mới. Phần sửa dài hơn 50 dòng thì gọi Neon thêm một lượt cho phần đó.
 - Lỗi sai: bác, ghi một câu lý do có bằng chứng.
 - `CAN_THEM:`: bổ sung vào brief rồi gọi lại một lượt nếu điểm đó quan trọng.
 - Neon bắt được lỗi mà reviewer của Claude bỏ sót: coi là lỗi lọt cổng theo AGENTS.md của repo, và thêm chốt chặn cho loại lỗi đó.
@@ -106,6 +107,7 @@ PR có code: thêm một dòng vào khối DoD, ngay dưới dòng `- review:`, 
 - neon: HIGH=<n> MED=<n> LOW=<n> · đã sửa: <...> · bác: <... vì ...>
 - neon: KHONG_CO_LOI
 - neon: bỏ qua (<lý do>)
+- neon: N/A (chỉ docs)
 ```
 
 Plan hay kết luận gửi Đức: thêm một câu "Neon đã soát: ..." hoặc "Neon bỏ qua vì ...". Không dán nguyên văn đầu ra của Neon cho Đức.
