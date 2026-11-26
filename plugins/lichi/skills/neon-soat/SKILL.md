@@ -29,7 +29,7 @@ Diff lớn hơn 1500 dòng (không tính test, file sinh, lockfile) thì chia th
 
 Chỉ có một cửa: script `/Users/hiuduc/.claude/neon-soat.sh` trên Mac của Đức. Mã nguồn của script là `neon-soat.sh` trong thư mục skill này. Đức đã cho phép sẵn `Bash(bash /Users/hiuduc/.claude/neon-soat.sh:*)`, nên lệnh chạy thẳng, không hỏi. Không gọi `t3` hay `agy` trực tiếp: auto mode chặn hai lệnh này.
 
-Script tự ghép phần "luật chung" vào trước brief. Phần luật chung gồm: vai người soát độc lập tìm lỗi thật, được đọc file và chạy test, cấm sửa file, commit, push, đọc `.env`, và mẫu đầu ra bắt buộc. Gọi `gemini-4-neon` với `effort=medium` qua `t3` (Đức chọn 24/11). Không giới hạn lượt hay thời gian.
+Script tự ghép phần "luật chung" vào trước brief. Phần luật chung gồm: vai người soát độc lập tìm lỗi thật, được đọc file và chạy test, cấm sửa file, commit, push, đọc `.env`, và mẫu đầu ra bắt buộc. Gọi `gemini-4-neon` với `thought_level=medium` qua `t3` (Đức chọn mức medium 24/11; từ 26/11 model chỉ nhận option `thought_level`, gửi `effort` thì t3 báo "Unknown option effort" và dừng sau 3 giây). Không giới hạn lượt hay thời gian.
 
 Có hai chế độ:
 

@@ -44,7 +44,7 @@ chay_t3() { # chạy t3, in đầu ra như cũ, đồng thời ghi nhật ký
   return "$rc"
 }
 
-MODEL=(--provider antigravity --model gemini-4-neon --option effort=medium)
+MODEL=(--provider antigravity --model gemini-4-neon --option thought_level=medium)
 TITLE="Neon soat $(date +%m%d-%H%M)"
 
 if [ $# -eq 0 ]; then
